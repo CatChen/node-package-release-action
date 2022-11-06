@@ -1,10 +1,20 @@
-import { notice, error } from "@actions/core";
+import { notice, error, getInput, setFailed } from "@actions/core";
 import { getOctokit } from "./getOctokit";
 import { context } from "@actions/github";
 import { getLastGitTag } from "./getLastGitTag";
 import { getPackageVersion } from "./getPackageVersion";
 import { getLatestRelease } from "./getLatestRelease";
-import { rsort } from "semver";
+import { rsort, inc, ReleaseType } from "semver";
+
+const RELEASE_TYPES = [
+  "major",
+  "premajor",
+  "minor",
+  "preminor",
+  "patch",
+  "prepatch",
+  "prerelease",
+] as const;
 
 async function run(): Promise<void> {
   const lastGitTag = await getLastGitTag();
@@ -20,8 +30,22 @@ async function run(): Promise<void> {
   const versions = [lastGitTag, packageVersion, latestRelease].flatMap(
     (version) => (version === null ? [] : [version])
   );
-  const version = rsort(versions);
-  notice(`Highest version: ${version}`);
+  const highestVersion = rsort(versions)[0];
+  notice(`Highest version: ${highestVersion}`);
+
+  const releaseType = RELEASE_TYPES.find(
+    (releaseType) => getInput("release-type").toLowerCase() === releaseType
+  );
+  if (releaseType === undefined) {
+    setFailed(`Invalid release-type input: ${getInput("release-type")}`);
+    return;
+  }
+  const releaseVersion = inc(highestVersion, releaseType);
+  if (releaseVersion === null) {
+    setFailed("Failed to compute release version");
+    return;
+  }
+  notice(`Release version: ${releaseVersion}`);
 }
 
 async function cleanup(): Promise<void> {

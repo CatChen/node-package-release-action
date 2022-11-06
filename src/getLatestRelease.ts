@@ -19,14 +19,14 @@ export async function getLatestRelease(
   } catch (error) {
     if (error instanceof RequestError) {
       if (error.status === 404) {
-        warning(`Latest release not found. Listing pre-releases next.`);
+        warning(`Latest release not found but pre-release may exist`);
         const releasesResponse = await octokit.rest.repos.listReleases({
           owner,
           repo,
         });
         if (releasesResponse.data.length === 0) {
           // No release or pre-release available.
-          warning(`Pre-release not found.`);
+          warning(`Pre-release not found`);
           return null;
         }
         const latestRelease = releasesResponse.data[0];

@@ -15786,14 +15786,14 @@ function getLatestRelease(owner, repo, octokit) {
         catch (error) {
             if (error instanceof request_error_1.RequestError) {
                 if (error.status === 404) {
-                    (0, core_1.warning)(`Latest release not found. Listing pre-releases next.`);
+                    (0, core_1.warning)(`Latest release not found but pre-release may exist`);
                     const releasesResponse = yield octokit.rest.repos.listReleases({
                         owner,
                         repo,
                     });
                     if (releasesResponse.data.length === 0) {
                         // No release or pre-release available.
-                        (0, core_1.warning)(`Pre-release not found.`);
+                        (0, core_1.warning)(`Pre-release not found`);
                         return null;
                     }
                     const latestRelease = releasesResponse.data[0];
@@ -15915,6 +15915,15 @@ const getLastGitTag_1 = __nccwpck_require__(6650);
 const getPackageVersion_1 = __nccwpck_require__(4528);
 const getLatestRelease_1 = __nccwpck_require__(9895);
 const semver_1 = __nccwpck_require__(1383);
+const RELEASE_TYPES = [
+    "major",
+    "premajor",
+    "minor",
+    "preminor",
+    "patch",
+    "prepatch",
+    "prerelease",
+];
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const lastGitTag = yield (0, getLastGitTag_1.getLastGitTag)();
@@ -15926,8 +15935,19 @@ function run() {
         const latestRelease = yield (0, getLatestRelease_1.getLatestRelease)(owner, repo, octokit);
         (0, core_1.notice)(`Latest release: ${latestRelease}`);
         const versions = [lastGitTag, packageVersion, latestRelease].flatMap((version) => (version === null ? [] : [version]));
-        const version = (0, semver_1.rsort)(versions);
-        (0, core_1.notice)(`Highest version: ${version}`);
+        const highestVersion = (0, semver_1.rsort)(versions)[0];
+        (0, core_1.notice)(`Highest version: ${highestVersion}`);
+        const releaseType = RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)("release-type").toLowerCase() === releaseType);
+        if (releaseType === undefined) {
+            (0, core_1.setFailed)(`Invalid release-type input: ${(0, core_1.getInput)("release-type")}`);
+            return;
+        }
+        const releaseVersion = (0, semver_1.inc)(highestVersion, releaseType);
+        if (releaseVersion === null) {
+            (0, core_1.setFailed)("Failed to compute release version");
+            return;
+        }
+        (0, core_1.notice)(`Release version: ${releaseVersion}`);
     });
 }
 function cleanup() {
