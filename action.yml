@@ -9,6 +9,10 @@ inputs:
     description: "One of the following: major, minor, patch, premajor, preminor, prepatch, prerelease."
     required: false
     default: "patch"
+  prerelease:
+    description: "Mark the GitHub Release as a pre-release."
+    required: false
+    default: false
   dry-run:
     description: "Dry run without making changes."
     required: false

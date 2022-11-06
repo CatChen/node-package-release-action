@@ -26,4 +26,5 @@ jobs:
         uses: ./
         with:
           release-type: prerelease
+          prerelease: true
           dry-run: true

@@ -28,5 +28,6 @@ export async function createRelease(
     tag_name: `v${version}`,
     name: `v${version}`,
     generate_release_notes: true,
+    prerelease: getBooleanInput("prerelease"),
   });
 }
