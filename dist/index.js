@@ -16025,11 +16025,28 @@ const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function pushBranch() {
     return __awaiter(this, void 0, void 0, function* () {
+        const gitBranchOutput = yield (0, exec_1.getExecOutput)("git", [
+            "branch",
+            "--show-current",
+        ]);
+        if (gitBranchOutput.exitCode !== 0) {
+            throw new Error(gitBranchOutput.stderr);
+        }
+        const branchName = gitBranchOutput.stdout;
+        (0, core_1.notice)(`Current branch: ${branchName}`);
         const dryRun = (0, core_1.getBooleanInput)("dry-run");
         if (dryRun) {
             (0, core_1.notice)("Push is skipped in dry run.");
+            return;
         }
-        const gitPushOutput = yield (0, exec_1.getExecOutput)("git", ["push", "--follow-tags"]);
+        const gitPushOutput = yield (0, exec_1.getExecOutput)("git", [
+            "push",
+            "-f",
+            "--set-upstream",
+            "origin",
+            branchName,
+            "--follow-tags",
+        ]);
         if (gitPushOutput.exitCode !== 0) {
             throw new Error(gitPushOutput.stderr);
         }
