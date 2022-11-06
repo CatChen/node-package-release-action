@@ -8,6 +8,7 @@ import { getLatestRelease } from "./getLatestRelease";
 import { configGit } from "./configGit";
 import { setVersion } from "./setVersion";
 import { pushBranch } from "./pushBranch";
+import { createRelease } from "./createRelease";
 
 const RELEASE_TYPES = [
   "major",
@@ -55,6 +56,8 @@ async function run(): Promise<void> {
   await setVersion(releaseVersion);
 
   await pushBranch();
+
+  await createRelease(owner, repo, releaseVersion, octokit);
 }
 
 run();
