@@ -12777,7 +12777,7 @@ function run() {
         (0, core_1.notice)(`package.json version: ${packageVersion}`);
         const { owner, repo } = github_1.context.repo;
         const octokit = (0, getOctokit_1.getOctokit)();
-        const latestRelease = (0, getLatestRelease_1.getLatestRelease)(owner, repo, octokit);
+        const latestRelease = yield (0, getLatestRelease_1.getLatestRelease)(owner, repo, octokit);
         (0, core_1.notice)(`Latest release: ${latestRelease}`);
     });
 }

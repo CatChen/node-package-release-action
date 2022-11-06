@@ -13,7 +13,7 @@ async function run(): Promise<void> {
 
   const { owner, repo } = context.repo;
   const octokit = getOctokit();
-  const latestRelease = getLatestRelease(owner, repo, octokit);
+  const latestRelease = await getLatestRelease(owner, repo, octokit);
   notice(`Latest release: ${latestRelease}`);
 }
 
