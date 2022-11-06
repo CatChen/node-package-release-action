@@ -1,4 +1,4 @@
-import { notice, getBooleanInput } from "@actions/core";
+import { notice, error, getBooleanInput, ExitCode } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
 
 export async function pushBranch() {
@@ -6,15 +6,22 @@ export async function pushBranch() {
     "branch",
     "--show-current",
   ]);
-  if (gitBranchOutput.exitCode !== 0) {
+  if (gitBranchOutput.exitCode !== ExitCode.Success) {
     throw new Error(gitBranchOutput.stderr);
   }
   const branchName = gitBranchOutput.stdout;
+  if (branchName === "") {
+    error(`No branch detected`);
+    error(
+      `Did you forget to set the fetch-depth input in the actions/checkout Action?`
+    );
+    throw new Error(`No branch detected`);
+  }
   notice(`Current branch: ${branchName}`);
 
   const dryRun = getBooleanInput("dry-run");
   if (dryRun) {
-    notice("Push is skipped in dry run.");
+    notice("Push is skipped in dry run");
     return;
   }
 
@@ -26,7 +33,7 @@ export async function pushBranch() {
     branchName,
     "--follow-tags",
   ]);
-  if (gitPushOutput.exitCode !== 0) {
+  if (gitPushOutput.exitCode !== ExitCode.Success) {
     throw new Error(gitPushOutput.stderr);
   }
 }

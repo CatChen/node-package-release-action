@@ -16029,14 +16029,19 @@ function pushBranch() {
             "branch",
             "--show-current",
         ]);
-        if (gitBranchOutput.exitCode !== 0) {
+        if (gitBranchOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitBranchOutput.stderr);
         }
         const branchName = gitBranchOutput.stdout;
+        if (branchName === "") {
+            (0, core_1.error)(`No branch detected`);
+            (0, core_1.error)(`Did you forget to set the fetch-depth input in the actions/checkout Action?`);
+            throw new Error(`No branch detected`);
+        }
         (0, core_1.notice)(`Current branch: ${branchName}`);
         const dryRun = (0, core_1.getBooleanInput)("dry-run");
         if (dryRun) {
-            (0, core_1.notice)("Push is skipped in dry run.");
+            (0, core_1.notice)("Push is skipped in dry run");
             return;
         }
         const gitPushOutput = yield (0, exec_1.getExecOutput)("git", [
@@ -16047,7 +16052,7 @@ function pushBranch() {
             branchName,
             "--follow-tags",
         ]);
-        if (gitPushOutput.exitCode !== 0) {
+        if (gitPushOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitPushOutput.stderr);
         }
     });
