@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/CatChen/typescript-github-action-template#readme",
   "devDependencies": {
+    "@octokit/graphql-schema": "^12.22.0",
+    "@octokit/webhooks-definitions": "^3.67.3",
     "@types/node": "^18.11.9",
     "@types/semver": "^7.3.13",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
@@ -40,6 +42,8 @@
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.1.1",
+    "@octokit/plugin-retry": "^4.0.3",
+    "@octokit/plugin-throttling": "^4.3.2",
     "semver": "^7.3.8"
   }
 }
