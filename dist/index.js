@@ -15778,8 +15778,7 @@ function createRelease(owner, repo, version, octokit) {
                 name: `v${version}`,
             });
             (0, core_1.info)(`Release name: ${response.data.name}`);
-            (0, core_1.info)(`Release body:
-    ${response.data.body}`);
+            (0, core_1.info)("Release body:\n" + response.data.body + "\n\n");
             return;
         }
         yield octokit.rest.repos.createRelease({

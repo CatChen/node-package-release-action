@@ -18,8 +18,7 @@ export async function createRelease(
       name: `v${version}`,
     });
     info(`Release name: ${response.data.name}`);
-    info(`Release body:
-    ${response.data.body}`);
+    info("Release body:\n" + response.data.body + "\n\n");
     return;
   }
 
