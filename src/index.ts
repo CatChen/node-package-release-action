@@ -4,7 +4,7 @@ import { context } from "@actions/github";
 import { getLastGitTag } from "./getLastGitTag";
 import { getPackageVersion } from "./getPackageVersion";
 import { getLatestRelease } from "./getLatestRelease";
-import { rsort, inc, ReleaseType } from "semver";
+import { rsort, inc } from "semver";
 
 const RELEASE_TYPES = [
   "major",
