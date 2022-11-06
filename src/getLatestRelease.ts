@@ -34,4 +34,5 @@ export async function getLatestRelease(
       }
     }
   }
+  return null;
 }
