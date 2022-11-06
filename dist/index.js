@@ -15997,11 +15997,6 @@ function run() {
         yield (0, configGit_1.configGit)();
     });
 }
-function cleanup() {
-    return __awaiter(this, void 0, void 0, function* () {
-        (0, core_1.error)("Post action needs to be implemented or removed.");
-    });
-}
 run();
 
 
