@@ -1,3 +1,4 @@
+import { warning } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
 
 export async function getLastGitTag() {
@@ -13,6 +14,7 @@ export async function getLastGitTag() {
 
   if (lastTaggedCommit === "") {
     // There is no tag at all.
+    warning(`Tag not found.`);
     return null;
   }
 

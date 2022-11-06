@@ -12576,6 +12576,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLastGitTag = void 0;
+const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function getLastGitTag() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -12590,6 +12591,7 @@ function getLastGitTag() {
         const lastTaggedCommit = lastTaggedCommitOutput.stdout;
         if (lastTaggedCommit === "") {
             // There is no tag at all.
+            (0, core_1.warning)(`Tag not found.`);
             return null;
         }
         const lastTagOutput = yield (0, exec_1.getExecOutput)("git", [
@@ -12610,7 +12612,7 @@ exports.getLastGitTag = getLastGitTag;
 /***/ }),
 
 /***/ 9895:
-/***/ (function(__unused_webpack_module, exports) {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -12624,27 +12626,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLatestRelease = void 0;
+const core_1 = __nccwpck_require__(2186);
+const request_error_1 = __nccwpck_require__(537);
 function getLatestRelease(owner, repo, octokit) {
     return __awaiter(this, void 0, void 0, function* () {
-        const latestReleaseResponse = yield octokit.rest.repos.getLatestRelease({
-            owner,
-            repo,
-        });
-        if (latestReleaseResponse.status === 200) {
+        try {
+            const latestReleaseResponse = yield octokit.rest.repos.getLatestRelease({
+                owner,
+                repo,
+            });
             // Latest release doesn't include pre-release.
             const latestRelease = latestReleaseResponse.data;
             return latestRelease.tag_name;
         }
-        const releasesResponse = yield octokit.rest.repos.listReleases({
-            owner,
-            repo,
-        });
-        if (releasesResponse.data.length === 0) {
-            // No release or pre-release available.
-            return null;
+        catch (error) {
+            if (error instanceof request_error_1.RequestError) {
+                if (error.status === 404) {
+                    (0, core_1.warning)(`Latest release not found. Listing pre-releases next.`);
+                    const releasesResponse = yield octokit.rest.repos.listReleases({
+                        owner,
+                        repo,
+                    });
+                    if (releasesResponse.data.length === 0) {
+                        // No release or pre-release available.
+                        (0, core_1.warning)(`Pre-release not found.`);
+                        return null;
+                    }
+                    const latestRelease = releasesResponse.data[0];
+                    return latestRelease.tag_name;
+                }
+            }
         }
-        const latestRelease = releasesResponse.data[0];
-        return latestRelease.tag_name;
     });
 }
 exports.getLatestRelease = getLatestRelease;
