@@ -6,6 +6,7 @@ import { getLastGitTag } from "./getLastGitTag";
 import { getPackageVersion } from "./getPackageVersion";
 import { getLatestRelease } from "./getLatestRelease";
 import { configGit } from "./configGit";
+import { setVersion } from "./setVersion";
 
 const RELEASE_TYPES = [
   "major",
@@ -49,6 +50,8 @@ async function run(): Promise<void> {
   notice(`Release version: ${releaseVersion}`);
 
   await configGit();
+
+  await setVersion(releaseVersion);
 }
 
 run();
