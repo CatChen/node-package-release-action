@@ -8,7 +8,7 @@ inputs:
   release-type:
     description: "One of the following: major, minor, patch, premajor, preminor, prepatch, prerelease."
     required: false
-    default: "patch"
+    default: "prerelease"
   prerelease:
     description: "Mark the GitHub Release as a pre-release."
     required: false
