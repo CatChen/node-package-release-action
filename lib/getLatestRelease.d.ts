@@ -1,1 +1,3 @@
-export declare function getLatestRelease(): Promise<void>;
+import type { Octokit } from "@octokit/core";
+import type { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types";
+export declare function getLatestRelease(owner: string, repo: string, octokit: Octokit & Api): Promise<string | null>;
