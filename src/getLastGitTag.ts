@@ -6,6 +6,8 @@ export async function getLastGitTag() {
     "--tags",
     "--max-count=1",
   ]);
+  console.log(lastTaggedCommitOutput);
+  console.log(JSON.stringify(lastTaggedCommitOutput));
   if (lastTaggedCommitOutput.exitCode !== 0) {
     throw new Error(lastTaggedCommitOutput.stderr);
   }
