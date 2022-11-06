@@ -1,9 +1,9 @@
-import { context } from "@actions/github";
-import { info, error } from "@actions/core";
+import { notice, error } from "@actions/core";
+import { getLastGitTag } from "./getLastGitTag";
 
 async function run(): Promise<void> {
-  info(`This is the Action context: ${JSON.stringify(context)}`);
-  error("Action needs to be implemented.");
+  const lastGitTag = await getLastGitTag();
+  notice(`Last git tag: ${lastGitTag}`);
 }
 
 async function cleanup(): Promise<void> {
