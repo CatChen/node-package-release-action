@@ -1,1 +1,1 @@
-export declare function getLastGitTag(): Promise<string>;
+export declare function getLastGitTag(): Promise<string | null>;

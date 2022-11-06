@@ -12,6 +12,12 @@ export async function getLastGitTag() {
     throw new Error(lastTaggedCommitOutput.stderr);
   }
   const lastTaggedCommit = lastTaggedCommitOutput.stdout;
+
+  if (lastTaggedCommit === "") {
+    // There is no tag at all.
+    return null;
+  }
+
   const lastTagOutput = await getExecOutput("git", [
     "describe",
     "--tags",
