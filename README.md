@@ -60,3 +60,17 @@ Let's start with the easy ones. `major`, `minor` and `patch` increase their corr
 - `2.3.4` + `major` => `3.0.0`
 - `2.3.4` + `minor` => `2.4.0`
 - `2.3.4` + `patch` => `2.3.5`
+
+`prerelease` is an interesting one. It increases the prerelease part if it exists. Otherwise, it increases the minor part and append a prerelease zero suffix.
+
+- `2.3.4-0` + `prerelease` => `2.3.4-1`
+- `2.3.4` + `prerelease` => `2.3.5-0`
+
+`premajor`, `preminor` and `prepatch` are like `major`, `minor` and `patch` with a prerelease zero suffix, regardless of whether the original version has a prerelease part.
+
+- `2.3.4` + `premajor` => `3.0.0-0`
+- `2.3.4-5` + `premajor` => `3.0.0-0`
+- `2.3.4` + `preminor` => `2.4.0-0`
+- `2.3.4-5` + `preminor` => `2.4.0-0`
+- `2.3.4` + `prepatch` => `2.3.5-0`
+- `2.3.4-5` + `prepatch` => `2.3.5-0`
