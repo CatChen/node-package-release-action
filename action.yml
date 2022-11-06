@@ -9,6 +9,10 @@ inputs:
     description: "One of the following: major, minor, patch, premajor, preminor, prepatch, prerelease."
     required: false
     default: "patch"
+  dry-run:
+    description: "Dry run without making changes."
+    required: false
+    default: false
 runs:
   using: "node16"
   main: "dist/index.js"

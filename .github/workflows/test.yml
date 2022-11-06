@@ -22,3 +22,6 @@ jobs:
 
       - name: Test
         uses: ./
+        with:
+          release-type: patch
+          dry-run: true
