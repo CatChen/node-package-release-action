@@ -1,0 +1,28 @@
+name: ESLint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main, "[0-9]+-[0-9]+-*"]
+  workflow_call:
+
+jobs:
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          check-latest: true
+
+      - name: Install dependencies
+        run: yarn install
+
+      - uses: CatChen/eslint-suggestion-action@v2.1.7
+        with:
+          targets: "src"
+          fail-check: ${{ github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}

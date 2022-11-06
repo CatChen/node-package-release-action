@@ -1,0 +1,42 @@
+{
+  "name": "typescript-github-action-template",
+  "version": "0.1.0",
+  "description": "A template to create custom GitHub Action with TypeScript/JavaScript.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.js",
+  "type": "module",
+  "scripts": {
+    "build": "yarn tsc",
+    "package": "yarn ncc build src/index.ts --external eslint --source-map --license licenses.txt",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint -c .eslintrc.json src",
+    "preversion": "rm -rf lib && rm -rf dist && yarn && yarn build && yarn package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CatChen/typescript-github-action-template.git"
+  },
+  "author": "Cat Chen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CatChen/typescript-github-action-template/issues"
+  },
+  "homepage": "https://github.com/CatChen/typescript-github-action-template#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "@vercel/ncc": "^0.34.0",
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "prettier": "^2.7.1",
+    "pretty-quick": "^3.1.3",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1"
+  }
+}

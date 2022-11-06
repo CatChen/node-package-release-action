@@ -1,0 +1,56 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main, "[0-9]+-[0-9]+-*"]
+  workflow_run:
+    workflows: ["Build for Dependabot"]
+    types:
+      - completed
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build:
+    name: Build
+    if: |-
+      ${{
+        (github.event_name == 'push' && github.actor != 'dependabot[bot]') ||
+        (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]') ||
+        (github.event_name == 'workflow_run' && github.actor == 'dependabot[bot]') ||
+        github.event_name == 'workflow_call' ||
+        github.event_name == 'workflow_dispatch'
+      }}
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name != 'workflow_run' }}
+
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'workflow_run' }}
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          check-latest: true
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+
+      - name: Package
+        run: yarn package
+
+      - uses: CatChen/check-git-status-action@v1.0.9
+        id: check-git-status
+        with:
+          fail-if-not-clean: ${{ github.actor != 'dependabot[bot]' || github.event_name == 'workflow_call' }}
+          push-if-not-clean: true
+          github-token: ${{ secrets.CHECK_GIT_STATUS_ACTION_TOKEN }}
