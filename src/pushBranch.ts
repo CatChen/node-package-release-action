@@ -13,7 +13,7 @@ export async function pushBranch() {
   if (branchName === "") {
     error(`No branch detected`);
     error(
-      `Did you forget to set the fetch-depth and ref inputs in the actions/checkout Action?`
+      `Did you forget to set the ref input in the actions/checkout Action?`
     );
     throw new Error(`No branch detected`);
   }
