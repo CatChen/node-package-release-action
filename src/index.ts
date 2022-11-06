@@ -1,10 +1,11 @@
 import { notice, error, getInput, setFailed } from "@actions/core";
-import { getOctokit } from "./getOctokit";
 import { context } from "@actions/github";
+import { rsort, inc } from "semver";
+import { getOctokit } from "./getOctokit";
 import { getLastGitTag } from "./getLastGitTag";
 import { getPackageVersion } from "./getPackageVersion";
 import { getLatestRelease } from "./getLatestRelease";
-import { rsort, inc } from "semver";
+import { configGit } from "./configGit";
 
 const RELEASE_TYPES = [
   "major",
@@ -46,6 +47,8 @@ async function run(): Promise<void> {
     return;
   }
   notice(`Release version: ${releaseVersion}`);
+
+  await configGit();
 }
 
 async function cleanup(): Promise<void> {

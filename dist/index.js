@@ -15705,6 +15705,51 @@ try {
 
 /***/ }),
 
+/***/ 8695:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.configGit = exports.GITHUB_ACTION_USER_EMAIL = exports.GITHUB_ACTION_USER_NAME = void 0;
+const exec_1 = __nccwpck_require__(1514);
+exports.GITHUB_ACTION_USER_NAME = "GitHub Action";
+exports.GITHUB_ACTION_USER_EMAIL = "41898282+github-actions[bot]@users.noreply.github.com";
+function configGit() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const gitConfigNameOutput = yield (0, exec_1.getExecOutput)("git", [
+            "config",
+            "--global",
+            "user.name",
+            exports.GITHUB_ACTION_USER_NAME,
+        ]);
+        if (gitConfigNameOutput.exitCode !== 0) {
+            throw new Error(gitConfigNameOutput.stderr);
+        }
+        const gitConfigEmailOutput = yield (0, exec_1.getExecOutput)("git", [
+            "config",
+            "--global",
+            "user.email",
+            exports.GITHUB_ACTION_USER_EMAIL,
+        ]);
+        if (gitConfigEmailOutput.exitCode !== 0) {
+            throw new Error(gitConfigEmailOutput.stderr);
+        }
+    });
+}
+exports.configGit = configGit;
+
+
+/***/ }),
+
 /***/ 6650:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -15909,12 +15954,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
-const getOctokit_1 = __nccwpck_require__(8442);
 const github_1 = __nccwpck_require__(5438);
+const semver_1 = __nccwpck_require__(1383);
+const getOctokit_1 = __nccwpck_require__(8442);
 const getLastGitTag_1 = __nccwpck_require__(6650);
 const getPackageVersion_1 = __nccwpck_require__(4528);
 const getLatestRelease_1 = __nccwpck_require__(9895);
-const semver_1 = __nccwpck_require__(1383);
+const configGit_1 = __nccwpck_require__(8695);
 const RELEASE_TYPES = [
     "major",
     "premajor",
@@ -15948,6 +15994,7 @@ function run() {
             return;
         }
         (0, core_1.notice)(`Release version: ${releaseVersion}`);
+        yield (0, configGit_1.configGit)();
     });
 }
 function cleanup() {
