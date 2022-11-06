@@ -7,6 +7,7 @@ import { getPackageVersion } from "./getPackageVersion";
 import { getLatestRelease } from "./getLatestRelease";
 import { configGit } from "./configGit";
 import { setVersion } from "./setVersion";
+import { pushBranch } from "./pushBranch";
 
 const RELEASE_TYPES = [
   "major",
@@ -52,6 +53,8 @@ async function run(): Promise<void> {
   await configGit();
 
   await setVersion(releaseVersion);
+
+  await pushBranch();
 }
 
 run();
