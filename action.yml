@@ -5,6 +5,10 @@ inputs:
     description: "GitHub token."
     required: false
     default: ${{ github.token }}
+  release-type:
+    description: "One of the following: major, minor, patch, premajor, preminor, prepatch, prerelease."
+    required: false
+    default: "patch"
 runs:
   using: "node16"
   main: "dist/index.js"
