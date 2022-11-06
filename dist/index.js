@@ -16002,12 +16002,7 @@ function cleanup() {
         (0, core_1.error)("Post action needs to be implemented or removed.");
     });
 }
-if (!process.env["STATE_isPost"]) {
-    run();
-}
-else {
-    cleanup();
-}
+run();
 
 
 /***/ }),
