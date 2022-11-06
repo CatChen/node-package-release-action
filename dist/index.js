@@ -15962,6 +15962,7 @@ const getPackageVersion_1 = __nccwpck_require__(4528);
 const getLatestRelease_1 = __nccwpck_require__(9895);
 const configGit_1 = __nccwpck_require__(8695);
 const setVersion_1 = __nccwpck_require__(9556);
+const pushBranch_1 = __nccwpck_require__(7200);
 const RELEASE_TYPES = [
     "major",
     "premajor",
@@ -15997,9 +15998,44 @@ function run() {
         (0, core_1.notice)(`Release version: ${releaseVersion}`);
         yield (0, configGit_1.configGit)();
         yield (0, setVersion_1.setVersion)(releaseVersion);
+        yield (0, pushBranch_1.pushBranch)();
     });
 }
 run();
+
+
+/***/ }),
+
+/***/ 7200:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.pushBranch = void 0;
+const core_1 = __nccwpck_require__(2186);
+const exec_1 = __nccwpck_require__(1514);
+function pushBranch() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const dryRun = (0, core_1.getBooleanInput)("dry-run");
+        if (dryRun) {
+            (0, core_1.notice)("Push is skipped in dry run.");
+        }
+        const gitPushOutput = yield (0, exec_1.getExecOutput)("git", ["push", "--follow-tags"]);
+        if (gitPushOutput.exitCode !== 0) {
+            throw new Error(gitPushOutput.stderr);
+        }
+    });
+}
+exports.pushBranch = pushBranch;
 
 
 /***/ }),
