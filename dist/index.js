@@ -16035,7 +16035,7 @@ function pushBranch() {
         const branchName = gitBranchOutput.stdout;
         if (branchName === "") {
             (0, core_1.error)(`No branch detected`);
-            (0, core_1.error)(`Did you forget to set the fetch-depth input in the actions/checkout Action?`);
+            (0, core_1.error)(`Did you forget to set the fetch-depth and ref inputs in the actions/checkout Action?`);
             throw new Error(`No branch detected`);
         }
         (0, core_1.notice)(`Current branch: ${branchName}`);
