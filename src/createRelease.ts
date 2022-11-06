@@ -10,7 +10,7 @@ export async function createRelease(
 ) {
   const dryRun = getBooleanInput("dry-run");
   if (dryRun) {
-    notice("Release creation is skipped in dry run.");
+    notice("Release creation is skipped in dry run");
     const response = await octokit.rest.repos.generateReleaseNotes({
       owner,
       repo,
