@@ -15787,6 +15787,7 @@ function createRelease(owner, repo, version, octokit) {
             tag_name: `v${version}`,
             name: `v${version}`,
             generate_release_notes: true,
+            prerelease: (0, core_1.getBooleanInput)("prerelease"),
         });
     });
 }
