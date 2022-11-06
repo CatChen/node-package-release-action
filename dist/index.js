@@ -15743,6 +15743,10 @@ function configGit() {
         if (gitConfigEmailOutput.exitCode !== 0) {
             throw new Error(gitConfigEmailOutput.stderr);
         }
+        const ghAuthOutput = yield (0, exec_1.getExecOutput)("gh", ["auth", "setup-git"]);
+        if (ghAuthOutput.exitCode !== 0) {
+            throw new Error(ghAuthOutput.stderr);
+        }
     });
 }
 exports.configGit = configGit;

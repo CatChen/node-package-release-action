@@ -24,4 +24,9 @@ export async function configGit() {
   if (gitConfigEmailOutput.exitCode !== 0) {
     throw new Error(gitConfigEmailOutput.stderr);
   }
+
+  const ghAuthOutput = await getExecOutput("gh", ["auth", "setup-git"]);
+  if (ghAuthOutput.exitCode !== 0) {
+    throw new Error(ghAuthOutput.stderr);
+  }
 }
