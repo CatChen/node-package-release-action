@@ -15840,14 +15840,21 @@ const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function fetchEverything() {
     return __awaiter(this, void 0, void 0, function* () {
-        const gitFetchOutput = yield (0, exec_1.getExecOutput)("git", [
+        const gitFetchTagsOutput = yield (0, exec_1.getExecOutput)("git", [
             "fetch",
             "--tags",
+            "origin",
+        ]);
+        if (gitFetchTagsOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(gitFetchTagsOutput.stderr);
+        }
+        const gitFetchUnshallowOutput = yield (0, exec_1.getExecOutput)("git", [
+            "fetch",
             "--unshallow",
             "origin",
         ]);
-        if (gitFetchOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(gitFetchOutput.stderr);
+        if (gitFetchUnshallowOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(gitFetchUnshallowOutput.stderr);
         }
     });
 }
