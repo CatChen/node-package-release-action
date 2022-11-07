@@ -2,6 +2,15 @@ import { notice, error, getBooleanInput, ExitCode } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
 
 export async function pushBranch() {
+  const gitFetchOutput = await getExecOutput("git", [
+    "fetch",
+    "--unshallow",
+    "origin",
+  ]);
+  if (gitFetchOutput.exitCode !== ExitCode.Success) {
+    throw new Error(gitFetchOutput.stderr);
+  }
+
   const gitBranchOutput = await getExecOutput("git", [
     "branch",
     "--show-current",
