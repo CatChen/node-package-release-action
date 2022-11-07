@@ -2,10 +2,11 @@ import { notice, getInput, setFailed } from "@actions/core";
 import { context } from "@actions/github";
 import { rsort, inc } from "semver";
 import { getOctokit } from "./getOctokit";
+import { configGit } from "./configGit";
+import { fetchEverything } from "./fetchEverything";
 import { getLastGitTag } from "./getLastGitTag";
 import { getPackageVersion } from "./getPackageVersion";
 import { getLatestRelease } from "./getLatestRelease";
-import { configGit } from "./configGit";
 import { setVersion } from "./setVersion";
 import { pushBranch } from "./pushBranch";
 import { createRelease } from "./createRelease";
@@ -21,6 +22,10 @@ const RELEASE_TYPES = [
 ] as const;
 
 async function run(): Promise<void> {
+  await configGit();
+
+  await fetchEverything();
+
   const lastGitTag = await getLastGitTag();
   notice(`Last git tag: ${lastGitTag}`);
   const packageVersion = await getPackageVersion();
@@ -50,8 +55,6 @@ async function run(): Promise<void> {
     return;
   }
   notice(`Release version: ${releaseVersion}`);
-
-  await configGit();
 
   await setVersion(releaseVersion);
 

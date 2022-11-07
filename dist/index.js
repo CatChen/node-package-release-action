@@ -15821,6 +15821,48 @@ exports.createRelease = createRelease;
 
 /***/ }),
 
+/***/ 1673:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.fetchEverything = void 0;
+const core_1 = __nccwpck_require__(2186);
+const exec_1 = __nccwpck_require__(1514);
+function fetchEverything() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const gitFetchTagsOutput = yield (0, exec_1.getExecOutput)("git", [
+            "fetch",
+            "--tags",
+            "origin",
+        ]);
+        if (gitFetchTagsOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(gitFetchTagsOutput.stderr);
+        }
+        const gitFetchUnshallowOutput = yield (0, exec_1.getExecOutput)("git", [
+            "fetch",
+            "--unshallow",
+            "origin",
+        ]);
+        if (gitFetchUnshallowOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(gitFetchUnshallowOutput.stderr);
+        }
+    });
+}
+exports.fetchEverything = fetchEverything;
+
+
+/***/ }),
+
 /***/ 6650:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -15838,31 +15880,21 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLastGitTag = void 0;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
+const semver_1 = __nccwpck_require__(1383);
 function getLastGitTag() {
     return __awaiter(this, void 0, void 0, function* () {
-        const lastTaggedCommitOutput = yield (0, exec_1.getExecOutput)("git", [
-            "rev-list",
-            "--tags",
-            "--max-count=1",
-        ]);
-        if (lastTaggedCommitOutput.exitCode !== 0) {
-            throw new Error(lastTaggedCommitOutput.stderr);
+        const tagOutput = yield (0, exec_1.getExecOutput)("git", ["tag"]);
+        if (tagOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(tagOutput.stderr);
         }
-        const lastTaggedCommit = lastTaggedCommitOutput.stdout;
-        if (lastTaggedCommit === "") {
-            // There is no tag at all.
-            (0, core_1.warning)(`Tag not found.`);
+        const allTags = tagOutput.stdout.split("\n");
+        const versionTags = allTags.filter((tag) => /v\d+\.\d+\.\d+(\-\d+)?/.test(tag));
+        const sortedTags = (0, semver_1.rsort)(versionTags);
+        if (sortedTags.length === 0) {
+            (0, core_1.warning)(`No tag found.`);
             return null;
         }
-        const lastTagOutput = yield (0, exec_1.getExecOutput)("git", [
-            "describe",
-            "--tags",
-            lastTaggedCommit,
-        ]);
-        if (lastTaggedCommitOutput.exitCode !== 0) {
-            throw new Error(lastTagOutput.stderr);
-        }
-        const lastTag = lastTagOutput.stdout;
+        const lastTag = sortedTags[0];
         return lastTag;
     });
 }
@@ -16028,10 +16060,11 @@ const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 const semver_1 = __nccwpck_require__(1383);
 const getOctokit_1 = __nccwpck_require__(8442);
+const configGit_1 = __nccwpck_require__(8695);
+const fetchEverything_1 = __nccwpck_require__(1673);
 const getLastGitTag_1 = __nccwpck_require__(6650);
 const getPackageVersion_1 = __nccwpck_require__(4528);
 const getLatestRelease_1 = __nccwpck_require__(9895);
-const configGit_1 = __nccwpck_require__(8695);
 const setVersion_1 = __nccwpck_require__(9556);
 const pushBranch_1 = __nccwpck_require__(7200);
 const createRelease_1 = __nccwpck_require__(4257);
@@ -16046,6 +16079,8 @@ const RELEASE_TYPES = [
 ];
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        yield (0, configGit_1.configGit)();
+        yield (0, fetchEverything_1.fetchEverything)();
         const lastGitTag = yield (0, getLastGitTag_1.getLastGitTag)();
         (0, core_1.notice)(`Last git tag: ${lastGitTag}`);
         const packageVersion = yield (0, getPackageVersion_1.getPackageVersion)();
@@ -16068,7 +16103,6 @@ function run() {
             return;
         }
         (0, core_1.notice)(`Release version: ${releaseVersion}`);
-        yield (0, configGit_1.configGit)();
         yield (0, setVersion_1.setVersion)(releaseVersion);
         yield (0, pushBranch_1.pushBranch)();
         yield (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
@@ -16099,18 +16133,6 @@ const exec_1 = __nccwpck_require__(1514);
 function pushBranch() {
     return __awaiter(this, void 0, void 0, function* () {
         const dryRun = (0, core_1.getBooleanInput)("dry-run");
-        const gitFetchOutput = yield (0, exec_1.getExecOutput)("git", [
-            "fetch",
-            "--unshallow",
-            "origin",
-        ]);
-        if (gitFetchOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(gitFetchOutput.stderr);
-        }
-        yield (0, exec_1.getExecOutput)("git", ["status"]);
-        yield (0, exec_1.getExecOutput)("git", ["log", "--oneline"]);
-        yield (0, exec_1.getExecOutput)("git", ["branch"]);
-        yield (0, exec_1.getExecOutput)("git", ["ls-remote"]);
         const gitBranchOutput = yield (0, exec_1.getExecOutput)("git", [
             "branch",
             "--show-current",
