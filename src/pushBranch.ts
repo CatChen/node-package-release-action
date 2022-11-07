@@ -2,6 +2,8 @@ import { notice, error, getBooleanInput, ExitCode } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
 
 export async function pushBranch() {
+  const dryRun = getBooleanInput("dry-run");
+
   const gitFetchOutput = await getExecOutput("git", [
     "fetch",
     "--unshallow",
@@ -33,13 +35,11 @@ export async function pushBranch() {
   }
   notice(`Current branch: ${branchName}`);
 
-  const dryRun = getBooleanInput("dry-run");
-  if (dryRun) {
-    notice("Push is skipped in dry run");
-    return;
-  }
-
-  const gitPushOutput = await getExecOutput("git", ["push", "--follow-tags"]);
+  const gitPushOutput = await getExecOutput("git", [
+    "push",
+    "--follow-tags",
+    ...(dryRun ? ["--dry-run"] : []),
+  ]);
   if (gitPushOutput.exitCode !== ExitCode.Success) {
     throw new Error(gitPushOutput.stderr);
   }

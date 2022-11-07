@@ -16080,6 +16080,7 @@ const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function pushBranch() {
     return __awaiter(this, void 0, void 0, function* () {
+        const dryRun = (0, core_1.getBooleanInput)("dry-run");
         const gitFetchOutput = yield (0, exec_1.getExecOutput)("git", [
             "fetch",
             "--unshallow",
@@ -16106,12 +16107,11 @@ function pushBranch() {
             throw new Error(`No branch detected`);
         }
         (0, core_1.notice)(`Current branch: ${branchName}`);
-        const dryRun = (0, core_1.getBooleanInput)("dry-run");
-        if (dryRun) {
-            (0, core_1.notice)("Push is skipped in dry run");
-            return;
-        }
-        const gitPushOutput = yield (0, exec_1.getExecOutput)("git", ["push", "--follow-tags"]);
+        const gitPushOutput = yield (0, exec_1.getExecOutput)("git", [
+            "push",
+            "--follow-tags",
+            ...(dryRun ? ["--dry-run"] : []),
+        ]);
         if (gitPushOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitPushOutput.stderr);
         }
