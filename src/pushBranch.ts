@@ -4,15 +4,6 @@ import { getExecOutput } from "@actions/exec";
 export async function pushBranch() {
   const dryRun = getBooleanInput("dry-run");
 
-  const gitFetchOutput = await getExecOutput("git", [
-    "fetch",
-    "--unshallow",
-    "origin",
-  ]);
-  if (gitFetchOutput.exitCode !== ExitCode.Success) {
-    throw new Error(gitFetchOutput.stderr);
-  }
-
   const gitBranchOutput = await getExecOutput("git", [
     "branch",
     "--show-current",
