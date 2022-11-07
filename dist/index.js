@@ -15720,6 +15720,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.configGit = exports.GITHUB_ACTION_USER_EMAIL = exports.GITHUB_ACTION_USER_NAME = void 0;
+const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 exports.GITHUB_ACTION_USER_NAME = "GitHub Action";
 exports.GITHUB_ACTION_USER_EMAIL = "41898282+github-actions[bot]@users.noreply.github.com";
@@ -15743,6 +15744,8 @@ function configGit() {
         if (gitConfigEmailOutput.exitCode !== 0) {
             throw new Error(gitConfigEmailOutput.stderr);
         }
+        const githubToken = (0, core_1.getInput)("github-token");
+        (0, core_1.exportVariable)("GH_TOKEN", githubToken);
         const ghAuthOutput = yield (0, exec_1.getExecOutput)("gh", ["auth", "setup-git"]);
         if (ghAuthOutput.exitCode !== 0) {
             throw new Error(ghAuthOutput.stderr);

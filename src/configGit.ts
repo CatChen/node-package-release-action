@@ -1,3 +1,4 @@
+import { getInput, exportVariable } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
 
 export const GITHUB_ACTION_USER_NAME = "GitHub Action";
@@ -24,6 +25,9 @@ export async function configGit() {
   if (gitConfigEmailOutput.exitCode !== 0) {
     throw new Error(gitConfigEmailOutput.stderr);
   }
+
+  const githubToken = getInput("github-token");
+  exportVariable("GH_TOKEN", githubToken);
 
   const ghAuthOutput = await getExecOutput("gh", ["auth", "setup-git"]);
   if (ghAuthOutput.exitCode !== 0) {
