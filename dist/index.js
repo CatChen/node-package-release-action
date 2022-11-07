@@ -16088,6 +16088,8 @@ function pushBranch() {
         if (gitFetchOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitFetchOutput.stderr);
         }
+        yield (0, exec_1.getExecOutput)("git", ["branch"]);
+        yield (0, exec_1.getExecOutput)("git", ["ls-remote"]);
         const gitBranchOutput = yield (0, exec_1.getExecOutput)("git", [
             "branch",
             "--show-current",
