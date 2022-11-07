@@ -9,7 +9,7 @@ updates:
     assignees:
       - catchen
     labels:
-      - pass2ship
+      - accept2ship
 
   - package-ecosystem: "github-actions"
     directory: "/"
