@@ -15880,31 +15880,21 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLastGitTag = void 0;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
+const semver_1 = __nccwpck_require__(1383);
 function getLastGitTag() {
     return __awaiter(this, void 0, void 0, function* () {
-        const lastTaggedCommitOutput = yield (0, exec_1.getExecOutput)("git", [
-            "rev-list",
-            "--tags",
-            "--max-count=1",
-        ]);
-        if (lastTaggedCommitOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(lastTaggedCommitOutput.stderr);
+        const tagOutput = yield (0, exec_1.getExecOutput)("git", ["tag"]);
+        if (tagOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(tagOutput.stderr);
         }
-        const lastTaggedCommit = lastTaggedCommitOutput.stdout;
-        if (lastTaggedCommit === "") {
-            // There is no tag at all.
-            (0, core_1.warning)(`Tag not found.`);
+        const allTags = tagOutput.stdout.split("\n");
+        const versionTags = allTags.filter((tag) => /v\d+\.\d+\.\d+(\-\d+)?/.test(tag));
+        const sortedTags = (0, semver_1.rsort)(versionTags);
+        if (sortedTags.length === 0) {
+            (0, core_1.warning)(`No tag found.`);
             return null;
         }
-        const lastTagOutput = yield (0, exec_1.getExecOutput)("git", [
-            "describe",
-            "--tags",
-            lastTaggedCommit,
-        ]);
-        if (lastTaggedCommitOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(lastTagOutput.stderr);
-        }
-        const lastTag = lastTagOutput.stdout;
+        const lastTag = sortedTags[0];
         return lastTag;
     });
 }
