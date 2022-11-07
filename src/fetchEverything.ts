@@ -11,12 +11,22 @@ export async function fetchEverything() {
     throw new Error(gitFetchTagsOutput.stderr);
   }
 
-  const gitFetchUnshallowOutput = await getExecOutput("git", [
-    "fetch",
-    "--unshallow",
-    "origin",
+  const gitIsShallowRepositoryOutput = await getExecOutput("git", [
+    "rev-parse",
+    "--is-shallow-repository",
   ]);
-  if (gitFetchUnshallowOutput.exitCode !== ExitCode.Success) {
-    throw new Error(gitFetchUnshallowOutput.stderr);
+  if (gitIsShallowRepositoryOutput.exitCode !== ExitCode.Success) {
+    throw new Error(gitIsShallowRepositoryOutput.stderr);
+  }
+
+  if (gitIsShallowRepositoryOutput.stdout === "true") {
+    const gitFetchUnshallowOutput = await getExecOutput("git", [
+      "fetch",
+      "--unshallow",
+      "origin",
+    ]);
+    if (gitFetchUnshallowOutput.exitCode !== ExitCode.Success) {
+      throw new Error(gitFetchUnshallowOutput.stderr);
+    }
   }
 }
