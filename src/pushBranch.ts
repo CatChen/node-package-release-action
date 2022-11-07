@@ -13,11 +13,6 @@ export async function pushBranch() {
     throw new Error(gitFetchOutput.stderr);
   }
 
-  await getExecOutput("git", ["status"]);
-  await getExecOutput("git", ["log", "--oneline"]);
-  await getExecOutput("git", ["branch"]);
-  await getExecOutput("git", ["ls-remote"]);
-
   const gitBranchOutput = await getExecOutput("git", [
     "branch",
     "--show-current",

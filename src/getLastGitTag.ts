@@ -1,4 +1,4 @@
-import { warning } from "@actions/core";
+import { warning, ExitCode } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
 
 export async function getLastGitTag() {
@@ -7,7 +7,7 @@ export async function getLastGitTag() {
     "--tags",
     "--max-count=1",
   ]);
-  if (lastTaggedCommitOutput.exitCode !== 0) {
+  if (lastTaggedCommitOutput.exitCode !== ExitCode.Success) {
     throw new Error(lastTaggedCommitOutput.stderr);
   }
   const lastTaggedCommit = lastTaggedCommitOutput.stdout;
@@ -18,12 +18,21 @@ export async function getLastGitTag() {
     return null;
   }
 
+  const gitFetchOutput = await getExecOutput("git", [
+    "fetch",
+    "--tags",
+    "origin",
+  ]);
+  if (gitFetchOutput.exitCode !== ExitCode.Success) {
+    throw new Error(gitFetchOutput.stderr);
+  }
+
   const lastTagOutput = await getExecOutput("git", [
     "describe",
     "--tags",
     lastTaggedCommit,
   ]);
-  if (lastTaggedCommitOutput.exitCode !== 0) {
+  if (lastTaggedCommitOutput.exitCode !== ExitCode.Success) {
     throw new Error(lastTagOutput.stderr);
   }
   const lastTag = lastTagOutput.stdout;

@@ -15845,7 +15845,7 @@ function getLastGitTag() {
             "--tags",
             "--max-count=1",
         ]);
-        if (lastTaggedCommitOutput.exitCode !== 0) {
+        if (lastTaggedCommitOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(lastTaggedCommitOutput.stderr);
         }
         const lastTaggedCommit = lastTaggedCommitOutput.stdout;
@@ -15854,12 +15854,20 @@ function getLastGitTag() {
             (0, core_1.warning)(`Tag not found.`);
             return null;
         }
+        const gitFetchOutput = yield (0, exec_1.getExecOutput)("git", [
+            "fetch",
+            "--tags",
+            "origin",
+        ]);
+        if (gitFetchOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(gitFetchOutput.stderr);
+        }
         const lastTagOutput = yield (0, exec_1.getExecOutput)("git", [
             "describe",
             "--tags",
             lastTaggedCommit,
         ]);
-        if (lastTaggedCommitOutput.exitCode !== 0) {
+        if (lastTaggedCommitOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(lastTagOutput.stderr);
         }
         const lastTag = lastTagOutput.stdout;
@@ -16107,10 +16115,6 @@ function pushBranch() {
         if (gitFetchOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitFetchOutput.stderr);
         }
-        yield (0, exec_1.getExecOutput)("git", ["status"]);
-        yield (0, exec_1.getExecOutput)("git", ["log", "--oneline"]);
-        yield (0, exec_1.getExecOutput)("git", ["branch"]);
-        yield (0, exec_1.getExecOutput)("git", ["ls-remote"]);
         const gitBranchOutput = yield (0, exec_1.getExecOutput)("git", [
             "branch",
             "--show-current",
