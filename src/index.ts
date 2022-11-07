@@ -1,4 +1,4 @@
-import { notice, error, getInput, setFailed } from "@actions/core";
+import { notice, getInput, setFailed } from "@actions/core";
 import { context } from "@actions/github";
 import { rsort, inc } from "semver";
 import { getOctokit } from "./getOctokit";
