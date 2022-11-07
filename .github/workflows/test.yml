@@ -53,3 +53,11 @@ jobs:
         with:
           release-type: prerelease
           prerelease: true
+
+      - name: Clean up
+        if: ${{ always() }}
+        continue-on-error: true
+        env:
+          TEST_BRANCH_NAME: ${{ format('workflows/tests/{0}-{1}-on-{2}', github.run_number, github.run_attempt, github.sha) }}
+        run: |
+          git push -d origin "$TEST_BRANCH_NAME"
