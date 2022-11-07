@@ -1,31 +1,22 @@
-import { warning } from "@actions/core";
+import { warning, ExitCode } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
+import { rsort } from "semver";
 
 export async function getLastGitTag() {
-  const lastTaggedCommitOutput = await getExecOutput("git", [
-    "rev-list",
-    "--tags",
-    "--max-count=1",
-  ]);
-  if (lastTaggedCommitOutput.exitCode !== 0) {
-    throw new Error(lastTaggedCommitOutput.stderr);
+  const tagOutput = await getExecOutput("git", ["tag"]);
+  if (tagOutput.exitCode !== ExitCode.Success) {
+    throw new Error(tagOutput.stderr);
   }
-  const lastTaggedCommit = lastTaggedCommitOutput.stdout;
 
-  if (lastTaggedCommit === "") {
-    // There is no tag at all.
-    warning(`Tag not found.`);
+  const allTags = tagOutput.stdout.split("\n");
+  const versionTags = allTags.filter((tag) =>
+    /v\d+\.\d+\.\d+(\-\d+)?/.test(tag)
+  );
+  const sortedTags = rsort(versionTags);
+  if (sortedTags.length === 0) {
+    warning(`No tag found.`);
     return null;
   }
-
-  const lastTagOutput = await getExecOutput("git", [
-    "describe",
-    "--tags",
-    lastTaggedCommit,
-  ]);
-  if (lastTaggedCommitOutput.exitCode !== 0) {
-    throw new Error(lastTagOutput.stderr);
-  }
-  const lastTag = lastTagOutput.stdout;
+  const lastTag = sortedTags[0];
   return lastTag;
 }
