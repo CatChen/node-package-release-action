@@ -15,6 +15,7 @@ on:
 jobs:
   test:
     name: Test
+    concurrency: release
     if: |-
       ${{
         !startsWith(github.head_ref, 'workflows/tests/') && ((

@@ -23,6 +23,7 @@ jobs:
   release:
     name: Release
     needs: [build, test, eslint, codeql]
+    concurrency: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
