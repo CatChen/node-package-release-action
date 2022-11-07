@@ -12,9 +12,6 @@ on:
   workflow_dispatch:
   workflow_call:
 
-concurrency:
-  group: release
-
 jobs:
   test:
     name: Test
@@ -52,6 +49,7 @@ jobs:
           git checkout -b "$TEST_BRANCH_NAME"
 
       - name: Test
+        concurrency: release
         uses: ./
         with:
           release-type: prerelease

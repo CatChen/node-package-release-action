@@ -5,9 +5,6 @@ on:
     - cron: "0 12 * * 0"
   workflow_dispatch:
 
-concurrency:
-  group: release
-
 jobs:
   build:
     uses: ./.github/workflows/build.yml
@@ -26,6 +23,7 @@ jobs:
   release:
     name: Release
     needs: [build, test, eslint, codeql]
+    concurrency: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
