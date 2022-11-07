@@ -23,7 +23,13 @@ jobs:
   release:
     name: Release
     needs: [build, test, eslint, codeql]
-    uses: ./
-    with:
-      release-type: patch
-      prerelease: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "main"
+
+      - name: Release
+        uses: ./
+        with:
+          release-type: patch
+          prerelease: true
