@@ -15840,6 +15840,14 @@ const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function getLastGitTag() {
     return __awaiter(this, void 0, void 0, function* () {
+        const gitFetchOutput = yield (0, exec_1.getExecOutput)("git", [
+            "fetch",
+            "--tags",
+            "origin",
+        ]);
+        if (gitFetchOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(gitFetchOutput.stderr);
+        }
         const lastTaggedCommitOutput = yield (0, exec_1.getExecOutput)("git", [
             "rev-list",
             "--tags",
@@ -15853,14 +15861,6 @@ function getLastGitTag() {
             // There is no tag at all.
             (0, core_1.warning)(`Tag not found.`);
             return null;
-        }
-        const gitFetchOutput = yield (0, exec_1.getExecOutput)("git", [
-            "fetch",
-            "--tags",
-            "origin",
-        ]);
-        if (gitFetchOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(gitFetchOutput.stderr);
         }
         const lastTagOutput = yield (0, exec_1.getExecOutput)("git", [
             "describe",

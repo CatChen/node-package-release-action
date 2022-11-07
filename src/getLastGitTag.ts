@@ -2,6 +2,15 @@ import { warning, ExitCode } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
 
 export async function getLastGitTag() {
+  const gitFetchOutput = await getExecOutput("git", [
+    "fetch",
+    "--tags",
+    "origin",
+  ]);
+  if (gitFetchOutput.exitCode !== ExitCode.Success) {
+    throw new Error(gitFetchOutput.stderr);
+  }
+
   const lastTaggedCommitOutput = await getExecOutput("git", [
     "rev-list",
     "--tags",
@@ -16,15 +25,6 @@ export async function getLastGitTag() {
     // There is no tag at all.
     warning(`Tag not found.`);
     return null;
-  }
-
-  const gitFetchOutput = await getExecOutput("git", [
-    "fetch",
-    "--tags",
-    "origin",
-  ]);
-  if (gitFetchOutput.exitCode !== ExitCode.Success) {
-    throw new Error(gitFetchOutput.stderr);
   }
 
   const lastTagOutput = await getExecOutput("git", [
