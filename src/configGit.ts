@@ -26,6 +26,26 @@ export async function configGit() {
     throw new Error(gitConfigEmailOutput.stderr);
   }
 
+  const gitConfigPushDefaultOutput = await getExecOutput("git", [
+    "config",
+    "--global",
+    "push.default",
+    "simple",
+  ]);
+  if (gitConfigPushDefaultOutput.exitCode !== 0) {
+    throw new Error(gitConfigPushDefaultOutput.stderr);
+  }
+
+  const gitConfigPushAutoSetupRemoteOutput = await getExecOutput("git", [
+    "config",
+    "--global",
+    "push.autoSetupRemote",
+    "true",
+  ]);
+  if (gitConfigPushAutoSetupRemoteOutput.exitCode !== 0) {
+    throw new Error(gitConfigPushAutoSetupRemoteOutput.stderr);
+  }
+
   const githubToken = getInput("github-token");
   exportVariable("GH_TOKEN", githubToken);
 
