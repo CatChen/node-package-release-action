@@ -1,4 +1,4 @@
-name: "TypeScript Github Action Template"
+name: "Node Package Release"
 description: "A template to create custom GitHub Action with TypeScript/JavaScript."
 inputs:
   github-token:

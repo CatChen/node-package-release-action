@@ -30,8 +30,7 @@ jobs:
         with:
           ref: "main"
 
-      - name: Release
-        uses: ./
+      - uses: ./
         with:
           release-type: patch
           prerelease: true
