@@ -37,12 +37,11 @@ export async function pushBranch() {
 
   const gitPushOutput = await getExecOutput("git", [
     "push",
+    ...(dryRun ? ["--dry-run"] : []),
     "-f",
     "--set-upstream",
     "origin",
-    `refs/heads/${branchName}`,
-    "--follow-tags",
-    ...(dryRun ? ["--dry-run"] : []),
+    `HEAD:refs/heads/${branchName}`,
   ]);
   if (gitPushOutput.exitCode !== ExitCode.Success) {
     throw new Error(gitPushOutput.stderr);
