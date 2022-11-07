@@ -30,7 +30,7 @@ export async function pushBranch() {
     "-f",
     "--set-upstream",
     "origin",
-    branchName,
+    `HEAD:refs/heads/${branchName}`,
     "--follow-tags",
   ]);
   if (gitPushOutput.exitCode !== ExitCode.Success) {
