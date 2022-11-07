@@ -15,12 +15,40 @@ on:
 jobs:
   test:
     name: Test
+    if: |-
+      ${{
+        !startsWith(github.head_ref, 'workflows/tests/') && (
+          github.actor == 'dependabot[bot]' || (
+            github.event_name != 'push' &&
+            github.event_name != 'pull_request'
+          )
+        ) && (
+          github.actor != 'dependabot[bot]' &&
+          github.event_name != 'workflow_run'
+        )
+      }}
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
+        if: ${{ github.event_name != 'workflow_run' }}
         with:
-          ref: ${{ github.head_ref || github.base_ref }}
+
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'workflow_run' }}
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Create test branch
+        env:
+          SHA: ${{ github.sha }}
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          TEST_BRANCH_NAME: ${{ format('workflows/tests/{0}-{1}-on-{2}', github.run_number, github.run_attempt, github.sha) }}
+        run: |
+          echo "::notice::Run number is $RUN_NUMBER"
+          echo "::notice::Run attempt is $RUN_ATTEMPT"
+          echo "::notice::Test branch is $TEST_BRANCH_NAME"
+          git checkout -b "$TEST_BRANCH_NAME"
 
       - name: Test
         uses: ./
