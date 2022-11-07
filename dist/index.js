@@ -16112,7 +16112,7 @@ function pushBranch() {
             "-f",
             "--set-upstream",
             "origin",
-            branchName,
+            `refs/heads/${branchName}`,
             "--follow-tags",
             ...(dryRun ? ["--dry-run"] : []),
         ]);
