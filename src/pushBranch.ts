@@ -39,14 +39,7 @@ export async function pushBranch() {
     return;
   }
 
-  const gitPushOutput = await getExecOutput("git", [
-    "push",
-    "-f",
-    "--set-upstream",
-    "origin",
-    `HEAD:refs/heads/${branchName}`,
-    "--follow-tags",
-  ]);
+  const gitPushOutput = await getExecOutput("git", ["push", "--follow-tags"]);
   if (gitPushOutput.exitCode !== ExitCode.Success) {
     throw new Error(gitPushOutput.stderr);
   }
