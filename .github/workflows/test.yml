@@ -15,6 +15,7 @@ on:
 jobs:
   test:
     name: Test
+    concurrency: release
     if: |-
       ${{
         !startsWith(github.head_ref, 'workflows/tests/') && ((
@@ -49,7 +50,6 @@ jobs:
           git checkout -b "$TEST_BRANCH_NAME"
 
       - name: Test
-        concurrency: release
         uses: ./
         with:
           release-type: prerelease
