@@ -65,6 +65,7 @@ jobs:
 
   test-without-Package:
     name: Test without Package
+    needs: [test]
     concurrency: release
     if: |-
       ${{
