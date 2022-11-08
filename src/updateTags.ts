@@ -15,7 +15,7 @@ export async function updateTags(version: string) {
       `Pre-release version should not be used to update shorthand tags: ${version}`
     );
     warning(
-      "Please don't set both prerelease and update-shorthand-release to true"
+      "Please don't set release-type to prerelease and update-shorthand-release to true at the same time"
     );
   }
 

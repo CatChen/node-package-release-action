@@ -35,3 +35,4 @@ jobs:
         with:
           release-type: patch
           prerelease: true
+          update-shorthand-release: true
