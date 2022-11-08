@@ -15,7 +15,7 @@ export async function setVersion(version: string) {
       throw new Error(npmVersionOutput.stderr);
     }
   } else {
-    const gitTagOutput = await getExecOutput("git", ["tag", version]);
+    const gitTagOutput = await getExecOutput("git", ["tag", `v${version}`]);
     if (gitTagOutput.exitCode !== 0) {
       throw new Error(gitTagOutput.stderr);
     }
