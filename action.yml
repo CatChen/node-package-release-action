@@ -5,6 +5,10 @@ inputs:
     description: "GitHub token."
     required: false
     default: ${{ github.token }}
+  directory:
+    description: "Directory to find package.json if it's not the project's root directory."
+    required: false
+    default: "./"
   release-type:
     description: "One of the following: major, minor, patch, premajor, preminor, prepatch, prerelease."
     required: false
