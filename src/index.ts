@@ -21,6 +21,8 @@ const RELEASE_TYPES = [
   "prerelease",
 ] as const;
 
+const DEFAULT_VERSION = "0.1.0";
+
 async function run(): Promise<void> {
   await configGit();
 
@@ -28,6 +30,7 @@ async function run(): Promise<void> {
 
   const lastGitTag = await getLastGitTag();
   notice(`Last git tag: ${lastGitTag}`);
+
   const packageVersion = await getPackageVersion();
   notice(`package.json version: ${packageVersion}`);
 
@@ -39,7 +42,9 @@ async function run(): Promise<void> {
   const versions = [lastGitTag, packageVersion, latestRelease].flatMap(
     (version) => (version === null ? [] : [version])
   );
-  const highestVersion = rsort(versions)[0];
+  const sortedVersions = rsort(versions);
+  const highestVersion =
+    sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
   notice(`Highest version: ${highestVersion}`);
 
   const releaseType = RELEASE_TYPES.find(
