@@ -16039,7 +16039,8 @@ function getPackageVersion(directory = "./") {
         const require = (0, module_1.createRequire)(absoluteDirectory);
         const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, "package.json");
         if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
-            throw new Error(`package.json cannot be found at ${packageJsonPath}`);
+            (0, core_1.warning)(`package.json cannot be found at ${packageJsonPath}`);
+            return null;
         }
         (0, core_1.notice)(`Using package.json from: ${packageJsonPath}`);
         const { version } = require(packageJsonPath);
@@ -16086,6 +16087,7 @@ const RELEASE_TYPES = [
     "prepatch",
     "prerelease",
 ];
+const DEFAULT_VERSION = "0.1.0";
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, configGit_1.configGit)();
@@ -16099,7 +16101,8 @@ function run() {
         const latestRelease = yield (0, getLatestRelease_1.getLatestRelease)(owner, repo, octokit);
         (0, core_1.notice)(`Latest release: ${latestRelease}`);
         const versions = [lastGitTag, packageVersion, latestRelease].flatMap((version) => (version === null ? [] : [version]));
-        const highestVersion = (0, semver_1.rsort)(versions)[0];
+        const sortedVersions = (0, semver_1.rsort)(versions);
+        const highestVersion = sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
         (0, core_1.notice)(`Highest version: ${highestVersion}`);
         const releaseType = RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)("release-type").toLowerCase() === releaseType);
         if (releaseType === undefined) {
