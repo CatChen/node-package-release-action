@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { getExecOutput } from "@actions/exec";
-import { getInput } from "@actions/core";
+import { getInput, notice } from "@actions/core";
 
 export const DEFAULT_WORKING_DIRECTORY = process.cwd();
 
@@ -20,4 +20,5 @@ export async function setVersion(version: string) {
       throw new Error(gitTagOutput.stderr);
     }
   }
+  notice(`Tag created: v${version}`);
 }
