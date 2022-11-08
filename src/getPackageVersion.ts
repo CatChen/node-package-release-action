@@ -1,11 +1,12 @@
 import { createRequire } from "module";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { notice, warning } from "@actions/core";
+import { getInput, notice, warning } from "@actions/core";
 
 export const DEFAULT_WORKING_DIRECTORY = process.cwd();
 
-export async function getPackageVersion(directory = "./") {
+export async function getPackageVersion() {
+  const directory = getInput("directory");
   const absoluteDirectory = resolve(DEFAULT_WORKING_DIRECTORY, directory);
   const packageJsonPath = resolve(absoluteDirectory, "package.json");
   if (!existsSync(packageJsonPath)) {
