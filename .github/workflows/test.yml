@@ -62,3 +62,54 @@ jobs:
           TEST_BRANCH_NAME: ${{ format('workflows/tests/{0}-{1}-on-{2}', github.run_number, github.run_attempt, github.sha) }}
         run: |
           git push -d origin "$TEST_BRANCH_NAME"
+
+  test-without-Package:
+    name: Test without Package
+    concurrency: release
+    if: |-
+      ${{
+        !startsWith(github.head_ref, 'workflows/tests/') && ((
+          github.actor == 'dependabot[bot]' && 
+          github.event_name != 'push' &&
+          github.event_name != 'pull_request'
+        ) || (
+          github.actor != 'dependabot[bot]' &&
+          github.event_name != 'workflow_run'
+        ))
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name != 'workflow_run' }}
+
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'workflow_run' }}
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Create test branch
+        env:
+          SHA: ${{ github.sha }}
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          TEST_BRANCH_NAME: ${{ format('workflows/tests/no-package/{0}-{1}-on-{2}', github.run_number, github.run_attempt, github.sha) }}
+        run: |
+          echo "::notice::Run number is $RUN_NUMBER"
+          echo "::notice::Run attempt is $RUN_ATTEMPT"
+          echo "::notice::Test branch is $TEST_BRANCH_NAME"
+          git checkout -b "$TEST_BRANCH_NAME"
+
+      - name: Test
+        uses: ./
+        with:
+          release-type: prerelease
+          directory: "src/"
+          prerelease: true
+
+      - name: Clean up
+        if: ${{ always() }}
+        continue-on-error: true
+        env:
+          TEST_BRANCH_NAME: ${{ format('workflows/tests/no-package/{0}-{1}-on-{2}', github.run_number, github.run_attempt, github.sha) }}
+        run: |
+          git push -d origin "$TEST_BRANCH_NAME"
