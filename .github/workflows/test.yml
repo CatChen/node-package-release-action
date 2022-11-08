@@ -63,9 +63,9 @@ jobs:
         run: |
           git push -d origin "$TEST_BRANCH_NAME"
 
-  test-without-Package:
+  test-without-package:
     name: Test without Package
-    needs: [test]
+    needs: [test-with-package]
     concurrency: release
     if: |-
       ${{
