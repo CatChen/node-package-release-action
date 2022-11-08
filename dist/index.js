@@ -16036,12 +16036,12 @@ exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
 function getPackageVersion(directory = "./") {
     return __awaiter(this, void 0, void 0, function* () {
         const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
-        const require = (0, module_1.createRequire)(absoluteDirectory);
         const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, "package.json");
         if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
             (0, core_1.warning)(`package.json cannot be found at ${packageJsonPath}`);
             return null;
         }
+        const require = (0, module_1.createRequire)(absoluteDirectory);
         (0, core_1.notice)(`Using package.json from: ${packageJsonPath}`);
         const { version } = require(packageJsonPath);
         return String(version);
@@ -16188,13 +16188,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.setVersion = void 0;
+exports.setVersion = exports.DEFAULT_WORKING_DIRECTORY = void 0;
+const node_fs_1 = __nccwpck_require__(7561);
+const node_path_1 = __nccwpck_require__(9411);
 const exec_1 = __nccwpck_require__(1514);
-function setVersion(version) {
+exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
+function setVersion(version, directory = "./") {
     return __awaiter(this, void 0, void 0, function* () {
-        const npmVersionOutput = yield (0, exec_1.getExecOutput)("npm", ["version", version]);
-        if (npmVersionOutput.exitCode !== 0) {
-            throw new Error(npmVersionOutput.stderr);
+        const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
+        const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, "package.json");
+        if ((0, node_fs_1.existsSync)(packageJsonPath)) {
+            const npmVersionOutput = yield (0, exec_1.getExecOutput)("npm", ["version", version]);
+            if (npmVersionOutput.exitCode !== 0) {
+                throw new Error(npmVersionOutput.stderr);
+            }
+        }
+        else {
+            const gitTagOutput = yield (0, exec_1.getExecOutput)("git", ["tag", version]);
+            if (gitTagOutput.exitCode !== 0) {
+                throw new Error(gitTagOutput.stderr);
+            }
         }
     });
 }
