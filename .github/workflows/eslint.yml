@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - uses: CatChen/eslint-suggestion-action@v2.1.7
+      - uses: CatChen/eslint-suggestion-action@v2.1.8
         with:
           targets: "src"
           fail-check: ${{ github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
