@@ -49,7 +49,11 @@ Which part of the [semver](https://semver.org/) should be increased for the next
 
 ### `prerelease`
 
-This controls whether the GitHub Release should be marked as a prerelease. The default value is `true`. This is independent from the `release-type` input.
+This controls whether the GitHub Release should be marked as a prerelease. The default value is `false`. This is independent from the `release-type` input.
+
+### `update-shorthand-release`
+
+[GitHub Action documentation](https://docs.github.com/en/actions/creating-actions/about-custom-actions#using-tags-for-release-management) recommends updating shorthand releases like `v1` and `v1.2` when releasing the latest `v1.2.*`. Set this to `true` when using this Action to release other Actions. The default value is `false`.
 
 ### `dry-run`
 

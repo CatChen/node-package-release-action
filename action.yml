@@ -17,6 +17,10 @@ inputs:
     description: "Mark the GitHub Release as a pre-release."
     required: false
     default: false
+  update-shorthand-release:
+    description: "Useful when releasing a GitHub Action, e.g. always updating v1 to the latest v1.*.* and always updating v1.2 to the latest v1.2.*."
+    required: false
+    default: false
   dry-run:
     description: "Dry run without making changes."
     required: false
