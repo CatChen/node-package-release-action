@@ -16261,6 +16261,7 @@ function updateTags(version) {
             if (gitTagMajorOutput.exitCode !== 0) {
                 throw new Error(gitTagMajorOutput.stderr);
             }
+            (0, core_1.notice)(`Tag updated: v${semver.major}`);
         }
         else {
             (0, core_1.warning)(`Tag v0 is not allowed so it's not updated`);
@@ -16274,6 +16275,7 @@ function updateTags(version) {
             if (gitTagMinorOutput.exitCode !== 0) {
                 throw new Error(gitTagMinorOutput.stderr);
             }
+            (0, core_1.notice)(`Tag updated: v${semver.major}.${semver.minor}`);
         }
         else {
             (0, core_1.warning)(`Tag v0.0 is not allowed so it's not updated`);
