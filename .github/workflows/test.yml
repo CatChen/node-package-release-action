@@ -13,8 +13,8 @@ on:
   workflow_call:
 
 jobs:
-  test:
-    name: Test
+  test-with-package:
+    name: Test with Package
     concurrency: release
     if: |-
       ${{
