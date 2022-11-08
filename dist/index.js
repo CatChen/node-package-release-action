@@ -16033,8 +16033,9 @@ const node_fs_1 = __nccwpck_require__(7561);
 const node_path_1 = __nccwpck_require__(9411);
 const core_1 = __nccwpck_require__(2186);
 exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
-function getPackageVersion(directory = "./") {
+function getPackageVersion() {
     return __awaiter(this, void 0, void 0, function* () {
+        const directory = (0, core_1.getInput)("directory");
         const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
         const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, "package.json");
         if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
@@ -16192,9 +16193,11 @@ exports.setVersion = exports.DEFAULT_WORKING_DIRECTORY = void 0;
 const node_fs_1 = __nccwpck_require__(7561);
 const node_path_1 = __nccwpck_require__(9411);
 const exec_1 = __nccwpck_require__(1514);
+const core_1 = __nccwpck_require__(2186);
 exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
-function setVersion(version, directory = "./") {
+function setVersion(version) {
     return __awaiter(this, void 0, void 0, function* () {
+        const directory = (0, core_1.getInput)("directory");
         const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
         const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, "package.json");
         if ((0, node_fs_1.existsSync)(packageJsonPath)) {

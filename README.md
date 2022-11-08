@@ -39,6 +39,10 @@ jobs:
 
 The default value is `${{ github.token }}`, which is the GitHub token generated for this workflow. You can [create a different token with a different set of permissions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and use it here as well.
 
+### `directory`
+
+The default value is `"./"`. It's where the `package.json` locates.
+
 ### `release-type`
 
 Which part of the [semver](https://semver.org/) should be increased for the next release. Valid inputs are `major`, `premajor`, `minor`, `preminor`, `patch`, `prepatch` and `prerelease`. The list of valid inputs is from [`semver.inc`](https://github.com/npm/node-semver#functions), which is used by the `npm version` command. The default value is `prerelease`. This is independent from the `prerelease` input.
