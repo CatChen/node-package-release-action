@@ -1,4 +1,4 @@
-import { notice, getInput, setFailed } from "@actions/core";
+import { notice, getInput, setFailed, getBooleanInput } from "@actions/core";
 import { context } from "@actions/github";
 import { rsort, inc } from "semver";
 import { getOctokit } from "./getOctokit";
@@ -10,6 +10,7 @@ import { getLatestRelease } from "./getLatestRelease";
 import { setVersion } from "./setVersion";
 import { pushBranch } from "./pushBranch";
 import { createRelease } from "./createRelease";
+import { updateTags } from "./updateTags";
 
 const RELEASE_TYPES = [
   "major",
@@ -66,6 +67,10 @@ async function run(): Promise<void> {
   await pushBranch();
 
   await createRelease(owner, repo, releaseVersion, octokit);
+
+  if (getBooleanInput("update-shorthand-release")) {
+    updateTags(releaseVersion);
+  }
 }
 
 run();

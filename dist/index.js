@@ -16079,6 +16079,7 @@ const getLatestRelease_1 = __nccwpck_require__(9895);
 const setVersion_1 = __nccwpck_require__(9556);
 const pushBranch_1 = __nccwpck_require__(7200);
 const createRelease_1 = __nccwpck_require__(4257);
+const updateTags_1 = __nccwpck_require__(1443);
 const RELEASE_TYPES = [
     "major",
     "premajor",
@@ -16119,6 +16120,9 @@ function run() {
         yield (0, setVersion_1.setVersion)(releaseVersion);
         yield (0, pushBranch_1.pushBranch)();
         yield (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
+        if ((0, core_1.getBooleanInput)("update-shorthand-release")) {
+            (0, updateTags_1.updateTags)(releaseVersion);
+        }
     });
 }
 run();
@@ -16207,7 +16211,7 @@ function setVersion(version) {
             }
         }
         else {
-            const gitTagOutput = yield (0, exec_1.getExecOutput)("git", ["tag", version]);
+            const gitTagOutput = yield (0, exec_1.getExecOutput)("git", ["tag", `v${version}`]);
             if (gitTagOutput.exitCode !== 0) {
                 throw new Error(gitTagOutput.stderr);
             }
@@ -16215,6 +16219,67 @@ function setVersion(version) {
     });
 }
 exports.setVersion = setVersion;
+
+
+/***/ }),
+
+/***/ 1443:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.updateTags = void 0;
+const core_1 = __nccwpck_require__(2186);
+const exec_1 = __nccwpck_require__(1514);
+const semver_1 = __nccwpck_require__(1383);
+function updateTags(version) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const semver = (0, semver_1.parse)(version);
+        const dryRun = (0, core_1.getBooleanInput)("dry-run");
+        if (semver === null) {
+            throw new Error(`Failed to parse the version as semver: ${version}`);
+        }
+        if (semver.prerelease.length !== 0) {
+            (0, core_1.warning)(`Pre-release version should not be used to update shorthand tags: ${version}`);
+            (0, core_1.warning)("Please don't set both prerelease and update-shorthand-release to true");
+        }
+        const gitTagMajorOutput = yield (0, exec_1.getExecOutput)("git", [
+            "tag",
+            "-f",
+            `v${semver.major}`,
+        ]);
+        if (gitTagMajorOutput.exitCode !== 0) {
+            throw new Error(gitTagMajorOutput.stderr);
+        }
+        const gitTagMinorOutput = yield (0, exec_1.getExecOutput)("git", [
+            "tag",
+            "-f",
+            `v${semver.major}.${semver.minor}`,
+        ]);
+        if (gitTagMinorOutput.exitCode !== 0) {
+            throw new Error(gitTagMinorOutput.stderr);
+        }
+        const gitPushOutput = yield (0, exec_1.getExecOutput)("git", [
+            "push",
+            "-f",
+            "--tags",
+            ...(dryRun ? ["--dry-run"] : []),
+        ]);
+        if (gitPushOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(gitPushOutput.stderr);
+        }
+    });
+}
+exports.updateTags = updateTags;
 
 
 /***/ }),
