@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: CatChen/node-package-release-action@v0.1.0
+      - uses: CatChen/node-package-release-action@v0.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} # optional
           release-type: prerelease # optional
