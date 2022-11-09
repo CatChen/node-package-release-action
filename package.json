@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/CatChen/typescript-github-action-template#readme",
   "devDependencies": {
-    "@octokit/graphql-schema": "^12.23.0",
+    "@octokit/graphql-schema": "^12.24.0",
     "@octokit/webhooks-definitions": "^3.67.3",
     "@types/node": "^18.11.9",
     "@types/semver": "^7.3.13",
