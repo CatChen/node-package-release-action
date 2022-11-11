@@ -19,8 +19,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  accept_to_ship:
-    name: Accept to Ship
+  release:
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
