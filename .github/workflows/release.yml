@@ -52,6 +52,6 @@ jobs:
 
       - uses: ./
         with:
-          release-type: ${{ inputs.release-type || "patch" }}
+          release-type: ${{ inputs.release-type || 'patch' }}
           prerelease: ${{ inputs.prerelease || true }}
           update-shorthand-release: true
