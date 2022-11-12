@@ -4,6 +4,25 @@ on:
   schedule:
     - cron: "0 12 * * 0"
   workflow_dispatch:
+    inputs:
+      release-type:
+        description: "Release Type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
+      prerelease:
+        description: "Prerelease"
+        required: true
+        default: true
+        type: boolean
 
 jobs:
   build:
@@ -33,6 +52,6 @@ jobs:
 
       - uses: ./
         with:
-          release-type: patch
-          prerelease: true
+          release-type: ${{ inputs.release-type || "patch" }}
+          prerelease: ${{ inputs.prerelease || true }}
           update-shorthand-release: true
