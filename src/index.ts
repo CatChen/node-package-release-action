@@ -1,26 +1,19 @@
 import { notice, getInput, setFailed, getBooleanInput } from "@actions/core";
 import { context } from "@actions/github";
 import { rsort, inc } from "semver";
+import { RELEASE_TYPES } from "./ReleaseType";
 import { getOctokit } from "./getOctokit";
 import { configGit } from "./configGit";
 import { fetchEverything } from "./fetchEverything";
 import { getLastGitTag } from "./getLastGitTag";
 import { getPackageVersion } from "./getPackageVersion";
 import { getLatestRelease } from "./getLatestRelease";
+import { findLastSameReleaseTypeVersion } from "./findLastSameReleaseTypeVersion";
 import { setVersion } from "./setVersion";
 import { pushBranch } from "./pushBranch";
 import { createRelease } from "./createRelease";
 import { updateTags } from "./updateTags";
-
-const RELEASE_TYPES = [
-  "major",
-  "premajor",
-  "minor",
-  "preminor",
-  "patch",
-  "prepatch",
-  "prerelease",
-] as const;
+import { checkDiff } from "./checkDiff";
 
 const DEFAULT_VERSION = "0.1.0";
 
@@ -61,6 +54,24 @@ async function run(): Promise<void> {
     return;
   }
   notice(`Release version: ${releaseVersion}`);
+
+  if (getBooleanInput("skip-if-no-diff")) {
+    const lastSameReleaseTypeVersion = await findLastSameReleaseTypeVersion(
+      releaseVersion,
+      releaseType
+    );
+    notice(`Last same release type version: ${lastSameReleaseTypeVersion}`);
+
+    if (lastSameReleaseTypeVersion !== null) {
+      const diff = await checkDiff(lastSameReleaseTypeVersion);
+      if (!diff) {
+        notice(
+          `Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`
+        );
+        return;
+      }
+    }
+  }
 
   await setVersion(releaseVersion);
 
