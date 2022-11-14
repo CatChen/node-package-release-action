@@ -21,7 +21,7 @@ on:
       prerelease:
         description: "Prerelease"
         required: true
-        default: true
+        default: false
         type: boolean
       skip-if-no-diff:
         description: "Skip if no diff"
@@ -63,7 +63,7 @@ jobs:
       - uses: ./
         with:
           release-type: ${{ inputs.release-type || 'patch' }}
-          prerelease: ${{ inputs.prerelease || true }}
+          prerelease: ${{ inputs.prerelease || false }}
           update-shorthand-release: true
           skip-if-no-diff: ${{ inputs.skip-if-no-diff || false }}
           dry-run: ${{ inputs.dry-run || false }}
