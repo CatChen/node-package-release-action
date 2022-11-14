@@ -12,10 +12,8 @@ export async function updateTags(version: string) {
 
   if (semver.prerelease.length !== 0) {
     warning(
-      `Pre-release version should not be used to update shorthand tags: ${version}`
-    );
-    warning(
-      "Please don't set release-type to prerelease and update-shorthand-release to true at the same time"
+      `Pre-release version should not be used to update shorthand tags: ${version}` +
+        "\nPlease don't set release-type to prerelease and update-shorthand-release to true at the same time"
     );
   }
 
