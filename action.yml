@@ -21,6 +21,10 @@ inputs:
     description: "Useful when releasing a GitHub Action, e.g. always updating v1 to the latest v1.*.* and always updating v1.2 to the latest v1.2.*."
     required: false
     default: false
+  skip-if-no-diff:
+    description: "When this is true, this Action does nothing if there is no change since last release of the same release type."
+    required: false
+    default: false
   dry-run:
     description: "Dry run without making changes."
     required: false

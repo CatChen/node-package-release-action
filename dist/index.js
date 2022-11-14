@@ -15705,6 +15705,62 @@ try {
 
 /***/ }),
 
+/***/ 9750:
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RELEASE_TYPES = void 0;
+exports.RELEASE_TYPES = [
+    "major",
+    "premajor",
+    "minor",
+    "preminor",
+    "patch",
+    "prepatch",
+    "prerelease",
+];
+
+
+/***/ }),
+
+/***/ 6073:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.checkDiff = void 0;
+const core_1 = __nccwpck_require__(2186);
+const exec_1 = __nccwpck_require__(1514);
+function checkDiff(tag) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const diffOutput = yield (0, exec_1.getExecOutput)("git", ["diff", tag, "--name-only"]);
+        if (diffOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(diffOutput.stderr);
+        }
+        (0, core_1.debug)(`Diff against ${tag}:` +
+            "\n" +
+            diffOutput.stdout
+                .split("\n")
+                .map((line) => `  ${line}`)
+                .join("\n"));
+        return diffOutput.stdout.split("\n").join("") !== "";
+    });
+}
+exports.checkDiff = checkDiff;
+
+
+/***/ }),
+
 /***/ 8695:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -15872,6 +15928,84 @@ exports.fetchEverything = fetchEverything;
 
 /***/ }),
 
+/***/ 374:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.findLastSameReleaseTypeVersion = void 0;
+const core_1 = __nccwpck_require__(2186);
+const semver_1 = __nccwpck_require__(1383);
+const getAllGitTags_1 = __nccwpck_require__(4484);
+function findLastSameReleaseTypeVersion(releaseVersion, releaseType) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const versionTags = yield (0, getAllGitTags_1.getAllGitTags)();
+        if (versionTags.length === 0) {
+            (0, core_1.warning)(`No tag found.`);
+            return null;
+        }
+        const sortedTags = (0, semver_1.rsort)(versionTags);
+        let candidateTag = sortedTags.shift();
+        while (candidateTag !== undefined &&
+            ((0, semver_1.gte)(candidateTag, releaseVersion) ||
+                (0, semver_1.diff)(candidateTag, releaseVersion) !== releaseType)) {
+            candidateTag = sortedTags.shift();
+        }
+        if (candidateTag === undefined) {
+            (0, core_1.warning)(`No tag found.`);
+            return null;
+        }
+        return candidateTag;
+    });
+}
+exports.findLastSameReleaseTypeVersion = findLastSameReleaseTypeVersion;
+
+
+/***/ }),
+
+/***/ 4484:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getAllGitTags = void 0;
+const core_1 = __nccwpck_require__(2186);
+const exec_1 = __nccwpck_require__(1514);
+const semver_1 = __nccwpck_require__(1383);
+function getAllGitTags() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const tagOutput = yield (0, exec_1.getExecOutput)("git", ["tag"]);
+        if (tagOutput.exitCode !== core_1.ExitCode.Success) {
+            throw new Error(tagOutput.stderr);
+        }
+        const allTags = tagOutput.stdout.split("\n");
+        const versionTags = allTags.filter((tag) => (0, semver_1.valid)(tag));
+        return versionTags;
+    });
+}
+exports.getAllGitTags = getAllGitTags;
+
+
+/***/ }),
+
 /***/ 6650:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -15888,21 +16022,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLastGitTag = void 0;
 const core_1 = __nccwpck_require__(2186);
-const exec_1 = __nccwpck_require__(1514);
 const semver_1 = __nccwpck_require__(1383);
+const getAllGitTags_1 = __nccwpck_require__(4484);
 function getLastGitTag() {
     return __awaiter(this, void 0, void 0, function* () {
-        const tagOutput = yield (0, exec_1.getExecOutput)("git", ["tag"]);
-        if (tagOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(tagOutput.stderr);
-        }
-        const allTags = tagOutput.stdout.split("\n");
-        const versionTags = allTags.filter((tag) => /v\d+\.\d+\.\d+(\-\d+)?/.test(tag));
-        const sortedTags = (0, semver_1.rsort)(versionTags);
-        if (sortedTags.length === 0) {
+        const versionTags = yield (0, getAllGitTags_1.getAllGitTags)();
+        if (versionTags.length === 0) {
             (0, core_1.warning)(`No tag found.`);
             return null;
         }
+        const sortedTags = (0, semver_1.rsort)(versionTags);
         const lastTag = sortedTags[0];
         return lastTag;
     });
@@ -16070,25 +16199,19 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 const semver_1 = __nccwpck_require__(1383);
+const ReleaseType_1 = __nccwpck_require__(9750);
 const getOctokit_1 = __nccwpck_require__(8442);
 const configGit_1 = __nccwpck_require__(8695);
 const fetchEverything_1 = __nccwpck_require__(1673);
 const getLastGitTag_1 = __nccwpck_require__(6650);
 const getPackageVersion_1 = __nccwpck_require__(4528);
 const getLatestRelease_1 = __nccwpck_require__(9895);
+const findLastSameReleaseTypeVersion_1 = __nccwpck_require__(374);
 const setVersion_1 = __nccwpck_require__(9556);
 const pushBranch_1 = __nccwpck_require__(7200);
 const createRelease_1 = __nccwpck_require__(4257);
 const updateTags_1 = __nccwpck_require__(1443);
-const RELEASE_TYPES = [
-    "major",
-    "premajor",
-    "minor",
-    "preminor",
-    "patch",
-    "prepatch",
-    "prerelease",
-];
+const checkDiff_1 = __nccwpck_require__(6073);
 const DEFAULT_VERSION = "0.1.0";
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -16106,7 +16229,7 @@ function run() {
         const sortedVersions = (0, semver_1.rsort)(versions);
         const highestVersion = sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
         (0, core_1.notice)(`Highest version: ${highestVersion}`);
-        const releaseType = RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)("release-type").toLowerCase() === releaseType);
+        const releaseType = ReleaseType_1.RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)("release-type").toLowerCase() === releaseType);
         if (releaseType === undefined) {
             (0, core_1.setFailed)(`Invalid release-type input: ${(0, core_1.getInput)("release-type")}`);
             return;
@@ -16117,6 +16240,17 @@ function run() {
             return;
         }
         (0, core_1.notice)(`Release version: ${releaseVersion}`);
+        if ((0, core_1.getBooleanInput)("skip-if-no-diff")) {
+            const lastSameReleaseTypeVersion = yield (0, findLastSameReleaseTypeVersion_1.findLastSameReleaseTypeVersion)(releaseVersion, releaseType);
+            (0, core_1.notice)(`Last same release type version: ${lastSameReleaseTypeVersion}`);
+            if (lastSameReleaseTypeVersion !== null) {
+                const diff = yield (0, checkDiff_1.checkDiff)(lastSameReleaseTypeVersion);
+                if (!diff) {
+                    (0, core_1.notice)(`Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`);
+                    return;
+                }
+            }
+        }
         yield (0, setVersion_1.setVersion)(releaseVersion);
         yield (0, pushBranch_1.pushBranch)();
         yield (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
@@ -16250,8 +16384,8 @@ function updateTags(version) {
             throw new Error(`Failed to parse the version as semver: ${version}`);
         }
         if (semver.prerelease.length !== 0) {
-            (0, core_1.warning)(`Pre-release version should not be used to update shorthand tags: ${version}`);
-            (0, core_1.warning)("Please don't set release-type to prerelease and update-shorthand-release to true at the same time");
+            (0, core_1.warning)(`Pre-release version should not be used to update shorthand tags: ${version}` +
+                "\nPlease don't set release-type to prerelease and update-shorthand-release to true at the same time");
         }
         if (semver.major > 0) {
             const gitTagMajorOutput = yield (0, exec_1.getExecOutput)("git", [
