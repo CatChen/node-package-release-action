@@ -16,7 +16,6 @@ name: Release
 on:
   schedule:
     - cron: "0 12 * * 0" # every sunday noon
-  workflow_dispatch:
 
 jobs:
   release:
@@ -91,6 +90,8 @@ Let's start with the easy ones. `major`, `minor` and `patch` increase their corr
 - `2.3.4-5` + `prepatch` => `2.3.5-0`
 
 ### Can I create a Workflow to manually release with any release type I want at the time?
+
+<img width="359" alt="Screenshot 2022-11-14 at 5 35 13 PM" src="https://user-images.githubusercontent.com/112175/201804995-7cb572b4-87a6-4662-9e24-7c4d3b0ff844.png">
 
 Yes! You can provide inputs in the Action web interface before manually triggering a Workflow. [GitHub Action documentation](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#providing-inputs) describes how to do this. Below is an example.
 
