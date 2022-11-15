@@ -16,7 +16,6 @@ name: Release
 on:
   schedule:
     - cron: "0 12 * * 0" # every sunday noon
-  workflow_dispatch:
 
 jobs:
   release:
