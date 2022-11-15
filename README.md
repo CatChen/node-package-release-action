@@ -25,11 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: CatChen/node-package-release-action@v0.1
+      - uses: CatChen/node-package-release-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} # optional
+          directory: "./" #optional
           release-type: prerelease # optional
-          prerelease: true # optional
+          prerelease: false # optional
+          update-shorthand-release: false
+          skip-if-no-diff: false
           dry-run: false # optional
 ```
 
@@ -54,6 +57,10 @@ This controls whether the GitHub Release should be marked as a prerelease. The d
 ### `update-shorthand-release`
 
 [GitHub Action documentation](https://docs.github.com/en/actions/creating-actions/about-custom-actions#using-tags-for-release-management) recommends updating shorthand releases like `v1` and `v1.2` when releasing the latest `v1.2.*`. Set this to `true` when using this Action to release other Actions. The default value is `false`.
+
+### `skip-if-no-diff`
+
+The controls whether this action should do nothing if there's no changes since last release of the same release type. If we release a minor upgrade to `1.2.3` or `1.2.3-4` it should be `1.2.4`. If `1.2.4` and `1.2.3` are the same and if `skip-if-no-diff` is set to `true`, `1.2.4` won't be created. `1.2.3-*` won't be used in the comparison. The default value is `false`.
 
 ### `dry-run`
 
@@ -82,3 +89,53 @@ Let's start with the easy ones. `major`, `minor` and `patch` increase their corr
 - `2.3.4-5` + `preminor` => `2.4.0-0`
 - `2.3.4` + `prepatch` => `2.3.5-0`
 - `2.3.4-5` + `prepatch` => `2.3.5-0`
+
+### Can I create a Workflow to manually release with any release type I want at the time?
+
+Yes! You can provide inputs in the Action web interface before manually triggering a Workflow. [GitHub Action documentation](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#providing-inputs) describes how to do this. Below is an example.
+
+```yaml
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: "Release Type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - premajor
+          - preminor
+          - prepatch
+          - prerelease
+      prerelease:
+        description: "Prerelease"
+        required: true
+        default: false
+        type: boolean
+      dry-run:
+        description: "Dry run"
+        required: true
+        default: false
+        type: boolean
+
+  release:
+    name: Release
+    concurrency: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: "main"
+
+      - uses: CatChen/node-package-release-action@v1
+        with:
+          release-type: ${{ inputs.release-type || 'patch' }}
+          prerelease: ${{ inputs.prerelease || false }}
+          dry-run: ${{ inputs.dry-run || false }}
+```
