@@ -81,7 +81,7 @@ async function run(): Promise<void> {
     setOutput("skipped", false);
   }
 
-  setOutput("tag", releaseVersion);
+  setOutput("tag", `v${releaseVersion}`);
 
   await setVersion(releaseVersion);
 
