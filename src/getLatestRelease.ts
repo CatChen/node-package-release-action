@@ -1,7 +1,8 @@
-import { warning } from "@actions/core";
+import { warning, debug } from "@actions/core";
 import type { Octokit } from "@octokit/core";
 import type { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types";
 import { RequestError } from "@octokit/request-error";
+import { valid, rsort } from "semver";
 
 export async function getLatestRelease(
   owner: string,
@@ -15,24 +16,40 @@ export async function getLatestRelease(
     });
     // Latest release doesn't include pre-release.
     const latestRelease = latestReleaseResponse.data;
-    return latestRelease.tag_name;
+    if (valid(latestRelease.tag_name) !== null) {
+      return latestRelease.tag_name;
+    } else {
+      warning(
+        `Latest release tag is not a valid semver: ${latestRelease.tag_name}`
+      );
+    }
   } catch (error) {
     if (error instanceof RequestError) {
       if (error.status === 404) {
         warning(`Latest release not found but pre-release may exist`);
-        const releasesResponse = await octokit.rest.repos.listReleases({
-          owner,
-          repo,
-        });
-        if (releasesResponse.data.length === 0) {
-          // No release or pre-release available.
-          warning(`Pre-release not found`);
-          return null;
-        }
-        const latestRelease = releasesResponse.data[0];
-        return latestRelease.tag_name;
+      } else {
+        throw new Error(`Unexpected status code: ${error.status}`);
       }
+    } else {
+      throw error;
     }
   }
-  return null;
+  const releasesResponse = await octokit.rest.repos.listReleases({
+    owner,
+    repo,
+  });
+  if (releasesResponse.data.length === 0) {
+    warning(`No release found`);
+    return null;
+  }
+  const releaseTags = releasesResponse.data.map((release) => release.tag_name);
+  const validReleaseTags = releaseTags.filter((tag) => valid(tag) !== null);
+  if (validReleaseTags.length === 0) {
+    warning(`No valid release tag found`);
+    debug("Release tags:\n" + releaseTags.map((tag) => `  ${tag}`).join("\n"));
+    return null;
+  }
+
+  const sortedReleaseTags = rsort(validReleaseTags);
+  return sortedReleaseTags[0];
 }
