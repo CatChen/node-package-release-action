@@ -24,7 +24,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: CatChen/node-package-release-action@v1
+      - id: release
+        uses: CatChen/node-package-release-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} # optional
           directory: "./" #optional
@@ -33,6 +34,16 @@ jobs:
           update-shorthand-release: false
           skip-if-no-diff: false
           dry-run: false # optional
+
+      - env:
+          SKIPPED: ${{ steps.release.output.skipped }}
+        run: |
+          if [[ "$SKIPPED"='true' ]]
+          then
+            echo 'Release is skipped.'
+          else
+            echo 'Release is successfully.'
+          fi
 ```
 
 ## Options
@@ -140,3 +151,7 @@ on:
           prerelease: ${{ inputs.prerelease || false }}
           dry-run: ${{ inputs.dry-run || false }}
 ```
+
+### How do I know if `skip-if-no-diff` took effect?
+
+Use an output called `skipped`. See the first code example as a reference.
