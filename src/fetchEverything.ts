@@ -19,7 +19,7 @@ export async function fetchEverything() {
     throw new Error(gitIsShallowRepositoryOutput.stderr);
   }
 
-  if (gitIsShallowRepositoryOutput.stdout === "true") {
+  if (gitIsShallowRepositoryOutput.stdout.trim() === "true") {
     const gitFetchUnshallowOutput = await getExecOutput("git", [
       "fetch",
       "--unshallow",
