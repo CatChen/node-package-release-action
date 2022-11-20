@@ -81,6 +81,8 @@ async function run(): Promise<void> {
     setOutput("skipped", false);
   }
 
+  setOutput("tag", releaseVersion);
+
   await setVersion(releaseVersion);
 
   await pushBranch();
