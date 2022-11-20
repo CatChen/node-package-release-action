@@ -16270,6 +16270,7 @@ function run() {
             }
             (0, core_1.setOutput)("skipped", false);
         }
+        (0, core_1.setOutput)("tag", releaseVersion);
         yield (0, setVersion_1.setVersion)(releaseVersion);
         yield (0, pushBranch_1.pushBranch)();
         yield (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
