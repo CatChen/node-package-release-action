@@ -4,7 +4,7 @@ import type { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types
 import { RequestError } from "@octokit/request-error";
 import { valid, rsort } from "semver";
 
-export async function getLatestRelease(
+export async function getlatestReleaseTag(
   owner: string,
   repo: string,
   octokit: Octokit & Api
