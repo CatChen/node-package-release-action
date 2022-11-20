@@ -1,4 +1,10 @@
-import { notice, getInput, setFailed, getBooleanInput } from "@actions/core";
+import {
+  notice,
+  getInput,
+  setFailed,
+  getBooleanInput,
+  setOutput,
+} from "@actions/core";
 import { context } from "@actions/github";
 import { rsort, inc } from "semver";
 import { RELEASE_TYPES } from "./ReleaseType";
@@ -68,9 +74,11 @@ async function run(): Promise<void> {
         notice(
           `Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`
         );
+        setOutput("skipped", true);
         return;
       }
     }
+    setOutput("skipped", false);
   }
 
   await setVersion(releaseVersion);
