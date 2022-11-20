@@ -15911,7 +15911,7 @@ function fetchEverything() {
         if (gitIsShallowRepositoryOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitIsShallowRepositoryOutput.stderr);
         }
-        if (gitIsShallowRepositoryOutput.stdout === "true") {
+        if (gitIsShallowRepositoryOutput.stdout.trim() === "true") {
             const gitFetchUnshallowOutput = yield (0, exec_1.getExecOutput)("git", [
                 "fetch",
                 "--unshallow",
