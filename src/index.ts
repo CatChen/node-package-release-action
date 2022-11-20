@@ -7,7 +7,7 @@ import { configGit } from "./configGit";
 import { fetchEverything } from "./fetchEverything";
 import { getLastGitTag } from "./getLastGitTag";
 import { getPackageVersion } from "./getPackageVersion";
-import { getLatestRelease } from "./getLatestRelease";
+import { getlatestReleaseTag } from "./getlatestReleaseTag";
 import { findLastSameReleaseTypeVersion } from "./findLastSameReleaseTypeVersion";
 import { setVersion } from "./setVersion";
 import { pushBranch } from "./pushBranch";
@@ -30,10 +30,10 @@ async function run(): Promise<void> {
 
   const { owner, repo } = context.repo;
   const octokit = getOctokit();
-  const latestRelease = await getLatestRelease(owner, repo, octokit);
-  notice(`Latest release: ${latestRelease}`);
+  const latestReleaseTag = await getlatestReleaseTag(owner, repo, octokit);
+  notice(`Latest release tag: ${latestReleaseTag}`);
 
-  const versions = [lastGitTag, packageVersion, latestRelease].flatMap(
+  const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap(
     (version) => (version === null ? [] : [version])
   );
   const sortedVersions = rsort(versions);
