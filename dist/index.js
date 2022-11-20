@@ -16058,7 +16058,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLatestRelease = void 0;
 const core_1 = __nccwpck_require__(2186);
 const request_error_1 = __nccwpck_require__(537);
-const console_1 = __nccwpck_require__(6206);
 const semver_1 = __nccwpck_require__(1383);
 function getLatestRelease(owner, repo, octokit) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -16101,7 +16100,7 @@ function getLatestRelease(owner, repo, octokit) {
         const validReleaseTags = releaseTags.filter((tag) => (0, semver_1.valid)(tag) !== null);
         if (validReleaseTags.length === 0) {
             (0, core_1.warning)(`No valid release tag found`);
-            (0, console_1.debug)("Release tags:\n" + releaseTags.map((tag) => `  ${tag}`).join("\n"));
+            (0, core_1.debug)("Release tags:\n" + releaseTags.map((tag) => `  ${tag}`).join("\n"));
             return null;
         }
         const sortedReleaseTags = (0, semver_1.rsort)(validReleaseTags);
@@ -16468,13 +16467,6 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("assert");
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("child_process");
-
-/***/ }),
-
-/***/ 6206:
-/***/ ((module) => {
-
-module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("console");
 
 /***/ }),
 

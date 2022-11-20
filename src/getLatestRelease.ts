@@ -1,8 +1,7 @@
-import { warning } from "@actions/core";
+import { warning, debug } from "@actions/core";
 import type { Octokit } from "@octokit/core";
 import type { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types";
 import { RequestError } from "@octokit/request-error";
-import { debug } from "console";
 import { valid, rsort } from "semver";
 
 export async function getLatestRelease(
