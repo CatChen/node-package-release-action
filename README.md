@@ -36,13 +36,14 @@ jobs:
           dry-run: false # optional
 
       - env:
-          SKIPPED: ${{ steps.release.output.skipped }}
+          TAG: ${{ steps.release.outputs.tag }}
+          SKIPPED: ${{ steps.release.outputs.skipped }}
         run: |
           if [[ "$SKIPPED"='true' ]]
           then
             echo 'Release is skipped.'
           else
-            echo 'Release is successfully.'
+            echo "Release $TAG successfully."
           fi
 ```
 
