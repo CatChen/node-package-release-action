@@ -124,9 +124,9 @@
     universal-user-agent "^6.0.0"
 
 "@octokit/graphql-schema@^12.24.0":
-  version "12.38.0"
-  resolved "https://registry.yarnpkg.com/@octokit/graphql-schema/-/graphql-schema-12.38.0.tgz#a54c69f0a98576be7c6bb48df1ed0cac5d79e025"
-  integrity sha512-/QOpCsebVtxs1OuPa7d75yLW6c4ad7lZeGCQcqo1JbXF1BeLnIotDGiod94aWEfR+6L4ru+S1IAty23MD8zqiw==
+  version "12.41.0"
+  resolved "https://registry.yarnpkg.com/@octokit/graphql-schema/-/graphql-schema-12.41.0.tgz#c92aac0c768ae5cdc794f6002b32443b1e34b29c"
+  integrity sha512-npru7tKmOFRFu53+J9mtrM9z23bIhe4W4/jYBjlp7UX3dSibDZmeafmxH3J7WmPizDLQuCmQf7T4Z4iGTZXJhg==
   dependencies:
     graphql "^16.0.0"
     graphql-tag "^2.10.3"
