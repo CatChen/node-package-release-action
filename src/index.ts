@@ -13,7 +13,7 @@ import { configGit } from "./configGit";
 import { fetchEverything } from "./fetchEverything";
 import { getLastGitTag } from "./getLastGitTag";
 import { getPackageVersion } from "./getPackageVersion";
-import { getlatestReleaseTag } from "./getlatestReleaseTag";
+import { getLatestReleaseTag } from "./getLatestReleaseTag";
 import { findLastSameReleaseTypeVersion } from "./findLastSameReleaseTypeVersion";
 import { setVersion } from "./setVersion";
 import { pushBranch } from "./pushBranch";
@@ -36,7 +36,7 @@ async function run(): Promise<void> {
 
   const { owner, repo } = context.repo;
   const octokit = getOctokit();
-  const latestReleaseTag = await getlatestReleaseTag(owner, repo, octokit);
+  const latestReleaseTag = await getLatestReleaseTag(owner, repo, octokit);
   notice(`Latest release tag: ${latestReleaseTag}`);
 
   const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap(
