@@ -16041,6 +16041,77 @@ exports.getLastGitTag = getLastGitTag;
 
 /***/ }),
 
+/***/ 658:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getLatestReleaseTag = void 0;
+const core_1 = __nccwpck_require__(2186);
+const request_error_1 = __nccwpck_require__(537);
+const semver_1 = __nccwpck_require__(1383);
+function getLatestReleaseTag(owner, repo, octokit) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const latestReleaseResponse = yield octokit.rest.repos.getLatestRelease({
+                owner,
+                repo,
+            });
+            // Latest release doesn't include pre-release.
+            const latestRelease = latestReleaseResponse.data;
+            if ((0, semver_1.valid)(latestRelease.tag_name) !== null) {
+                return latestRelease.tag_name;
+            }
+            else {
+                (0, core_1.warning)(`Latest release tag is not a valid semver: ${latestRelease.tag_name}`);
+            }
+        }
+        catch (error) {
+            if (error instanceof request_error_1.RequestError) {
+                if (error.status === 404) {
+                    (0, core_1.warning)(`Latest release not found but pre-release may exist`);
+                }
+                else {
+                    throw new Error(`Unexpected status code: ${error.status}`);
+                }
+            }
+            else {
+                throw error;
+            }
+        }
+        const releasesResponse = yield octokit.rest.repos.listReleases({
+            owner,
+            repo,
+        });
+        if (releasesResponse.data.length === 0) {
+            (0, core_1.warning)(`No release found`);
+            return null;
+        }
+        const releaseTags = releasesResponse.data.map((release) => release.tag_name);
+        const validReleaseTags = releaseTags.filter((tag) => (0, semver_1.valid)(tag) !== null);
+        if (validReleaseTags.length === 0) {
+            (0, core_1.warning)(`No valid release tag found`);
+            (0, core_1.debug)("Release tags:\n" + releaseTags.map((tag) => `  ${tag}`).join("\n"));
+            return null;
+        }
+        const sortedReleaseTags = (0, semver_1.rsort)(validReleaseTags);
+        return sortedReleaseTags[0];
+    });
+}
+exports.getLatestReleaseTag = getLatestReleaseTag;
+
+
+/***/ }),
+
 /***/ 8442:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -16128,77 +16199,6 @@ exports.getPackageVersion = getPackageVersion;
 
 /***/ }),
 
-/***/ 5481:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getlatestReleaseTag = void 0;
-const core_1 = __nccwpck_require__(2186);
-const request_error_1 = __nccwpck_require__(537);
-const semver_1 = __nccwpck_require__(1383);
-function getlatestReleaseTag(owner, repo, octokit) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const latestReleaseResponse = yield octokit.rest.repos.getLatestRelease({
-                owner,
-                repo,
-            });
-            // Latest release doesn't include pre-release.
-            const latestRelease = latestReleaseResponse.data;
-            if ((0, semver_1.valid)(latestRelease.tag_name) !== null) {
-                return latestRelease.tag_name;
-            }
-            else {
-                (0, core_1.warning)(`Latest release tag is not a valid semver: ${latestRelease.tag_name}`);
-            }
-        }
-        catch (error) {
-            if (error instanceof request_error_1.RequestError) {
-                if (error.status === 404) {
-                    (0, core_1.warning)(`Latest release not found but pre-release may exist`);
-                }
-                else {
-                    throw new Error(`Unexpected status code: ${error.status}`);
-                }
-            }
-            else {
-                throw error;
-            }
-        }
-        const releasesResponse = yield octokit.rest.repos.listReleases({
-            owner,
-            repo,
-        });
-        if (releasesResponse.data.length === 0) {
-            (0, core_1.warning)(`No release found`);
-            return null;
-        }
-        const releaseTags = releasesResponse.data.map((release) => release.tag_name);
-        const validReleaseTags = releaseTags.filter((tag) => (0, semver_1.valid)(tag) !== null);
-        if (validReleaseTags.length === 0) {
-            (0, core_1.warning)(`No valid release tag found`);
-            (0, core_1.debug)("Release tags:\n" + releaseTags.map((tag) => `  ${tag}`).join("\n"));
-            return null;
-        }
-        const sortedReleaseTags = (0, semver_1.rsort)(validReleaseTags);
-        return sortedReleaseTags[0];
-    });
-}
-exports.getlatestReleaseTag = getlatestReleaseTag;
-
-
-/***/ }),
-
 /***/ 6144:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -16222,7 +16222,7 @@ const configGit_1 = __nccwpck_require__(8695);
 const fetchEverything_1 = __nccwpck_require__(1673);
 const getLastGitTag_1 = __nccwpck_require__(6650);
 const getPackageVersion_1 = __nccwpck_require__(4528);
-const getlatestReleaseTag_1 = __nccwpck_require__(5481);
+const getLatestReleaseTag_1 = __nccwpck_require__(658);
 const findLastSameReleaseTypeVersion_1 = __nccwpck_require__(374);
 const setVersion_1 = __nccwpck_require__(9556);
 const pushBranch_1 = __nccwpck_require__(7200);
@@ -16240,7 +16240,7 @@ function run() {
         (0, core_1.notice)(`package.json version: ${packageVersion}`);
         const { owner, repo } = github_1.context.repo;
         const octokit = (0, getOctokit_1.getOctokit)();
-        const latestReleaseTag = yield (0, getlatestReleaseTag_1.getlatestReleaseTag)(owner, repo, octokit);
+        const latestReleaseTag = yield (0, getLatestReleaseTag_1.getLatestReleaseTag)(owner, repo, octokit);
         (0, core_1.notice)(`Latest release tag: ${latestReleaseTag}`);
         const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap((version) => (version === null ? [] : [version]));
         const sortedVersions = (0, semver_1.rsort)(versions);
