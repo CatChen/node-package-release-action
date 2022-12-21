@@ -78,12 +78,27 @@ jobs:
           skip-if-no-diff: ${{ inputs.skip-if-no-diff || true }}
           diff-targets: ${{ inputs.diff-targets || 'dist/**/*' }}
 
+      - env:
+          SKIPPED: ${{ steps.release.outputs.skipped }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          echo "::notice::steps.release.outputs.skipped is $SKIPPED"
+          echo "::notice::steps.release.outputs.tag is $TAG"
+          printenv
+
   publish:
     name: Publish
     needs: [release]
-    if: ${{ needs.release.outputs.skipped != true }}
+    if: ${{ needs.release.outputs.skipped != 'true' }}
     runs-on: ubuntu-latest
     steps:
+      - env:
+          SKIPPED: ${{ needs.release.outputs.skipped }}
+          TAG: ${{ needs.release.outputs.tag }}
+        run: |
+          echo "::notice::steps.release.outputs.skipped is $SKIPPED"
+          echo "::notice::steps.release.outputs.tag is $TAG"
+          printenv
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.release.outputs.tag }}
