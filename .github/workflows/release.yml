@@ -76,7 +76,7 @@ jobs:
           update-shorthand-release: true
           dry-run: ${{ inputs.dry-run || false }}
           skip-if-no-diff: ${{ inputs.skip-if-no-diff || true }}
-          diff-targets: ${{ inputs.diff-targets || "dist/**/*" }}
+          diff-targets: ${{ inputs.diff-targets || 'dist/**/*' }}
 
   publish:
     name: Publish
