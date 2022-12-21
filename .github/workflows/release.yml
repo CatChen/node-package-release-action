@@ -84,6 +84,12 @@ jobs:
     if: ${{ needs.release.outputs.diff != true }}
     runs-on: ubuntu-latest
     steps:
+      - env:
+          SKIP: ${{ needs.release.outputs.diff }}
+          TAG: ${{ needs.release.outputs.tag }}
+        run: |
+          echo "::notice::needs.release.outputs.diff is $SKIP"
+          echo "::notice::needs.release.outputs.tag is $TAG"
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.release.outputs.tag }}
