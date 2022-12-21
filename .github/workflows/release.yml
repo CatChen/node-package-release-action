@@ -81,7 +81,7 @@ jobs:
   publish:
     name: Publish
     needs: [release]
-    if: ${{ needs.release.outputs.diff != true }}
+    if: ${{ needs.release.outputs.skipped != true }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -95,9 +95,15 @@ jobs:
       - env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ inputs.dry-run || false }}
         run: |
           yarn install
           yarn build
           npm whoami
           npm config ls -l
-          npm publish
+          if [[ "$DRY_RUN" = true ]]
+          then
+            npm publish --dry-run
+          else
+            npm publish
+          fi
