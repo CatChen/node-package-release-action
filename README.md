@@ -73,6 +73,10 @@ This controls whether the GitHub Release should be marked as a prerelease. The d
 
 The controls whether this action should do nothing if there's no changes since last release of the same release type. If we release a minor upgrade to `1.2.3` or `1.2.3-4` it should be `1.2.4`. If `1.2.4` and `1.2.3` are the same and if `skip-if-no-diff` is set to `true`, `1.2.4` won't be created. `1.2.3-*` won't be used in the comparison. The default value is `false`.
 
+### `diff-targets`
+
+This controls the diff targets used with `skip-if-no-diff`. The default value is `"."`. For example, it could be `"{package.json,lib/**/*}"` for a typical TypeScript project with compiled files in the `lib` directory. Use glob pattern to match multiple directories if necessary, for example `"{src,lib}"` instead of `"src lib"` or `"{src, lib}"` to match both the `src` directory and the `lib` directory.
+
 ### `dry-run`
 
 This controls whether this is a dry run. The default value is `false`. It's used for debugging only.

@@ -25,6 +25,10 @@ inputs:
     description: "When this is true, this Action does nothing if there is no change since last release of the same release type."
     required: false
     default: false
+  diff-targets:
+    description: "Files, directories, and/or globs to run diff that determines whether to skip. No effect when skip-if-no-diff is false."
+    required: false
+    default: "."
   dry-run:
     description: "Dry run without making changes."
     required: false
