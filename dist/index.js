@@ -15739,11 +15739,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.checkDiff = void 0;
+const node_path_1 = __nccwpck_require__(9411);
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function checkDiff(tag) {
     return __awaiter(this, void 0, void 0, function* () {
-        const diffOutput = yield (0, exec_1.getExecOutput)("git", ["diff", tag, "--name-only"]);
+        const directory = (0, core_1.getInput)("directory");
+        const diffTargets = (0, core_1.getInput)("diff-targets");
+        const diffOutput = yield (0, exec_1.getExecOutput)("git", [
+            "diff",
+            tag,
+            "--name-only",
+            "--",
+            (0, node_path_1.join)(directory, diffTargets),
+        ]);
         if (diffOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(diffOutput.stderr);
         }
