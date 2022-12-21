@@ -81,7 +81,7 @@ jobs:
   publish:
     name: Publish
     needs: [release]
-    if: ${{ needs.release.outputs.diff != 'true' }}
+    if: ${{ needs.release.outputs.diff != true }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
