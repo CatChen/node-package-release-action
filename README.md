@@ -15,7 +15,7 @@ name: Release
 
 on:
   schedule:
-    - cron: "0 12 * * 0" # every sunday noon
+    - cron: '0 12 * * 0' # every sunday noon
 
 jobs:
   release:
@@ -28,7 +28,7 @@ jobs:
         uses: CatChen/node-package-release-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} # optional
-          directory: "./" #optional
+          directory: './' #optional
           release-type: prerelease # optional
           prerelease: false # optional
           update-shorthand-release: false
@@ -118,9 +118,9 @@ on:
   workflow_dispatch:
     inputs:
       release-type:
-        description: "Release Type"
+        description: 'Release Type'
         required: true
-        default: "patch"
+        default: 'patch'
         type: choice
         options:
           - major
@@ -131,12 +131,12 @@ on:
           - prepatch
           - prerelease
       prerelease:
-        description: "Prerelease"
+        description: 'Prerelease'
         required: true
         default: false
         type: boolean
       dry-run:
-        description: "Dry run"
+        description: 'Dry run'
         required: true
         default: false
         type: boolean
@@ -148,7 +148,7 @@ on:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: "main"
+          ref: 'main'
 
       - uses: CatChen/node-package-release-action@v1
         with:

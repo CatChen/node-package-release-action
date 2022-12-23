@@ -1,13 +1,13 @@
-import { warning, debug } from "@actions/core";
-import type { Octokit } from "@octokit/core";
-import type { Api } from "@octokit/plugin-rest-endpoint-methods/dist-types/types";
-import { RequestError } from "@octokit/request-error";
-import { valid, rsort } from "semver";
+import type { Octokit } from '@octokit/core';
+import type { Api } from '@octokit/plugin-rest-endpoint-methods/dist-types/types';
+import { debug, warning } from '@actions/core';
+import { RequestError } from '@octokit/request-error';
+import { rsort, valid } from 'semver';
 
 export async function getLatestReleaseTag(
   owner: string,
   repo: string,
-  octokit: Octokit & Api
+  octokit: Octokit & Api,
 ) {
   try {
     const latestReleaseResponse = await octokit.rest.repos.getLatestRelease({
@@ -20,7 +20,7 @@ export async function getLatestReleaseTag(
       return latestRelease.tag_name;
     } else {
       warning(
-        `Latest release tag is not a valid semver: ${latestRelease.tag_name}`
+        `Latest release tag is not a valid semver: ${latestRelease.tag_name}`,
       );
     }
   } catch (error) {
@@ -46,7 +46,7 @@ export async function getLatestReleaseTag(
   const validReleaseTags = releaseTags.filter((tag) => valid(tag) !== null);
   if (validReleaseTags.length === 0) {
     warning(`No valid release tag found`);
-    debug("Release tags:\n" + releaseTags.map((tag) => `  ${tag}`).join("\n"));
+    debug('Release tags:\n' + releaseTags.map((tag) => `  ${tag}`).join('\n'));
     return null;
   }
 

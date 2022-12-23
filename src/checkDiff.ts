@@ -1,18 +1,18 @@
-import { join } from "node:path";
-import { debug, ExitCode, getInput } from "@actions/core";
-import { getExecOutput } from "@actions/exec";
-import { create } from "@actions/glob";
+import { join } from 'node:path';
+import { ExitCode, debug, getInput } from '@actions/core';
+import { getExecOutput } from '@actions/exec';
+import { create } from '@actions/glob';
 
 export async function checkDiff(tag: string) {
-  const directory = getInput("directory");
-  const diffTargets = getInput("diff-targets");
+  const directory = getInput('directory');
+  const diffTargets = getInput('diff-targets');
   const globber = await create(join(directory, diffTargets));
   const glob = await globber.glob();
-  const diffOutput = await getExecOutput("git", [
-    "diff",
+  const diffOutput = await getExecOutput('git', [
+    'diff',
     tag,
-    "--name-only",
-    "--",
+    '--name-only',
+    '--',
     ...glob,
   ]);
   if (diffOutput.exitCode !== ExitCode.Success) {
@@ -20,11 +20,11 @@ export async function checkDiff(tag: string) {
   }
   debug(
     `Diff against ${tag}:` +
-      "\n" +
+      '\n' +
       diffOutput.stdout
-        .split("\n")
+        .split('\n')
         .map((line) => `  ${line}`)
-        .join("\n")
+        .join('\n'),
   );
-  return diffOutput.stdout.split("\n").join("") !== "";
+  return diffOutput.stdout.split('\n').join('') !== '';
 }

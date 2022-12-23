@@ -25,6 +25,7 @@
   "devDependencies": {
     "@octokit/graphql-schema": "^12.24.0",
     "@octokit/webhooks-definitions": "^3.67.3",
+    "@serverless-guru/prettier-plugin-import-order": "^0.2.0",
     "@types/node": "^18.11.9",
     "@types/semver": "^7.3.13",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
