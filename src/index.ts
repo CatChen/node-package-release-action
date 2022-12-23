@@ -1,27 +1,27 @@
 import {
-  notice,
-  getInput,
-  setFailed,
   getBooleanInput,
+  getInput,
+  notice,
+  setFailed,
   setOutput,
-} from "@actions/core";
-import { context } from "@actions/github";
-import { rsort, inc } from "semver";
-import { RELEASE_TYPES } from "./ReleaseType";
-import { getOctokit } from "./getOctokit";
-import { configGit } from "./configGit";
-import { fetchEverything } from "./fetchEverything";
-import { getLastGitTag } from "./getLastGitTag";
-import { getPackageVersion } from "./getPackageVersion";
-import { getLatestReleaseTag } from "./getLatestReleaseTag";
-import { findLastSameReleaseTypeVersion } from "./findLastSameReleaseTypeVersion";
-import { setVersion } from "./setVersion";
-import { pushBranch } from "./pushBranch";
-import { createRelease } from "./createRelease";
-import { updateTags } from "./updateTags";
-import { checkDiff } from "./checkDiff";
+} from '@actions/core';
+import { context } from '@actions/github';
+import { inc, rsort } from 'semver';
+import { RELEASE_TYPES } from './ReleaseType';
+import { checkDiff } from './checkDiff';
+import { configGit } from './configGit';
+import { createRelease } from './createRelease';
+import { fetchEverything } from './fetchEverything';
+import { findLastSameReleaseTypeVersion } from './findLastSameReleaseTypeVersion';
+import { getLastGitTag } from './getLastGitTag';
+import { getLatestReleaseTag } from './getLatestReleaseTag';
+import { getOctokit } from './getOctokit';
+import { getPackageVersion } from './getPackageVersion';
+import { pushBranch } from './pushBranch';
+import { setVersion } from './setVersion';
+import { updateTags } from './updateTags';
 
-const DEFAULT_VERSION = "0.1.0";
+const DEFAULT_VERSION = '0.1.0';
 
 async function run(): Promise<void> {
   await configGit();
@@ -40,7 +40,7 @@ async function run(): Promise<void> {
   notice(`Latest release tag: ${latestReleaseTag}`);
 
   const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap(
-    (version) => (version === null ? [] : [version])
+    (version) => (version === null ? [] : [version]),
   );
   const sortedVersions = rsort(versions);
   const highestVersion =
@@ -48,23 +48,23 @@ async function run(): Promise<void> {
   notice(`Highest version: ${highestVersion}`);
 
   const releaseType = RELEASE_TYPES.find(
-    (releaseType) => getInput("release-type").toLowerCase() === releaseType
+    (releaseType) => getInput('release-type').toLowerCase() === releaseType,
   );
   if (releaseType === undefined) {
-    setFailed(`Invalid release-type input: ${getInput("release-type")}`);
+    setFailed(`Invalid release-type input: ${getInput('release-type')}`);
     return;
   }
   const releaseVersion = inc(highestVersion, releaseType);
   if (releaseVersion === null) {
-    setFailed("Failed to compute release version");
+    setFailed('Failed to compute release version');
     return;
   }
   notice(`Release version: ${releaseVersion}`);
 
-  if (getBooleanInput("skip-if-no-diff")) {
+  if (getBooleanInput('skip-if-no-diff')) {
     const lastSameReleaseTypeVersion = await findLastSameReleaseTypeVersion(
       releaseVersion,
-      releaseType
+      releaseType,
     );
     notice(`Last same release type version: ${lastSameReleaseTypeVersion}`);
 
@@ -72,16 +72,16 @@ async function run(): Promise<void> {
       const diff = await checkDiff(lastSameReleaseTypeVersion);
       if (!diff) {
         notice(
-          `Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`
+          `Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`,
         );
-        setOutput("skipped", true);
+        setOutput('skipped', true);
         return;
       }
     }
-    setOutput("skipped", false);
+    setOutput('skipped', false);
   }
 
-  setOutput("tag", `v${releaseVersion}`);
+  setOutput('tag', `v${releaseVersion}`);
 
   await setVersion(releaseVersion);
 
@@ -89,7 +89,7 @@ async function run(): Promise<void> {
 
   await createRelease(owner, repo, releaseVersion, octokit);
 
-  if (getBooleanInput("update-shorthand-release")) {
+  if (getBooleanInput('update-shorthand-release')) {
     updateTags(releaseVersion);
   }
 }

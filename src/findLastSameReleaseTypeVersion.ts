@@ -1,10 +1,10 @@
-import { warning } from "@actions/core";
-import { ReleaseType, rsort, gte, diff } from "semver";
-import { getAllGitTags } from "./getAllGitTags";
+import { warning } from '@actions/core';
+import { ReleaseType, diff, gte, rsort } from 'semver';
+import { getAllGitTags } from './getAllGitTags';
 
 export async function findLastSameReleaseTypeVersion(
   releaseVersion: string,
-  releaseType: ReleaseType
+  releaseType: ReleaseType,
 ) {
   const versionTags = await getAllGitTags();
   if (versionTags.length === 0) {

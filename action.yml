@@ -1,46 +1,46 @@
-name: "Node Package Release"
-description: "A template to create custom GitHub Action with TypeScript/JavaScript."
+name: 'Node Package Release'
+description: 'A template to create custom GitHub Action with TypeScript/JavaScript.'
 inputs:
   github-token:
-    description: "GitHub token."
+    description: 'GitHub token.'
     required: false
     default: ${{ github.token }}
   directory:
     description: "Directory to find package.json if it's not the project's root directory."
     required: false
-    default: "./"
+    default: './'
   release-type:
-    description: "One of the following: major, minor, patch, premajor, preminor, prepatch, prerelease."
+    description: 'One of the following: major, minor, patch, premajor, preminor, prepatch, prerelease.'
     required: false
-    default: "prerelease"
+    default: 'prerelease'
   prerelease:
-    description: "Mark the GitHub Release as a pre-release."
+    description: 'Mark the GitHub Release as a pre-release.'
     required: false
     default: false
   update-shorthand-release:
-    description: "Useful when releasing a GitHub Action, e.g. always updating v1 to the latest v1.*.* and always updating v1.2 to the latest v1.2.*."
+    description: 'Useful when releasing a GitHub Action, e.g. always updating v1 to the latest v1.*.* and always updating v1.2 to the latest v1.2.*.'
     required: false
     default: false
   skip-if-no-diff:
-    description: "When this is true, this Action does nothing if there is no change since last release of the same release type."
+    description: 'When this is true, this Action does nothing if there is no change since last release of the same release type.'
     required: false
     default: false
   diff-targets:
-    description: "Files, directories, and/or globs to run diff that determines whether to skip. No effect when skip-if-no-diff is false."
+    description: 'Files, directories, and/or globs to run diff that determines whether to skip. No effect when skip-if-no-diff is false.'
     required: false
-    default: "."
+    default: '.'
   dry-run:
-    description: "Dry run without making changes."
+    description: 'Dry run without making changes.'
     required: false
     default: false
 outputs:
   tag:
-    description: "The git tag created for this release, e.g. v1.2.3."
+    description: 'The git tag created for this release, e.g. v1.2.3.'
   skipped:
-    description: "Indicator of whether the Action is skipped because of the skip-if-no-diff input."
+    description: 'Indicator of whether the Action is skipped because of the skip-if-no-diff input.'
 runs:
-  using: "node16"
-  main: "dist/index.js"
+  using: 'node16'
+  main: 'dist/index.js'
 branding:
-  icon: "send"
-  color: "blue"
+  icon: 'send'
+  color: 'blue'
