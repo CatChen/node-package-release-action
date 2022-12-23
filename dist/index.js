@@ -18141,13 +18141,13 @@ try {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RELEASE_TYPES = void 0;
 exports.RELEASE_TYPES = [
-    "major",
-    "premajor",
-    "minor",
-    "preminor",
-    "patch",
-    "prepatch",
-    "prerelease",
+    'major',
+    'premajor',
+    'minor',
+    'preminor',
+    'patch',
+    'prepatch',
+    'prerelease',
 ];
 
 
@@ -18174,27 +18174,27 @@ const exec_1 = __nccwpck_require__(1514);
 const glob_1 = __nccwpck_require__(8090);
 function checkDiff(tag) {
     return __awaiter(this, void 0, void 0, function* () {
-        const directory = (0, core_1.getInput)("directory");
-        const diffTargets = (0, core_1.getInput)("diff-targets");
+        const directory = (0, core_1.getInput)('directory');
+        const diffTargets = (0, core_1.getInput)('diff-targets');
         const globber = yield (0, glob_1.create)((0, node_path_1.join)(directory, diffTargets));
         const glob = yield globber.glob();
-        const diffOutput = yield (0, exec_1.getExecOutput)("git", [
-            "diff",
+        const diffOutput = yield (0, exec_1.getExecOutput)('git', [
+            'diff',
             tag,
-            "--name-only",
-            "--",
+            '--name-only',
+            '--',
             ...glob,
         ]);
         if (diffOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(diffOutput.stderr);
         }
         (0, core_1.debug)(`Diff against ${tag}:` +
-            "\n" +
+            '\n' +
             diffOutput.stdout
-                .split("\n")
+                .split('\n')
                 .map((line) => `  ${line}`)
-                .join("\n"));
-        return diffOutput.stdout.split("\n").join("") !== "";
+                .join('\n'));
+        return diffOutput.stdout.split('\n').join('') !== '';
     });
 }
 exports.checkDiff = checkDiff;
@@ -18219,49 +18219,49 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.configGit = exports.GITHUB_ACTION_USER_EMAIL = exports.GITHUB_ACTION_USER_NAME = void 0;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
-exports.GITHUB_ACTION_USER_NAME = "GitHub Action";
-exports.GITHUB_ACTION_USER_EMAIL = "41898282+github-actions[bot]@users.noreply.github.com";
+exports.GITHUB_ACTION_USER_NAME = 'GitHub Action';
+exports.GITHUB_ACTION_USER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com';
 function configGit() {
     return __awaiter(this, void 0, void 0, function* () {
-        const gitConfigNameOutput = yield (0, exec_1.getExecOutput)("git", [
-            "config",
-            "--global",
-            "user.name",
+        const gitConfigNameOutput = yield (0, exec_1.getExecOutput)('git', [
+            'config',
+            '--global',
+            'user.name',
             exports.GITHUB_ACTION_USER_NAME,
         ]);
         if (gitConfigNameOutput.exitCode !== 0) {
             throw new Error(gitConfigNameOutput.stderr);
         }
-        const gitConfigEmailOutput = yield (0, exec_1.getExecOutput)("git", [
-            "config",
-            "--global",
-            "user.email",
+        const gitConfigEmailOutput = yield (0, exec_1.getExecOutput)('git', [
+            'config',
+            '--global',
+            'user.email',
             exports.GITHUB_ACTION_USER_EMAIL,
         ]);
         if (gitConfigEmailOutput.exitCode !== 0) {
             throw new Error(gitConfigEmailOutput.stderr);
         }
-        const gitConfigPushDefaultOutput = yield (0, exec_1.getExecOutput)("git", [
-            "config",
-            "--global",
-            "push.default",
-            "simple",
+        const gitConfigPushDefaultOutput = yield (0, exec_1.getExecOutput)('git', [
+            'config',
+            '--global',
+            'push.default',
+            'simple',
         ]);
         if (gitConfigPushDefaultOutput.exitCode !== 0) {
             throw new Error(gitConfigPushDefaultOutput.stderr);
         }
-        const gitConfigPushAutoSetupRemoteOutput = yield (0, exec_1.getExecOutput)("git", [
-            "config",
-            "--global",
-            "push.autoSetupRemote",
-            "true",
+        const gitConfigPushAutoSetupRemoteOutput = yield (0, exec_1.getExecOutput)('git', [
+            'config',
+            '--global',
+            'push.autoSetupRemote',
+            'true',
         ]);
         if (gitConfigPushAutoSetupRemoteOutput.exitCode !== 0) {
             throw new Error(gitConfigPushAutoSetupRemoteOutput.stderr);
         }
-        const githubToken = (0, core_1.getInput)("github-token");
-        (0, core_1.exportVariable)("GH_TOKEN", githubToken);
-        const ghAuthOutput = yield (0, exec_1.getExecOutput)("gh", ["auth", "setup-git"]);
+        const githubToken = (0, core_1.getInput)('github-token');
+        (0, core_1.exportVariable)('GH_TOKEN', githubToken);
+        const ghAuthOutput = yield (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
         if (ghAuthOutput.exitCode !== 0) {
             throw new Error(ghAuthOutput.stderr);
         }
@@ -18290,9 +18290,9 @@ exports.createRelease = void 0;
 const core_1 = __nccwpck_require__(2186);
 function createRelease(owner, repo, version, octokit) {
     return __awaiter(this, void 0, void 0, function* () {
-        const dryRun = (0, core_1.getBooleanInput)("dry-run");
+        const dryRun = (0, core_1.getBooleanInput)('dry-run');
         if (dryRun) {
-            (0, core_1.notice)("Release creation is skipped in dry run");
+            (0, core_1.notice)('Release creation is skipped in dry run');
             const response = yield octokit.rest.repos.generateReleaseNotes({
                 owner,
                 repo,
@@ -18300,7 +18300,7 @@ function createRelease(owner, repo, version, octokit) {
                 name: `v${version}`,
             });
             (0, core_1.info)(`Release name: ${response.data.name}`);
-            (0, core_1.info)("Release body:\n" + response.data.body + "\n\n");
+            (0, core_1.info)('Release body:\n' + response.data.body + '\n\n');
             return;
         }
         yield octokit.rest.repos.createRelease({
@@ -18309,7 +18309,7 @@ function createRelease(owner, repo, version, octokit) {
             tag_name: `v${version}`,
             name: `v${version}`,
             generate_release_notes: true,
-            prerelease: (0, core_1.getBooleanInput)("prerelease"),
+            prerelease: (0, core_1.getBooleanInput)('prerelease'),
         });
     });
 }
@@ -18337,26 +18337,26 @@ const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function fetchEverything() {
     return __awaiter(this, void 0, void 0, function* () {
-        const gitFetchTagsOutput = yield (0, exec_1.getExecOutput)("git", [
-            "fetch",
-            "--tags",
-            "origin",
+        const gitFetchTagsOutput = yield (0, exec_1.getExecOutput)('git', [
+            'fetch',
+            '--tags',
+            'origin',
         ]);
         if (gitFetchTagsOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitFetchTagsOutput.stderr);
         }
-        const gitIsShallowRepositoryOutput = yield (0, exec_1.getExecOutput)("git", [
-            "rev-parse",
-            "--is-shallow-repository",
+        const gitIsShallowRepositoryOutput = yield (0, exec_1.getExecOutput)('git', [
+            'rev-parse',
+            '--is-shallow-repository',
         ]);
         if (gitIsShallowRepositoryOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitIsShallowRepositoryOutput.stderr);
         }
-        if (gitIsShallowRepositoryOutput.stdout.trim() === "true") {
-            const gitFetchUnshallowOutput = yield (0, exec_1.getExecOutput)("git", [
-                "fetch",
-                "--unshallow",
-                "origin",
+        if (gitIsShallowRepositoryOutput.stdout.trim() === 'true') {
+            const gitFetchUnshallowOutput = yield (0, exec_1.getExecOutput)('git', [
+                'fetch',
+                '--unshallow',
+                'origin',
             ]);
             if (gitFetchUnshallowOutput.exitCode !== core_1.ExitCode.Success) {
                 throw new Error(gitFetchUnshallowOutput.stderr);
@@ -18433,11 +18433,11 @@ const exec_1 = __nccwpck_require__(1514);
 const semver_1 = __nccwpck_require__(1383);
 function getAllGitTags() {
     return __awaiter(this, void 0, void 0, function* () {
-        const tagOutput = yield (0, exec_1.getExecOutput)("git", ["tag"]);
+        const tagOutput = yield (0, exec_1.getExecOutput)('git', ['tag']);
         if (tagOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(tagOutput.stderr);
         }
-        const allTags = tagOutput.stdout.split("\n");
+        const allTags = tagOutput.stdout.split('\n');
         const versionTags = allTags.filter((tag) => (0, semver_1.valid)(tag));
         return versionTags;
     });
@@ -18541,7 +18541,7 @@ function getLatestReleaseTag(owner, repo, octokit) {
         const validReleaseTags = releaseTags.filter((tag) => (0, semver_1.valid)(tag) !== null);
         if (validReleaseTags.length === 0) {
             (0, core_1.warning)(`No valid release tag found`);
-            (0, core_1.debug)("Release tags:\n" + releaseTags.map((tag) => `  ${tag}`).join("\n"));
+            (0, core_1.debug)('Release tags:\n' + releaseTags.map((tag) => `  ${tag}`).join('\n'));
             return null;
         }
         const sortedReleaseTags = (0, semver_1.rsort)(validReleaseTags);
@@ -18561,10 +18561,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getOctokit = void 0;
 const core_1 = __nccwpck_require__(2186);
 const utils_1 = __nccwpck_require__(3030);
-const plugin_throttling_1 = __nccwpck_require__(9968);
 const plugin_retry_1 = __nccwpck_require__(6298);
+const plugin_throttling_1 = __nccwpck_require__(9968);
 function getOctokit() {
-    const githubToken = (0, core_1.getInput)("github-token");
+    const githubToken = (0, core_1.getInput)('github-token');
     const Octokit = utils_1.GitHub.plugin(plugin_throttling_1.throttling, plugin_retry_1.retry);
     const octokit = new Octokit((0, utils_1.getOctokitOptions)(githubToken, {
         throttle: {
@@ -18590,7 +18590,7 @@ function getOctokit() {
             },
         },
         retry: {
-            doNotRetry: ["429"],
+            doNotRetry: ['429'],
         },
     }));
     return octokit;
@@ -18622,9 +18622,9 @@ const core_1 = __nccwpck_require__(2186);
 exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
 function getPackageVersion() {
     return __awaiter(this, void 0, void 0, function* () {
-        const directory = (0, core_1.getInput)("directory");
+        const directory = (0, core_1.getInput)('directory');
         const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
-        const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, "package.json");
+        const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
         if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
             (0, core_1.warning)(`package.json cannot be found at ${packageJsonPath}`);
             return null;
@@ -18658,19 +18658,19 @@ const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 const semver_1 = __nccwpck_require__(1383);
 const ReleaseType_1 = __nccwpck_require__(9750);
-const getOctokit_1 = __nccwpck_require__(8442);
-const configGit_1 = __nccwpck_require__(8695);
-const fetchEverything_1 = __nccwpck_require__(1673);
-const getLastGitTag_1 = __nccwpck_require__(6650);
-const getPackageVersion_1 = __nccwpck_require__(4528);
-const getLatestReleaseTag_1 = __nccwpck_require__(658);
-const findLastSameReleaseTypeVersion_1 = __nccwpck_require__(374);
-const setVersion_1 = __nccwpck_require__(9556);
-const pushBranch_1 = __nccwpck_require__(7200);
-const createRelease_1 = __nccwpck_require__(4257);
-const updateTags_1 = __nccwpck_require__(1443);
 const checkDiff_1 = __nccwpck_require__(6073);
-const DEFAULT_VERSION = "0.1.0";
+const configGit_1 = __nccwpck_require__(8695);
+const createRelease_1 = __nccwpck_require__(4257);
+const fetchEverything_1 = __nccwpck_require__(1673);
+const findLastSameReleaseTypeVersion_1 = __nccwpck_require__(374);
+const getLastGitTag_1 = __nccwpck_require__(6650);
+const getLatestReleaseTag_1 = __nccwpck_require__(658);
+const getOctokit_1 = __nccwpck_require__(8442);
+const getPackageVersion_1 = __nccwpck_require__(4528);
+const pushBranch_1 = __nccwpck_require__(7200);
+const setVersion_1 = __nccwpck_require__(9556);
+const updateTags_1 = __nccwpck_require__(1443);
+const DEFAULT_VERSION = '0.1.0';
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, configGit_1.configGit)();
@@ -18687,35 +18687,35 @@ function run() {
         const sortedVersions = (0, semver_1.rsort)(versions);
         const highestVersion = sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
         (0, core_1.notice)(`Highest version: ${highestVersion}`);
-        const releaseType = ReleaseType_1.RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)("release-type").toLowerCase() === releaseType);
+        const releaseType = ReleaseType_1.RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)('release-type').toLowerCase() === releaseType);
         if (releaseType === undefined) {
-            (0, core_1.setFailed)(`Invalid release-type input: ${(0, core_1.getInput)("release-type")}`);
+            (0, core_1.setFailed)(`Invalid release-type input: ${(0, core_1.getInput)('release-type')}`);
             return;
         }
         const releaseVersion = (0, semver_1.inc)(highestVersion, releaseType);
         if (releaseVersion === null) {
-            (0, core_1.setFailed)("Failed to compute release version");
+            (0, core_1.setFailed)('Failed to compute release version');
             return;
         }
         (0, core_1.notice)(`Release version: ${releaseVersion}`);
-        if ((0, core_1.getBooleanInput)("skip-if-no-diff")) {
+        if ((0, core_1.getBooleanInput)('skip-if-no-diff')) {
             const lastSameReleaseTypeVersion = yield (0, findLastSameReleaseTypeVersion_1.findLastSameReleaseTypeVersion)(releaseVersion, releaseType);
             (0, core_1.notice)(`Last same release type version: ${lastSameReleaseTypeVersion}`);
             if (lastSameReleaseTypeVersion !== null) {
                 const diff = yield (0, checkDiff_1.checkDiff)(lastSameReleaseTypeVersion);
                 if (!diff) {
                     (0, core_1.notice)(`Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`);
-                    (0, core_1.setOutput)("skipped", true);
+                    (0, core_1.setOutput)('skipped', true);
                     return;
                 }
             }
-            (0, core_1.setOutput)("skipped", false);
+            (0, core_1.setOutput)('skipped', false);
         }
-        (0, core_1.setOutput)("tag", `v${releaseVersion}`);
+        (0, core_1.setOutput)('tag', `v${releaseVersion}`);
         yield (0, setVersion_1.setVersion)(releaseVersion);
         yield (0, pushBranch_1.pushBranch)();
         yield (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
-        if ((0, core_1.getBooleanInput)("update-shorthand-release")) {
+        if ((0, core_1.getBooleanInput)('update-shorthand-release')) {
             (0, updateTags_1.updateTags)(releaseVersion);
         }
     });
@@ -18744,25 +18744,25 @@ const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function pushBranch() {
     return __awaiter(this, void 0, void 0, function* () {
-        const dryRun = (0, core_1.getBooleanInput)("dry-run");
-        const gitBranchOutput = yield (0, exec_1.getExecOutput)("git", [
-            "branch",
-            "--show-current",
+        const dryRun = (0, core_1.getBooleanInput)('dry-run');
+        const gitBranchOutput = yield (0, exec_1.getExecOutput)('git', [
+            'branch',
+            '--show-current',
         ]);
         if (gitBranchOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitBranchOutput.stderr);
         }
         const branchName = gitBranchOutput.stdout;
-        if (branchName === "") {
+        if (branchName === '') {
             (0, core_1.error)(`No branch detected`);
             (0, core_1.error)(`Did you forget to set the ref input in the actions/checkout Action?`);
             throw new Error(`No branch detected`);
         }
         (0, core_1.notice)(`Current branch: ${branchName}`);
-        const gitPushOutput = yield (0, exec_1.getExecOutput)("git", [
-            "push",
-            "--follow-tags",
-            ...(dryRun ? ["--dry-run"] : []),
+        const gitPushOutput = yield (0, exec_1.getExecOutput)('git', [
+            'push',
+            '--follow-tags',
+            ...(dryRun ? ['--dry-run'] : []),
         ]);
         if (gitPushOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitPushOutput.stderr);
@@ -18791,22 +18791,22 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setVersion = exports.DEFAULT_WORKING_DIRECTORY = void 0;
 const node_fs_1 = __nccwpck_require__(7561);
 const node_path_1 = __nccwpck_require__(9411);
-const exec_1 = __nccwpck_require__(1514);
 const core_1 = __nccwpck_require__(2186);
+const exec_1 = __nccwpck_require__(1514);
 exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
 function setVersion(version) {
     return __awaiter(this, void 0, void 0, function* () {
-        const directory = (0, core_1.getInput)("directory");
+        const directory = (0, core_1.getInput)('directory');
         const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
-        const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, "package.json");
+        const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
         if ((0, node_fs_1.existsSync)(packageJsonPath)) {
-            const npmVersionOutput = yield (0, exec_1.getExecOutput)("npm", ["version", version]);
+            const npmVersionOutput = yield (0, exec_1.getExecOutput)('npm', ['version', version]);
             if (npmVersionOutput.exitCode !== 0) {
                 throw new Error(npmVersionOutput.stderr);
             }
         }
         else {
-            const gitTagOutput = yield (0, exec_1.getExecOutput)("git", ["tag", `v${version}`]);
+            const gitTagOutput = yield (0, exec_1.getExecOutput)('git', ['tag', `v${version}`]);
             if (gitTagOutput.exitCode !== 0) {
                 throw new Error(gitTagOutput.stderr);
             }
@@ -18840,7 +18840,7 @@ const semver_1 = __nccwpck_require__(1383);
 function updateTags(version) {
     return __awaiter(this, void 0, void 0, function* () {
         const semver = (0, semver_1.parse)(version);
-        const dryRun = (0, core_1.getBooleanInput)("dry-run");
+        const dryRun = (0, core_1.getBooleanInput)('dry-run');
         if (semver === null) {
             throw new Error(`Failed to parse the version as semver: ${version}`);
         }
@@ -18849,9 +18849,9 @@ function updateTags(version) {
                 "\nPlease don't set release-type to prerelease and update-shorthand-release to true at the same time");
         }
         if (semver.major > 0) {
-            const gitTagMajorOutput = yield (0, exec_1.getExecOutput)("git", [
-                "tag",
-                "-f",
+            const gitTagMajorOutput = yield (0, exec_1.getExecOutput)('git', [
+                'tag',
+                '-f',
                 `v${semver.major}`,
             ]);
             if (gitTagMajorOutput.exitCode !== 0) {
@@ -18863,9 +18863,9 @@ function updateTags(version) {
             (0, core_1.warning)(`Tag v0 is not allowed so it's not updated`);
         }
         if (semver.major > 0 || semver.minor > 0) {
-            const gitTagMinorOutput = yield (0, exec_1.getExecOutput)("git", [
-                "tag",
-                "-f",
+            const gitTagMinorOutput = yield (0, exec_1.getExecOutput)('git', [
+                'tag',
+                '-f',
                 `v${semver.major}.${semver.minor}`,
             ]);
             if (gitTagMinorOutput.exitCode !== 0) {
@@ -18876,11 +18876,11 @@ function updateTags(version) {
         else {
             (0, core_1.warning)(`Tag v0.0 is not allowed so it's not updated`);
         }
-        const gitPushOutput = yield (0, exec_1.getExecOutput)("git", [
-            "push",
-            "-f",
-            "--tags",
-            ...(dryRun ? ["--dry-run"] : []),
+        const gitPushOutput = yield (0, exec_1.getExecOutput)('git', [
+            'push',
+            '-f',
+            '--tags',
+            ...(dryRun ? ['--dry-run'] : []),
         ]);
         if (gitPushOutput.exitCode !== core_1.ExitCode.Success) {
             throw new Error(gitPushOutput.stderr);
