@@ -86,7 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ needs.release.outputs.tag }}
+          ref: '${{ inputs.dry-run ? github.ref : needs.release.outputs.tag }}'
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
