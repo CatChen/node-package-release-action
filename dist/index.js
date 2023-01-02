@@ -19326,7 +19326,7 @@ function getLatestReleaseTag(owner, repo, octokit) {
                     (0, core_1.warning)(`Latest release not found but pre-release may exist`);
                 }
                 else {
-                    throw new Error(`Unexpected status code: ${error.status}`);
+                    throw new Error(`Unexpected error: [${error.status}] ${error.message}`);
                 }
             }
             else {
