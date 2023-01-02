@@ -28,7 +28,7 @@ export async function getLatestReleaseTag(
       if (error.status === 404) {
         warning(`Latest release not found but pre-release may exist`);
       } else {
-        throw new Error(`Unexpected status code: ${error.status}`);
+        throw new Error(`Unexpected error: [${error.status}] ${error.message}`);
       }
     } else {
       throw error;
