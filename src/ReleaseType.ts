@@ -8,4 +8,4 @@ export const RELEASE_TYPES = [
   'prerelease',
 ] as const;
 
-export type ReleaseType = typeof RELEASE_TYPES[number];
+export type ReleaseType = (typeof RELEASE_TYPES)[number];
