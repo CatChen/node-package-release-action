@@ -394,9 +394,9 @@
     deprecation "^2.3.1"
 
 "@octokit/plugin-retry@^4.0.3":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-retry/-/plugin-retry-4.0.4.tgz#10ac08df821ef9269e6b8d69401aab8cb2ca7c45"
-  integrity sha512-d7qGFLR3AH+WbNEDUvBPgMc7wRCxU40FZyNXFFqs8ISw75ZYS5/P3ScggzU13dCoY0aywYDxKugGstQTwNgppA==
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-retry/-/plugin-retry-4.1.0.tgz#1acde73cd24fceb0168802a6498c37b76439a19b"
+  integrity sha512-8FklwHCdAUMl9hI35jF6lFru0GE/VamoV93gneyfagS3KMlD36+6RKY23o+SwnwIPPq9sIaej5qCKITMNNMf6g==
   dependencies:
     "@octokit/types" "^9.0.0"
     bottleneck "^2.15.3"
