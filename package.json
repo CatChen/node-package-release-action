@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/CatChen/node-package-release-action#readme",
   "devDependencies": {
-    "@octokit/graphql-schema": "^12.24.0",
+    "@octokit/graphql-schema": "^13.0.1",
     "@octokit/webhooks-definitions": "^3.67.3",
     "@serverless-guru/prettier-plugin-import-order": "^0.4.1",
     "@types/glob": "^8.0.0",
