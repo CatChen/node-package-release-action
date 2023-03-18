@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import { ExitCode, debug, getInput } from '@actions/core';
 import { getExecOutput } from '@actions/exec';
-import { sync } from 'glob';
+import { globSync } from 'glob';
 
 export async function checkDiff(tag: string) {
   const directory = getInput('directory');
@@ -11,7 +11,7 @@ export async function checkDiff(tag: string) {
     tag,
     '--name-only',
     '--',
-    ...sync(join(directory, diffTargets)),
+    ...globSync(join(directory, diffTargets)),
   ]);
   if (diffOutput.exitCode !== ExitCode.Success) {
     throw new Error(diffOutput.stderr);
