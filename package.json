@@ -22,6 +22,7 @@
     "url": "https://github.com/CatChen/node-package-release-action/issues"
   },
   "homepage": "https://github.com/CatChen/node-package-release-action#readme",
+  "funding": "https://github.com/CatChen/node-package-release-action?sponsor=1",
   "devDependencies": {
     "@octokit/graphql-schema": "^13.0.1",
     "@octokit/webhooks-definitions": "^3.67.3",
