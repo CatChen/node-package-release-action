@@ -134,6 +134,10 @@ jobs:
   codeql:
     needs: [accept-to-ship, pass-to-ship]
     if: ${{ !needs.accept-to-ship.outputs.skipped || !needs.pass-to-ship.outputs.skipped }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     uses: ./.github/workflows/codeql.yml
     with:
       ref: 'refs/heads/main'
