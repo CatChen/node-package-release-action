@@ -42,11 +42,14 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/build.yml
-    secrets: inherit
+    permissions:
+      pull-requests: write
+      contents: write
 
   test:
     uses: ./.github/workflows/test.yml
-    secrets: inherit
+    permissions:
+      contents: write
 
   eslint:
     uses: ./.github/workflows/eslint.yml

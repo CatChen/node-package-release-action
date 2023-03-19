@@ -5,10 +5,6 @@ on:
     branches: [main]
   pull_request:
     branches: [main, '[0-9]+-[0-9]+-*']
-  workflow_run:
-    workflows: ['Test for Dependabot']
-    types:
-      - completed
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -17,32 +13,18 @@ on:
         required: false
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   test-with-package:
     name: Test with Package
     concurrency: release
-    if: |-
-      ${{
-        !startsWith(github.head_ref, 'workflows/tests/') && ((
-          github.actor == 'dependabot[bot]' && 
-          github.event_name != 'push' &&
-          github.event_name != 'pull_request'
-        ) || (
-          github.actor != 'dependabot[bot]' &&
-          github.event_name != 'workflow_run'
-        ))
-      }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event_name != 'workflow_run' }}
         with:
           ref: ${{ inputs.ref }}
-
-      - uses: actions/checkout@v3
-        if: ${{ github.event_name == 'workflow_run' }}
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Create test branch
         env:
@@ -74,26 +56,12 @@ jobs:
     name: Test without Package
     needs: [test-with-package]
     concurrency: release
-    if: |-
-      ${{
-        !startsWith(github.head_ref, 'workflows/tests/') && ((
-          github.actor == 'dependabot[bot]' && 
-          github.event_name != 'push' &&
-          github.event_name != 'pull_request'
-        ) || (
-          github.actor != 'dependabot[bot]' &&
-          github.event_name != 'workflow_run'
-        ))
-      }}
+    if: ${{ !startsWith(github.head_ref, 'workflows/tests/') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event_name != 'workflow_run' }}
-
-      - uses: actions/checkout@v3
-        if: ${{ github.event_name == 'workflow_run' }}
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: ${{ inputs.ref }}
 
       - name: Create test branch
         env:
