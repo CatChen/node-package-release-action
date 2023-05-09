@@ -28,7 +28,7 @@
     "@octokit/webhooks-definitions": "^3.67.3",
     "@serverless-guru/prettier-plugin-import-order": "^0.4.1",
     "@types/glob": "^8.0.0",
-    "@types/node": "^18.11.9",
+    "@types/node": "^20.1.1",
     "@types/semver": "^7.3.13",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.1",
