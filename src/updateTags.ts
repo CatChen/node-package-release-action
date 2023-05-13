@@ -18,40 +18,27 @@ export async function updateTags(version: string) {
   }
 
   if (semver.major > 0) {
-    const gitTagMajorOutput = await getExecOutput('git', [
-      'tag',
-      '-f',
-      `v${semver.major}`,
-    ]);
-    if (gitTagMajorOutput.exitCode !== 0) {
-      throw new Error(gitTagMajorOutput.stderr);
-    }
+    await getExecOutput('git', ['tag', '-f', `v${semver.major}`]);
     notice(`Tag updated: v${semver.major}`);
   } else {
     warning(`Tag v0 is not allowed so it's not updated`);
   }
 
   if (semver.major > 0 || semver.minor > 0) {
-    const gitTagMinorOutput = await getExecOutput('git', [
+    await getExecOutput('git', [
       'tag',
       '-f',
       `v${semver.major}.${semver.minor}`,
     ]);
-    if (gitTagMinorOutput.exitCode !== 0) {
-      throw new Error(gitTagMinorOutput.stderr);
-    }
     notice(`Tag updated: v${semver.major}.${semver.minor}`);
   } else {
     warning(`Tag v0.0 is not allowed so it's not updated`);
   }
 
-  const gitPushOutput = await getExecOutput('git', [
+  await getExecOutput('git', [
     'push',
     '-f',
     '--tags',
     ...(dryRun ? ['--dry-run'] : []),
   ]);
-  if (gitPushOutput.exitCode !== ExitCode.Success) {
-    throw new Error(gitPushOutput.stderr);
-  }
 }

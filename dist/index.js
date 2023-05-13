@@ -16748,9 +16748,6 @@ function checkDiff(tag) {
             '--',
             ...(0, glob_1.globSync)((0, node_path_1.join)(directory, diffTargets)),
         ]);
-        if (diffOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(diffOutput.stderr);
-        }
         (0, core_1.debug)(`Diff against ${tag}:` +
             '\n' +
             diffOutput.stdout
@@ -16786,48 +16783,28 @@ exports.GITHUB_ACTION_USER_NAME = 'GitHub Action';
 exports.GITHUB_ACTION_USER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com';
 function configGit() {
     return __awaiter(this, void 0, void 0, function* () {
-        const gitConfigNameOutput = yield (0, exec_1.getExecOutput)('git', [
+        yield (0, exec_1.getExecOutput)('git', [
             'config',
             '--global',
             'user.name',
             exports.GITHUB_ACTION_USER_NAME,
         ]);
-        if (gitConfigNameOutput.exitCode !== 0) {
-            throw new Error(gitConfigNameOutput.stderr);
-        }
-        const gitConfigEmailOutput = yield (0, exec_1.getExecOutput)('git', [
+        yield (0, exec_1.getExecOutput)('git', [
             'config',
             '--global',
             'user.email',
             exports.GITHUB_ACTION_USER_EMAIL,
         ]);
-        if (gitConfigEmailOutput.exitCode !== 0) {
-            throw new Error(gitConfigEmailOutput.stderr);
-        }
-        const gitConfigPushDefaultOutput = yield (0, exec_1.getExecOutput)('git', [
-            'config',
-            '--global',
-            'push.default',
-            'simple',
-        ]);
-        if (gitConfigPushDefaultOutput.exitCode !== 0) {
-            throw new Error(gitConfigPushDefaultOutput.stderr);
-        }
-        const gitConfigPushAutoSetupRemoteOutput = yield (0, exec_1.getExecOutput)('git', [
+        yield (0, exec_1.getExecOutput)('git', ['config', '--global', 'push.default', 'simple']);
+        yield (0, exec_1.getExecOutput)('git', [
             'config',
             '--global',
             'push.autoSetupRemote',
             'true',
         ]);
-        if (gitConfigPushAutoSetupRemoteOutput.exitCode !== 0) {
-            throw new Error(gitConfigPushAutoSetupRemoteOutput.stderr);
-        }
         const githubToken = (0, core_1.getInput)('github-token');
         (0, core_1.exportVariable)('GH_TOKEN', githubToken);
-        const ghAuthOutput = yield (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
-        if (ghAuthOutput.exitCode !== 0) {
-            throw new Error(ghAuthOutput.stderr);
-        }
+        yield (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
     });
 }
 exports.configGit = configGit;
@@ -16896,34 +16873,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchEverything = void 0;
-const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 function fetchEverything() {
     return __awaiter(this, void 0, void 0, function* () {
-        const gitFetchTagsOutput = yield (0, exec_1.getExecOutput)('git', [
-            'fetch',
-            '--tags',
-            'origin',
-        ]);
-        if (gitFetchTagsOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(gitFetchTagsOutput.stderr);
-        }
+        yield (0, exec_1.getExecOutput)('git', ['fetch', '--tags', 'origin']);
         const gitIsShallowRepositoryOutput = yield (0, exec_1.getExecOutput)('git', [
             'rev-parse',
             '--is-shallow-repository',
         ]);
-        if (gitIsShallowRepositoryOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(gitIsShallowRepositoryOutput.stderr);
-        }
         if (gitIsShallowRepositoryOutput.stdout.trim() === 'true') {
-            const gitFetchUnshallowOutput = yield (0, exec_1.getExecOutput)('git', [
-                'fetch',
-                '--unshallow',
-                'origin',
-            ]);
-            if (gitFetchUnshallowOutput.exitCode !== core_1.ExitCode.Success) {
-                throw new Error(gitFetchUnshallowOutput.stderr);
-            }
+            yield (0, exec_1.getExecOutput)('git', ['fetch', '--unshallow', 'origin']);
         }
     });
 }
@@ -16991,15 +16950,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getAllGitTags = void 0;
-const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 const semver_1 = __nccwpck_require__(1383);
 function getAllGitTags() {
     return __awaiter(this, void 0, void 0, function* () {
         const tagOutput = yield (0, exec_1.getExecOutput)('git', ['tag']);
-        if (tagOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(tagOutput.stderr);
-        }
         const allTags = tagOutput.stdout.split('\n');
         const versionTags = allTags.filter((tag) => (0, semver_1.valid)(tag));
         return versionTags;
@@ -17363,16 +17318,10 @@ function setVersion(version) {
         const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
         const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
         if ((0, node_fs_1.existsSync)(packageJsonPath)) {
-            const npmVersionOutput = yield (0, exec_1.getExecOutput)('npm', ['version', version]);
-            if (npmVersionOutput.exitCode !== 0) {
-                throw new Error(npmVersionOutput.stderr);
-            }
+            yield (0, exec_1.getExecOutput)('npm', ['version', version]);
         }
         else {
-            const gitTagOutput = yield (0, exec_1.getExecOutput)('git', ['tag', `v${version}`]);
-            if (gitTagOutput.exitCode !== 0) {
-                throw new Error(gitTagOutput.stderr);
-            }
+            yield (0, exec_1.getExecOutput)('git', ['tag', `v${version}`]);
         }
         (0, core_1.notice)(`Tag created: v${version}`);
     });
@@ -17412,42 +17361,29 @@ function updateTags(version) {
                 "\nPlease don't set release-type to prerelease and update-shorthand-release to true at the same time");
         }
         if (semver.major > 0) {
-            const gitTagMajorOutput = yield (0, exec_1.getExecOutput)('git', [
-                'tag',
-                '-f',
-                `v${semver.major}`,
-            ]);
-            if (gitTagMajorOutput.exitCode !== 0) {
-                throw new Error(gitTagMajorOutput.stderr);
-            }
+            yield (0, exec_1.getExecOutput)('git', ['tag', '-f', `v${semver.major}`]);
             (0, core_1.notice)(`Tag updated: v${semver.major}`);
         }
         else {
             (0, core_1.warning)(`Tag v0 is not allowed so it's not updated`);
         }
         if (semver.major > 0 || semver.minor > 0) {
-            const gitTagMinorOutput = yield (0, exec_1.getExecOutput)('git', [
+            yield (0, exec_1.getExecOutput)('git', [
                 'tag',
                 '-f',
                 `v${semver.major}.${semver.minor}`,
             ]);
-            if (gitTagMinorOutput.exitCode !== 0) {
-                throw new Error(gitTagMinorOutput.stderr);
-            }
             (0, core_1.notice)(`Tag updated: v${semver.major}.${semver.minor}`);
         }
         else {
             (0, core_1.warning)(`Tag v0.0 is not allowed so it's not updated`);
         }
-        const gitPushOutput = yield (0, exec_1.getExecOutput)('git', [
+        yield (0, exec_1.getExecOutput)('git', [
             'push',
             '-f',
             '--tags',
             ...(dryRun ? ['--dry-run'] : []),
         ]);
-        if (gitPushOutput.exitCode !== core_1.ExitCode.Success) {
-            throw new Error(gitPushOutput.stderr);
-        }
     });
 }
 exports.updateTags = updateTags;
