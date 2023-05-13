@@ -1,4 +1,4 @@
-import { ExitCode, error, getBooleanInput, notice } from '@actions/core';
+import { error, getBooleanInput, notice } from '@actions/core';
 import { getExecOutput } from '@actions/exec';
 
 export async function pushBranch() {
@@ -8,9 +8,6 @@ export async function pushBranch() {
     'branch',
     '--show-current',
   ]);
-  if (gitBranchOutput.exitCode !== ExitCode.Success) {
-    throw new Error(gitBranchOutput.stderr);
-  }
   const branchName = gitBranchOutput.stdout;
   if (branchName === '') {
     error(`No branch detected`);
@@ -21,12 +18,9 @@ export async function pushBranch() {
   }
   notice(`Current branch: ${branchName}`);
 
-  const gitPushOutput = await getExecOutput('git', [
+  await getExecOutput('git', [
     'push',
     '--follow-tags',
     ...(dryRun ? ['--dry-run'] : []),
   ]);
-  if (gitPushOutput.exitCode !== ExitCode.Success) {
-    throw new Error(gitPushOutput.stderr);
-  }
 }
