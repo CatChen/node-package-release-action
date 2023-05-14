@@ -10,15 +10,9 @@ export async function setVersion(version: string) {
   const absoluteDirectory = resolve(DEFAULT_WORKING_DIRECTORY, directory);
   const packageJsonPath = resolve(absoluteDirectory, 'package.json');
   if (existsSync(packageJsonPath)) {
-    const npmVersionOutput = await getExecOutput('npm', ['version', version]);
-    if (npmVersionOutput.exitCode !== 0) {
-      throw new Error(npmVersionOutput.stderr);
-    }
+    await getExecOutput('npm', ['version', version]);
   } else {
-    const gitTagOutput = await getExecOutput('git', ['tag', `v${version}`]);
-    if (gitTagOutput.exitCode !== 0) {
-      throw new Error(gitTagOutput.stderr);
-    }
+    await getExecOutput('git', ['tag', `v${version}`]);
   }
   notice(`Tag created: v${version}`);
 }
