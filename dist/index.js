@@ -16340,7 +16340,8 @@ function findLastSameReleaseTypeVersion(releaseVersion, releaseType) {
         }
         let cursorTag = candidateTag;
         while (cursorTag !== undefined &&
-            (0, semver_1.diff)(cursorTag, releaseVersion) === releaseType) {
+            (0, semver_1.diff)(cursorTag, releaseVersion) === releaseType &&
+            (0, semver_1.inc)(cursorTag, releaseType) === releaseVersion) {
             candidateTag = cursorTag;
             cursorTag = sortedTags.shift();
         }

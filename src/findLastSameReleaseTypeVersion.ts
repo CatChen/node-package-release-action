@@ -1,5 +1,5 @@
 import { warning } from '@actions/core';
-import { ReleaseType, diff, gte, rsort } from 'semver';
+import { ReleaseType, diff, gte, rsort, inc } from 'semver';
 import { getAllGitTags } from './getAllGitTags';
 
 export async function findLastSameReleaseTypeVersion(
@@ -23,7 +23,8 @@ export async function findLastSameReleaseTypeVersion(
   let cursorTag = candidateTag;
   while (
     cursorTag !== undefined &&
-    diff(cursorTag, releaseVersion) === releaseType
+    diff(cursorTag, releaseVersion) === releaseType &&
+    inc(cursorTag, releaseType) === releaseVersion
   ) {
     candidateTag = cursorTag;
     cursorTag = sortedTags.shift();
