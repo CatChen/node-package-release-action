@@ -71,7 +71,7 @@ This controls whether the GitHub Release should be marked as a prerelease. The d
 
 ### `skip-if-no-diff`
 
-The controls whether this action should do nothing if there's no changes since last release of the same release type. If we release a minor upgrade to `1.2.3` or `1.2.3-4` it should be `1.2.4`. If `1.2.4` and `1.2.3` are the same and if `skip-if-no-diff` is set to `true`, `1.2.4` won't be created. `1.2.3-*` won't be used in the comparison. The default value is `false`.
+This controls whether this action should do nothing if there's no changes since last release of the same release type. If we release a minor upgrade to `1.2.3` or `1.2.4-0` it should be `1.2.4`. If `1.2.4` and `1.2.3` are the same and if `skip-if-no-diff` is set to `true`, `1.2.4` won't be created. `1.2.4-*` won't be used in the comparison. The default value is `false`.
 
 ### `diff-targets`
 
@@ -160,3 +160,22 @@ on:
 ### How do I know if `skip-if-no-diff` took effect?
 
 Use an output called `skipped`. See the first code example as a reference.
+
+### What does "last release of the same release type" mean for `skip-if-no-diff`?
+
+Let's say these are the releases returned from `git tag`:
+
+- `v1.0.0`
+- `v1.1.0`
+- `v1.2.0`
+- `v1.2.1`
+- `v1.2.2`
+- `v1.2.3`
+- `v1.2.4-0`
+- `v1.2.4-1`
+
+We are going to make a patch release. The release version will be `1.2.4`. `1.2.4`'s last release of the same type (patch) is `1.2.3`.
+
+Before `1.2.3` there is `1.2.2`, but `1.2.2` + `patch` doesn't equal to `1.2.4`. `1.2.2` isn't the last release of the same release type.
+
+After `1.2.3` there is `1.2.4-0` and `1.2.4-0` + `patch` equals to `1.2.4`. However, we should pick `1.2.3`. If there's any diff since `1.2.3` we should make the `1.2.4` release. When we say "release `1.2.4` as a patch if this patch contains any change", we mean changes since `1.2.3`. Even if there's no change since `1.2.4-0` we should still make the release. That's because `1.2.4-0` as a prepatch release may already contains all the changes we want so there's no change since `1.2.4-0`.
