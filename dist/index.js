@@ -16338,6 +16338,12 @@ function findLastSameReleaseTypeVersion(releaseVersion, releaseType) {
                 (0, semver_1.diff)(candidateTag, releaseVersion) !== releaseType)) {
             candidateTag = sortedTags.shift();
         }
+        let cursorTag = candidateTag;
+        while (cursorTag !== undefined &&
+            (0, semver_1.diff)(cursorTag, releaseVersion) === releaseType) {
+            candidateTag = cursorTag;
+            cursorTag = sortedTags.shift();
+        }
         if (candidateTag === undefined) {
             (0, core_1.warning)(`No tag found.`);
             return null;

@@ -20,6 +20,14 @@ export async function findLastSameReleaseTypeVersion(
   ) {
     candidateTag = sortedTags.shift();
   }
+  let cursorTag = candidateTag;
+  while (
+    cursorTag !== undefined &&
+    diff(cursorTag, releaseVersion) === releaseType
+  ) {
+    candidateTag = cursorTag;
+    cursorTag = sortedTags.shift();
+  }
   if (candidateTag === undefined) {
     warning(`No tag found.`);
     return null;
