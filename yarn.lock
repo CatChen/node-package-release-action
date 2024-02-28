@@ -508,10 +508,10 @@
   dependencies:
     "@octokit/types" "^12.0.0"
 
-"@octokit/plugin-retry@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-retry/-/plugin-retry-6.0.1.tgz#3257404f7cc418e1c1f13a7f2012c1db848b7693"
-  integrity sha512-SKs+Tz9oj0g4p28qkZwl/topGcb0k0qPNX/i7vBKmDsjoeqnVfFUquqrE/O9oJY7+oLzdCtkiWSXLpLjvl6uog==
+"@octokit/plugin-retry@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-retry/-/plugin-retry-7.0.2.tgz#8e0b027848fefc5108f19f7a79ea1d382b264ebf"
+  integrity sha512-CEjrcJ4yaGVokYSa2Ho1zvsBWa81Oerj3wSpBeNFL9od/WsO8/c3zdxnLThpWeQh0GWXY/7CkQugDDjJTPaiGQ==
   dependencies:
     "@octokit/request-error" "^5.0.0"
     "@octokit/types" "^12.0.0"
