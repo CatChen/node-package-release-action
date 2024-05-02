@@ -33,7 +33,7 @@ export default ts.config(
       'node_modules/**/*',
       'lib/**/*',
       'dist/**/*',
-      '.eslintrc.js',
+      'eslint.config.js',
     ],
     overrides: [
       {
