@@ -9,7 +9,7 @@
     "build": "yarn tsc",
     "package": "yarn ncc build src/index.ts --external eslint --source-map --license licenses.txt",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint -c .eslintrc.json src",
+    "lint": "eslint -c .eslintrc.js",
     "preversion": "rm -rf lib && rm -rf dist && yarn && yarn build && yarn package"
   },
   "repository": {
@@ -24,6 +24,8 @@
   "homepage": "https://github.com/CatChen/node-package-release-action#readme",
   "funding": "https://github.com/CatChen/node-package-release-action?sponsor=1",
   "devDependencies": {
+    "@eslint/eslintrc": "^3.0.2",
+    "@eslint/js": "^9.1.1",
     "@octokit/graphql-schema": "^15.1.2",
     "@octokit/webhooks-definitions": "^3.67.3",
     "@serverless-guru/prettier-plugin-import-order": "^0.4.1",
@@ -39,7 +41,8 @@
     "husky": "^9.0.11",
     "lint-staged": "^15.0.2",
     "prettier": "^3.0.2",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.2",
+    "typescript-eslint": "^7.8.0"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
@@ -49,6 +52,9 @@
     "@octokit/plugin-throttling": "^5.0.1",
     "glob": "^10.2.3",
     "semver": "^7.3.8"
+  },
+  "resolutions": {
+    "strip-ansi": "6.0.1"
   },
   "lint-staged": {
     "*.(ts,js)": "yarn lint --fix",
