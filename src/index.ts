@@ -31,7 +31,7 @@ async function run(): Promise<void> {
   const lastGitTag = await getLastGitTag();
   notice(`Last git tag: ${lastGitTag}`);
 
-  const packageVersion = await getPackageVersion();
+  const packageVersion = getPackageVersion();
   notice(`package.json version: ${packageVersion}`);
 
   const { owner, repo } = context.repo;
@@ -90,8 +90,8 @@ async function run(): Promise<void> {
   await createRelease(owner, repo, releaseVersion, octokit);
 
   if (getBooleanInput('update-shorthand-release')) {
-    updateTags(releaseVersion);
+    await updateTags(releaseVersion);
   }
 }
 
-run();
+run().catch((error: Error) => setFailed(error));
