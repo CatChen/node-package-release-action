@@ -17,7 +17,7 @@ export default ts.config(
   ...compat.config({
     env: {
       browser: true,
-      es2021: true,
+      es2022: true,
       node: true,
     },
     extends: ['eslint:recommended', 'plugin:prettier/recommended'],

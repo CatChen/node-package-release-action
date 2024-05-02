@@ -36863,43 +36863,32 @@ exports.RELEASE_TYPES = [
 /***/ }),
 
 /***/ 6073:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.checkDiff = void 0;
 const node_path_1 = __nccwpck_require__(9411);
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 const glob_1 = __nccwpck_require__(8211);
-function checkDiff(tag) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const directory = (0, core_1.getInput)('directory');
-        const diffTargets = (0, core_1.getInput)('diff-targets');
-        const diffOutput = yield (0, exec_1.getExecOutput)('git', [
-            'diff',
-            tag,
-            '--name-only',
-            '--',
-            ...(0, glob_1.globSync)((0, node_path_1.join)(directory, diffTargets)),
-        ]);
-        (0, core_1.debug)(`Diff against ${tag}:` +
-            '\n' +
-            diffOutput.stdout
-                .split('\n')
-                .map((line) => `  ${line}`)
-                .join('\n'));
-        return diffOutput.stdout.split('\n').join('') !== '';
-    });
+async function checkDiff(tag) {
+    const directory = (0, core_1.getInput)('directory');
+    const diffTargets = (0, core_1.getInput)('diff-targets');
+    const diffOutput = await (0, exec_1.getExecOutput)('git', [
+        'diff',
+        tag,
+        '--name-only',
+        '--',
+        ...(0, glob_1.globSync)((0, node_path_1.join)(directory, diffTargets)),
+    ]);
+    (0, core_1.debug)(`Diff against ${tag}:` +
+        '\n' +
+        diffOutput.stdout
+            .split('\n')
+            .map((line) => `  ${line}`)
+            .join('\n'));
+    return diffOutput.stdout.split('\n').join('') !== '';
 }
 exports.checkDiff = checkDiff;
 
@@ -36907,49 +36896,38 @@ exports.checkDiff = checkDiff;
 /***/ }),
 
 /***/ 8695:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.configGit = exports.GITHUB_ACTION_USER_EMAIL = exports.GITHUB_ACTION_USER_NAME = void 0;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 exports.GITHUB_ACTION_USER_NAME = 'GitHub Action';
 exports.GITHUB_ACTION_USER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com';
-function configGit() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield (0, exec_1.getExecOutput)('git', [
-            'config',
-            '--global',
-            'user.name',
-            exports.GITHUB_ACTION_USER_NAME,
-        ]);
-        yield (0, exec_1.getExecOutput)('git', [
-            'config',
-            '--global',
-            'user.email',
-            exports.GITHUB_ACTION_USER_EMAIL,
-        ]);
-        yield (0, exec_1.getExecOutput)('git', ['config', '--global', 'push.default', 'simple']);
-        yield (0, exec_1.getExecOutput)('git', [
-            'config',
-            '--global',
-            'push.autoSetupRemote',
-            'true',
-        ]);
-        const githubToken = (0, core_1.getInput)('github-token');
-        (0, core_1.exportVariable)('GH_TOKEN', githubToken);
-        yield (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
-    });
+async function configGit() {
+    await (0, exec_1.getExecOutput)('git', [
+        'config',
+        '--global',
+        'user.name',
+        exports.GITHUB_ACTION_USER_NAME,
+    ]);
+    await (0, exec_1.getExecOutput)('git', [
+        'config',
+        '--global',
+        'user.email',
+        exports.GITHUB_ACTION_USER_EMAIL,
+    ]);
+    await (0, exec_1.getExecOutput)('git', ['config', '--global', 'push.default', 'simple']);
+    await (0, exec_1.getExecOutput)('git', [
+        'config',
+        '--global',
+        'push.autoSetupRemote',
+        'true',
+    ]);
+    const githubToken = (0, core_1.getInput)('github-token');
+    (0, core_1.exportVariable)('GH_TOKEN', githubToken);
+    await (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
 }
 exports.configGit = configGit;
 
@@ -36957,44 +36935,33 @@ exports.configGit = configGit;
 /***/ }),
 
 /***/ 4257:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createRelease = void 0;
 const core_1 = __nccwpck_require__(2186);
-function createRelease(owner, repo, version, octokit) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const dryRun = (0, core_1.getBooleanInput)('dry-run');
-        if (dryRun) {
-            (0, core_1.notice)('Release creation is skipped in dry run');
-            const response = yield octokit.rest.repos.generateReleaseNotes({
-                owner,
-                repo,
-                tag_name: `v${version}`,
-                name: `v${version}`,
-            });
-            (0, core_1.info)(`Release name: ${response.data.name}`);
-            (0, core_1.info)('Release body:\n' + response.data.body + '\n\n');
-            return;
-        }
-        yield octokit.rest.repos.createRelease({
+async function createRelease(owner, repo, version, octokit) {
+    const dryRun = (0, core_1.getBooleanInput)('dry-run');
+    if (dryRun) {
+        (0, core_1.notice)('Release creation is skipped in dry run');
+        const response = await octokit.rest.repos.generateReleaseNotes({
             owner,
             repo,
             tag_name: `v${version}`,
             name: `v${version}`,
-            generate_release_notes: true,
-            prerelease: (0, core_1.getBooleanInput)('prerelease'),
         });
+        (0, core_1.info)(`Release name: ${response.data.name}`);
+        (0, core_1.info)('Release body:\n' + response.data.body + '\n\n');
+        return;
+    }
+    await octokit.rest.repos.createRelease({
+        owner,
+        repo,
+        tag_name: `v${version}`,
+        name: `v${version}`,
+        generate_release_notes: true,
+        prerelease: (0, core_1.getBooleanInput)('prerelease'),
     });
 }
 exports.createRelease = createRelease;
@@ -37003,32 +36970,21 @@ exports.createRelease = createRelease;
 /***/ }),
 
 /***/ 1673:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchEverything = void 0;
 const exec_1 = __nccwpck_require__(1514);
-function fetchEverything() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield (0, exec_1.getExecOutput)('git', ['fetch', '--tags', 'origin']);
-        const gitIsShallowRepositoryOutput = yield (0, exec_1.getExecOutput)('git', [
-            'rev-parse',
-            '--is-shallow-repository',
-        ]);
-        if (gitIsShallowRepositoryOutput.stdout.trim() === 'true') {
-            yield (0, exec_1.getExecOutput)('git', ['fetch', '--unshallow', 'origin']);
-        }
-    });
+async function fetchEverything() {
+    await (0, exec_1.getExecOutput)('git', ['fetch', '--tags', 'origin']);
+    const gitIsShallowRepositoryOutput = await (0, exec_1.getExecOutput)('git', [
+        'rev-parse',
+        '--is-shallow-repository',
+    ]);
+    if (gitIsShallowRepositoryOutput.stdout.trim() === 'true') {
+        await (0, exec_1.getExecOutput)('git', ['fetch', '--unshallow', 'origin']);
+    }
 }
 exports.fetchEverything = fetchEverything;
 
@@ -37036,50 +36992,39 @@ exports.fetchEverything = fetchEverything;
 /***/ }),
 
 /***/ 374:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.findLastSameReleaseTypeVersion = void 0;
 const core_1 = __nccwpck_require__(2186);
 const semver_1 = __nccwpck_require__(1383);
 const getAllGitTags_1 = __nccwpck_require__(4484);
-function findLastSameReleaseTypeVersion(releaseVersion, releaseType) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const versionTags = yield (0, getAllGitTags_1.getAllGitTags)();
-        if (versionTags.length === 0) {
-            (0, core_1.warning)(`No tag found.`);
-            return null;
-        }
-        const sortedTags = (0, semver_1.rsort)(versionTags);
-        let candidateTag = sortedTags.shift();
-        while (candidateTag !== undefined &&
-            ((0, semver_1.gte)(candidateTag, releaseVersion) ||
-                (0, semver_1.diff)(candidateTag, releaseVersion) !== releaseType)) {
-            candidateTag = sortedTags.shift();
-        }
-        let cursorTag = candidateTag;
-        while (cursorTag !== undefined &&
-            (0, semver_1.diff)(cursorTag, releaseVersion) === releaseType &&
-            (0, semver_1.inc)(cursorTag, releaseType) === releaseVersion) {
-            candidateTag = cursorTag;
-            cursorTag = sortedTags.shift();
-        }
-        if (candidateTag === undefined) {
-            (0, core_1.warning)(`No tag found.`);
-            return null;
-        }
-        return candidateTag;
-    });
+async function findLastSameReleaseTypeVersion(releaseVersion, releaseType) {
+    const versionTags = await (0, getAllGitTags_1.getAllGitTags)();
+    if (versionTags.length === 0) {
+        (0, core_1.warning)(`No tag found.`);
+        return null;
+    }
+    const sortedTags = (0, semver_1.rsort)(versionTags);
+    let candidateTag = sortedTags.shift();
+    while (candidateTag !== undefined &&
+        ((0, semver_1.gte)(candidateTag, releaseVersion) ||
+            (0, semver_1.diff)(candidateTag, releaseVersion) !== releaseType)) {
+        candidateTag = sortedTags.shift();
+    }
+    let cursorTag = candidateTag;
+    while (cursorTag !== undefined &&
+        (0, semver_1.diff)(cursorTag, releaseVersion) === releaseType &&
+        (0, semver_1.inc)(cursorTag, releaseType) === releaseVersion) {
+        candidateTag = cursorTag;
+        cursorTag = sortedTags.shift();
+    }
+    if (candidateTag === undefined) {
+        (0, core_1.warning)(`No tag found.`);
+        return null;
+    }
+    return candidateTag;
 }
 exports.findLastSameReleaseTypeVersion = findLastSameReleaseTypeVersion;
 
@@ -37087,29 +37032,18 @@ exports.findLastSameReleaseTypeVersion = findLastSameReleaseTypeVersion;
 /***/ }),
 
 /***/ 4484:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getAllGitTags = void 0;
 const exec_1 = __nccwpck_require__(1514);
 const semver_1 = __nccwpck_require__(1383);
-function getAllGitTags() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const tagOutput = yield (0, exec_1.getExecOutput)('git', ['tag']);
-        const allTags = tagOutput.stdout.split('\n');
-        const versionTags = allTags.filter((tag) => (0, semver_1.valid)(tag));
-        return versionTags;
-    });
+async function getAllGitTags() {
+    const tagOutput = await (0, exec_1.getExecOutput)('git', ['tag']);
+    const allTags = tagOutput.stdout.split('\n');
+    const versionTags = allTags.filter((tag) => (0, semver_1.valid)(tag));
+    return versionTags;
 }
 exports.getAllGitTags = getAllGitTags;
 
@@ -37117,34 +37051,23 @@ exports.getAllGitTags = getAllGitTags;
 /***/ }),
 
 /***/ 6650:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLastGitTag = void 0;
 const core_1 = __nccwpck_require__(2186);
 const semver_1 = __nccwpck_require__(1383);
 const getAllGitTags_1 = __nccwpck_require__(4484);
-function getLastGitTag() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const versionTags = yield (0, getAllGitTags_1.getAllGitTags)();
-        if (versionTags.length === 0) {
-            (0, core_1.warning)(`No tag found.`);
-            return null;
-        }
-        const sortedTags = (0, semver_1.rsort)(versionTags);
-        const lastTag = sortedTags[0];
-        return lastTag;
-    });
+async function getLastGitTag() {
+    const versionTags = await (0, getAllGitTags_1.getAllGitTags)();
+    if (versionTags.length === 0) {
+        (0, core_1.warning)(`No tag found.`);
+        return null;
+    }
+    const sortedTags = (0, semver_1.rsort)(versionTags);
+    const lastTag = sortedTags[0];
+    return lastTag;
 }
 exports.getLastGitTag = getLastGitTag;
 
@@ -37152,70 +37075,59 @@ exports.getLastGitTag = getLastGitTag;
 /***/ }),
 
 /***/ 8594:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getLatestReleaseTag = void 0;
 const core_1 = __nccwpck_require__(2186);
 const request_error_1 = __nccwpck_require__(537);
 const semver_1 = __nccwpck_require__(1383);
-function getLatestReleaseTag(owner, repo, octokit) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const latestReleaseResponse = yield octokit.rest.repos.getLatestRelease({
-                owner,
-                repo,
-            });
-            // Latest release doesn't include pre-release.
-            const latestRelease = latestReleaseResponse.data;
-            if ((0, semver_1.valid)(latestRelease.tag_name) !== null) {
-                return latestRelease.tag_name;
-            }
-            else {
-                (0, core_1.warning)(`Latest release tag is not a valid semver: ${latestRelease.tag_name}`);
-            }
-        }
-        catch (error) {
-            if (error instanceof request_error_1.RequestError) {
-                if (error.status === 404) {
-                    (0, core_1.warning)(`Latest release not found but pre-release may exist`);
-                }
-                else {
-                    throw new Error(`Unexpected error: [${error.status}] ${error.message}`);
-                }
-            }
-            else {
-                throw error;
-            }
-        }
-        const releasesResponse = yield octokit.rest.repos.listReleases({
+async function getLatestReleaseTag(owner, repo, octokit) {
+    try {
+        const latestReleaseResponse = await octokit.rest.repos.getLatestRelease({
             owner,
             repo,
         });
-        if (releasesResponse.data.length === 0) {
-            (0, core_1.warning)(`No release found`);
-            return null;
+        // Latest release doesn't include pre-release.
+        const latestRelease = latestReleaseResponse.data;
+        if ((0, semver_1.valid)(latestRelease.tag_name) !== null) {
+            return latestRelease.tag_name;
         }
-        const releaseTags = releasesResponse.data.map((release) => release.tag_name);
-        const validReleaseTags = releaseTags.filter((tag) => (0, semver_1.valid)(tag) !== null);
-        if (validReleaseTags.length === 0) {
-            (0, core_1.warning)(`No valid release tag found`);
-            (0, core_1.debug)('Release tags:\n' + releaseTags.map((tag) => `  ${tag}`).join('\n'));
-            return null;
+        else {
+            (0, core_1.warning)(`Latest release tag is not a valid semver: ${latestRelease.tag_name}`);
         }
-        const sortedReleaseTags = (0, semver_1.rsort)(validReleaseTags);
-        return sortedReleaseTags[0];
+    }
+    catch (error) {
+        if (error instanceof request_error_1.RequestError) {
+            if (error.status === 404) {
+                (0, core_1.warning)(`Latest release not found but pre-release may exist`);
+            }
+            else {
+                throw new Error(`Unexpected error: [${error.status}] ${error.message}`);
+            }
+        }
+        else {
+            throw error;
+        }
+    }
+    const releasesResponse = await octokit.rest.repos.listReleases({
+        owner,
+        repo,
     });
+    if (releasesResponse.data.length === 0) {
+        (0, core_1.warning)(`No release found`);
+        return null;
+    }
+    const releaseTags = releasesResponse.data.map((release) => release.tag_name);
+    const validReleaseTags = releaseTags.filter((tag) => (0, semver_1.valid)(tag) !== null);
+    if (validReleaseTags.length === 0) {
+        (0, core_1.warning)(`No valid release tag found`);
+        (0, core_1.debug)('Release tags:\n' + releaseTags.map((tag) => `  ${tag}`).join('\n'));
+        return null;
+    }
+    const sortedReleaseTags = (0, semver_1.rsort)(validReleaseTags);
+    return sortedReleaseTags[0];
 }
 exports.getLatestReleaseTag = getLatestReleaseTag;
 
@@ -37270,18 +37182,9 @@ exports.getOctokit = getOctokit;
 /***/ }),
 
 /***/ 4528:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getPackageVersion = exports.DEFAULT_WORKING_DIRECTORY = void 0;
 const module_1 = __nccwpck_require__(8188);
@@ -37290,147 +37193,49 @@ const node_path_1 = __nccwpck_require__(9411);
 const core_1 = __nccwpck_require__(2186);
 exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
 function getPackageVersion() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const directory = (0, core_1.getInput)('directory');
-        const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
-        const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
-        if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
-            (0, core_1.warning)(`package.json cannot be found at ${packageJsonPath}`);
-            return null;
-        }
-        const require = (0, module_1.createRequire)(absoluteDirectory);
-        (0, core_1.notice)(`Using package.json from: ${packageJsonPath}`);
-        const { version } = require(packageJsonPath);
-        return String(version);
-    });
+    const directory = (0, core_1.getInput)('directory');
+    const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
+    const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
+    if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
+        (0, core_1.warning)(`package.json cannot be found at ${packageJsonPath}`);
+        return null;
+    }
+    const require = (0, module_1.createRequire)(absoluteDirectory);
+    (0, core_1.notice)(`Using package.json from: ${packageJsonPath}`);
+    const { version } = require(packageJsonPath);
+    return String(version);
 }
 exports.getPackageVersion = getPackageVersion;
 
 
 /***/ }),
 
-/***/ 6144:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __nccwpck_require__(2186);
-const github_1 = __nccwpck_require__(5438);
-const semver_1 = __nccwpck_require__(1383);
-const ReleaseType_1 = __nccwpck_require__(9750);
-const checkDiff_1 = __nccwpck_require__(6073);
-const configGit_1 = __nccwpck_require__(8695);
-const createRelease_1 = __nccwpck_require__(4257);
-const fetchEverything_1 = __nccwpck_require__(1673);
-const findLastSameReleaseTypeVersion_1 = __nccwpck_require__(374);
-const getLastGitTag_1 = __nccwpck_require__(6650);
-const getLatestReleaseTag_1 = __nccwpck_require__(8594);
-const getOctokit_1 = __nccwpck_require__(8442);
-const getPackageVersion_1 = __nccwpck_require__(4528);
-const pushBranch_1 = __nccwpck_require__(7200);
-const setVersion_1 = __nccwpck_require__(9556);
-const updateTags_1 = __nccwpck_require__(1443);
-const DEFAULT_VERSION = '0.1.0';
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield (0, configGit_1.configGit)();
-        yield (0, fetchEverything_1.fetchEverything)();
-        const lastGitTag = yield (0, getLastGitTag_1.getLastGitTag)();
-        (0, core_1.notice)(`Last git tag: ${lastGitTag}`);
-        const packageVersion = yield (0, getPackageVersion_1.getPackageVersion)();
-        (0, core_1.notice)(`package.json version: ${packageVersion}`);
-        const { owner, repo } = github_1.context.repo;
-        const octokit = (0, getOctokit_1.getOctokit)();
-        const latestReleaseTag = yield (0, getLatestReleaseTag_1.getLatestReleaseTag)(owner, repo, octokit);
-        (0, core_1.notice)(`Latest release tag: ${latestReleaseTag}`);
-        const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap((version) => (version === null ? [] : [version]));
-        const sortedVersions = (0, semver_1.rsort)(versions);
-        const highestVersion = sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
-        (0, core_1.notice)(`Highest version: ${highestVersion}`);
-        const releaseType = ReleaseType_1.RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)('release-type').toLowerCase() === releaseType);
-        if (releaseType === undefined) {
-            (0, core_1.setFailed)(`Invalid release-type input: ${(0, core_1.getInput)('release-type')}`);
-            return;
-        }
-        const releaseVersion = (0, semver_1.inc)(highestVersion, releaseType);
-        if (releaseVersion === null) {
-            (0, core_1.setFailed)('Failed to compute release version');
-            return;
-        }
-        (0, core_1.notice)(`Release version: ${releaseVersion}`);
-        if ((0, core_1.getBooleanInput)('skip-if-no-diff')) {
-            const lastSameReleaseTypeVersion = yield (0, findLastSameReleaseTypeVersion_1.findLastSameReleaseTypeVersion)(releaseVersion, releaseType);
-            (0, core_1.notice)(`Last same release type version: ${lastSameReleaseTypeVersion}`);
-            if (lastSameReleaseTypeVersion !== null) {
-                const diff = yield (0, checkDiff_1.checkDiff)(lastSameReleaseTypeVersion);
-                if (!diff) {
-                    (0, core_1.notice)(`Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`);
-                    (0, core_1.setOutput)('skipped', true);
-                    return;
-                }
-            }
-            (0, core_1.setOutput)('skipped', false);
-        }
-        (0, core_1.setOutput)('tag', `v${releaseVersion}`);
-        yield (0, setVersion_1.setVersion)(releaseVersion);
-        yield (0, pushBranch_1.pushBranch)();
-        yield (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
-        if ((0, core_1.getBooleanInput)('update-shorthand-release')) {
-            (0, updateTags_1.updateTags)(releaseVersion);
-        }
-    });
-}
-run();
-
-
-/***/ }),
-
 /***/ 7200:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.pushBranch = void 0;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
-function pushBranch() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const dryRun = (0, core_1.getBooleanInput)('dry-run');
-        const gitBranchOutput = yield (0, exec_1.getExecOutput)('git', [
-            'branch',
-            '--show-current',
-        ]);
-        const branchName = gitBranchOutput.stdout;
-        if (branchName === '') {
-            (0, core_1.error)(`No branch detected`);
-            (0, core_1.error)(`Did you forget to set the ref input in the actions/checkout Action?`);
-            throw new Error(`No branch detected`);
-        }
-        (0, core_1.notice)(`Current branch: ${branchName}`);
-        yield (0, exec_1.getExecOutput)('git', [
-            'push',
-            '--follow-tags',
-            ...(dryRun ? ['--dry-run'] : []),
-        ]);
-    });
+async function pushBranch() {
+    const dryRun = (0, core_1.getBooleanInput)('dry-run');
+    const gitBranchOutput = await (0, exec_1.getExecOutput)('git', [
+        'branch',
+        '--show-current',
+    ]);
+    const branchName = gitBranchOutput.stdout;
+    if (branchName === '') {
+        (0, core_1.error)(`No branch detected`);
+        (0, core_1.error)(`Did you forget to set the ref input in the actions/checkout Action?`);
+        throw new Error(`No branch detected`);
+    }
+    (0, core_1.notice)(`Current branch: ${branchName}`);
+    await (0, exec_1.getExecOutput)('git', [
+        'push',
+        '--follow-tags',
+        ...(dryRun ? ['--dry-run'] : []),
+    ]);
 }
 exports.pushBranch = pushBranch;
 
@@ -37438,18 +37243,9 @@ exports.pushBranch = pushBranch;
 /***/ }),
 
 /***/ 9556:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setVersion = exports.DEFAULT_WORKING_DIRECTORY = void 0;
 const node_fs_1 = __nccwpck_require__(7561);
@@ -37457,19 +37253,17 @@ const node_path_1 = __nccwpck_require__(9411);
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
-function setVersion(version) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const directory = (0, core_1.getInput)('directory');
-        const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
-        const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
-        if ((0, node_fs_1.existsSync)(packageJsonPath)) {
-            yield (0, exec_1.getExecOutput)('npm', ['version', version]);
-        }
-        else {
-            yield (0, exec_1.getExecOutput)('git', ['tag', `v${version}`]);
-        }
-        (0, core_1.notice)(`Tag created: v${version}`);
-    });
+async function setVersion(version) {
+    const directory = (0, core_1.getInput)('directory');
+    const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
+    const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
+    if ((0, node_fs_1.existsSync)(packageJsonPath)) {
+        await (0, exec_1.getExecOutput)('npm', ['version', version]);
+    }
+    else {
+        await (0, exec_1.getExecOutput)('git', ['tag', `v${version}`]);
+    }
+    (0, core_1.notice)(`Tag created: v${version}`);
 }
 exports.setVersion = setVersion;
 
@@ -37477,59 +37271,48 @@ exports.setVersion = setVersion;
 /***/ }),
 
 /***/ 1443:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updateTags = void 0;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 const semver_1 = __nccwpck_require__(1383);
-function updateTags(version) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const semver = (0, semver_1.parse)(version);
-        const dryRun = (0, core_1.getBooleanInput)('dry-run');
-        if (semver === null) {
-            throw new Error(`Failed to parse the version as semver: ${version}`);
-        }
-        if (semver.prerelease.length !== 0) {
-            (0, core_1.warning)(`Pre-release version should not be used to update shorthand tags: ${version}` +
-                "\nPlease don't set release-type to prerelease and update-shorthand-release to true at the same time");
-        }
-        if (semver.major > 0) {
-            yield (0, exec_1.getExecOutput)('git', ['tag', '-f', `v${semver.major}`]);
-            (0, core_1.notice)(`Tag updated: v${semver.major}`);
-        }
-        else {
-            (0, core_1.warning)(`Tag v0 is not allowed so it's not updated`);
-        }
-        if (semver.major > 0 || semver.minor > 0) {
-            yield (0, exec_1.getExecOutput)('git', [
-                'tag',
-                '-f',
-                `v${semver.major}.${semver.minor}`,
-            ]);
-            (0, core_1.notice)(`Tag updated: v${semver.major}.${semver.minor}`);
-        }
-        else {
-            (0, core_1.warning)(`Tag v0.0 is not allowed so it's not updated`);
-        }
-        yield (0, exec_1.getExecOutput)('git', [
-            'push',
+async function updateTags(version) {
+    const semver = (0, semver_1.parse)(version);
+    const dryRun = (0, core_1.getBooleanInput)('dry-run');
+    if (semver === null) {
+        throw new Error(`Failed to parse the version as semver: ${version}`);
+    }
+    if (semver.prerelease.length !== 0) {
+        (0, core_1.warning)(`Pre-release version should not be used to update shorthand tags: ${version}` +
+            "\nPlease don't set release-type to prerelease and update-shorthand-release to true at the same time");
+    }
+    if (semver.major > 0) {
+        await (0, exec_1.getExecOutput)('git', ['tag', '-f', `v${semver.major}`]);
+        (0, core_1.notice)(`Tag updated: v${semver.major}`);
+    }
+    else {
+        (0, core_1.warning)(`Tag v0 is not allowed so it's not updated`);
+    }
+    if (semver.major > 0 || semver.minor > 0) {
+        await (0, exec_1.getExecOutput)('git', [
+            'tag',
             '-f',
-            '--tags',
-            ...(dryRun ? ['--dry-run'] : []),
+            `v${semver.major}.${semver.minor}`,
         ]);
-    });
+        (0, core_1.notice)(`Tag updated: v${semver.major}.${semver.minor}`);
+    }
+    else {
+        (0, core_1.warning)(`Tag v0.0 is not allowed so it's not updated`);
+    }
+    await (0, exec_1.getExecOutput)('git', [
+        'push',
+        '-f',
+        '--tags',
+        ...(dryRun ? ['--dry-run'] : []),
+    ]);
 }
 exports.updateTags = updateTags;
 
@@ -45573,11 +45356,81 @@ exports.LRUCache = LRUCache;
 /******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
 /******/ 
 /************************************************************************/
-/******/ 
-/******/ // startup
-/******/ // Load entry module and return exports
-/******/ // This entry module is referenced by other modules so it can't be inlined
-/******/ var __webpack_exports__ = __nccwpck_require__(6144);
-/******/ 
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+var exports = __webpack_exports__;
+
+Object.defineProperty(exports, "X", ({ value: true }));
+const core_1 = __nccwpck_require__(2186);
+const github_1 = __nccwpck_require__(5438);
+const semver_1 = __nccwpck_require__(1383);
+const ReleaseType_1 = __nccwpck_require__(9750);
+const checkDiff_1 = __nccwpck_require__(6073);
+const configGit_1 = __nccwpck_require__(8695);
+const createRelease_1 = __nccwpck_require__(4257);
+const fetchEverything_1 = __nccwpck_require__(1673);
+const findLastSameReleaseTypeVersion_1 = __nccwpck_require__(374);
+const getLastGitTag_1 = __nccwpck_require__(6650);
+const getLatestReleaseTag_1 = __nccwpck_require__(8594);
+const getOctokit_1 = __nccwpck_require__(8442);
+const getPackageVersion_1 = __nccwpck_require__(4528);
+const pushBranch_1 = __nccwpck_require__(7200);
+const setVersion_1 = __nccwpck_require__(9556);
+const updateTags_1 = __nccwpck_require__(1443);
+const DEFAULT_VERSION = '0.1.0';
+async function run() {
+    await (0, configGit_1.configGit)();
+    await (0, fetchEverything_1.fetchEverything)();
+    const lastGitTag = await (0, getLastGitTag_1.getLastGitTag)();
+    (0, core_1.notice)(`Last git tag: ${lastGitTag}`);
+    const packageVersion = (0, getPackageVersion_1.getPackageVersion)();
+    (0, core_1.notice)(`package.json version: ${packageVersion}`);
+    const { owner, repo } = github_1.context.repo;
+    const octokit = (0, getOctokit_1.getOctokit)();
+    const latestReleaseTag = await (0, getLatestReleaseTag_1.getLatestReleaseTag)(owner, repo, octokit);
+    (0, core_1.notice)(`Latest release tag: ${latestReleaseTag}`);
+    const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap((version) => (version === null ? [] : [version]));
+    const sortedVersions = (0, semver_1.rsort)(versions);
+    const highestVersion = sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
+    (0, core_1.notice)(`Highest version: ${highestVersion}`);
+    const releaseType = ReleaseType_1.RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)('release-type').toLowerCase() === releaseType);
+    if (releaseType === undefined) {
+        (0, core_1.setFailed)(`Invalid release-type input: ${(0, core_1.getInput)('release-type')}`);
+        return;
+    }
+    const releaseVersion = (0, semver_1.inc)(highestVersion, releaseType);
+    if (releaseVersion === null) {
+        (0, core_1.setFailed)('Failed to compute release version');
+        return;
+    }
+    (0, core_1.notice)(`Release version: ${releaseVersion}`);
+    if ((0, core_1.getBooleanInput)('skip-if-no-diff')) {
+        const lastSameReleaseTypeVersion = await (0, findLastSameReleaseTypeVersion_1.findLastSameReleaseTypeVersion)(releaseVersion, releaseType);
+        (0, core_1.notice)(`Last same release type version: ${lastSameReleaseTypeVersion}`);
+        if (lastSameReleaseTypeVersion !== null) {
+            const diff = await (0, checkDiff_1.checkDiff)(lastSameReleaseTypeVersion);
+            if (!diff) {
+                (0, core_1.notice)(`Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`);
+                (0, core_1.setOutput)('skipped', true);
+                return;
+            }
+        }
+        (0, core_1.setOutput)('skipped', false);
+    }
+    (0, core_1.setOutput)('tag', `v${releaseVersion}`);
+    await (0, setVersion_1.setVersion)(releaseVersion);
+    await (0, pushBranch_1.pushBranch)();
+    await (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
+    if ((0, core_1.getBooleanInput)('update-shorthand-release')) {
+        await (0, updateTags_1.updateTags)(releaseVersion);
+    }
+}
+run().catch((error) => (0, core_1.setFailed)(error));
+
+})();
+
+var __webpack_exports___esModule = __webpack_exports__.X;
+export { __webpack_exports___esModule as __esModule };
 
 //# sourceMappingURL=index.js.map
