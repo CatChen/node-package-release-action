@@ -5,7 +5,7 @@ import { getInput, notice, warning } from '@actions/core';
 
 export const DEFAULT_WORKING_DIRECTORY = process.cwd();
 
-export async function getPackageVersion() {
+export function getPackageVersion() {
   const directory = getInput('directory');
   const absoluteDirectory = resolve(DEFAULT_WORKING_DIRECTORY, directory);
   const packageJsonPath = resolve(absoluteDirectory, 'package.json');
@@ -15,7 +15,9 @@ export async function getPackageVersion() {
   }
   const require = createRequire(absoluteDirectory);
   notice(`Using package.json from: ${packageJsonPath}`);
-  const { version } = require(packageJsonPath);
+  const { version } = require(packageJsonPath) as unknown as {
+    version: string;
+  };
 
   return String(version);
 }
