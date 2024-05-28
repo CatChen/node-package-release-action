@@ -17,7 +17,7 @@ on:
   pull_request_review:
     types: [submitted, edited, dismissed]
   check_run:
-    type: [created, rerequested, completed]
+    types: [created, rerequested, completed]
   check_suite:
     types: [completed]
   workflow_run:
