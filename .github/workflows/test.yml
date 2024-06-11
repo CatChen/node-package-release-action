@@ -6,12 +6,6 @@ on:
   pull_request:
     branches: [main, '[0-9]+-[0-9]+-*']
   workflow_dispatch:
-  workflow_call:
-    inputs:
-      ref:
-        description: 'Checkout a different git ref instead of the SHA from the GitHub event.'
-        required: false
-        type: string
 
 permissions:
   contents: write
@@ -23,8 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref }}
 
       - name: Create test branch
         env:
@@ -60,8 +52,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref }}
 
       - name: Create test branch
         env:
