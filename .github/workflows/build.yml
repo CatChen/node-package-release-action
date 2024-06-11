@@ -20,6 +20,8 @@ jobs:
     permissions:
       pull-requests: write
       contents: write
+    outputs:
+      status: ${{ steps.check-git-status.outputs.status }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,3 +51,15 @@ jobs:
           fail-if-not-clean: ${{ github.actor != 'dependabot[bot]' || github.actor_id != 49699333 }}
           push-if-not-clean: true
           request-changes-if-not-clean: false
+
+  eslint:
+    name: ESLint
+    needs: [build]
+    if: ${{ needs.build.outputs.status == 'dirty' }}
+    uses: ./.github/workflows/eslint.yml
+
+  test:
+    name: Test
+    needs: [build]
+    if: ${{ needs.build.outputs.status == 'dirty' }}
+    uses: ./.github/workflows/test.yml
