@@ -20,9 +20,6 @@ jobs:
     permissions:
       pull-requests: write
       contents: write
-    outputs:
-      status: ${{ steps.check-git-status.outputs.status }}
-      sha: ${{ steps.check-git-status.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,25 +43,16 @@ jobs:
       - name: Package
         run: yarn package
 
+      - uses: getsentry/action-github-app-token@v3
+        id: get-github-app-token
+        with:
+          app_id: ${{ secrets.CHECK_GIT_STATUS_BOT_APP_ID }}
+          private_key: ${{ secrets.CHECK_GIT_STATUS_BOT_APP_PRIVATE_KEY }}
+
       - uses: CatChen/check-git-status-action@v1
         id: check-git-status
         with:
           fail-if-not-clean: ${{ github.actor != 'dependabot[bot]' || github.actor_id != 49699333 }}
           push-if-not-clean: true
           request-changes-if-not-clean: false
-
-  eslint:
-    name: ESLint
-    needs: [build]
-    if: ${{ failure() || needs.build.outputs.status == 'dirty' }}
-    uses: ./.github/workflows/eslint.yml
-    with:
-      ref: ${{ needs.build.outputs.sha }}
-
-  test:
-    name: Test
-    needs: [build]
-    if: ${{ failure() || needs.build.outputs.status == 'dirty' }}
-    uses: ./.github/workflows/test.yml
-    with:
-      ref: ${{ needs.build.outputs.sha }}
+          push-token: ${{ steps.get-github-app-token.outputs.token }}
