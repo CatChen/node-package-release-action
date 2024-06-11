@@ -43,11 +43,11 @@ jobs:
       - name: Package
         run: yarn package
 
-      - uses: getsentry/action-github-app-token@v3
+      - uses: actions/create-github-app-token@v1
         id: get-github-app-token
         with:
-          app_id: ${{ secrets.CHECK_GIT_STATUS_BOT_APP_ID }}
-          private_key: ${{ secrets.CHECK_GIT_STATUS_BOT_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.CHECK_GIT_STATUS_BOT_APP_ID }}
+          private-key: ${{ secrets.CHECK_GIT_STATUS_BOT_APP_PRIVATE_KEY }}
 
       - uses: CatChen/check-git-status-action@v1
         id: check-git-status
