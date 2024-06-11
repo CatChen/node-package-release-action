@@ -56,7 +56,7 @@ jobs:
   eslint:
     name: ESLint
     needs: [build]
-    if: ${{ needs.build.result == 'failure' || needs.build.outputs.status == 'dirty' }}
+    if: ${{ failure() || needs.build.outputs.status == 'dirty' }}
     uses: ./.github/workflows/eslint.yml
     with:
       ref: ${{ needs.build.outputs.sha }}
@@ -64,7 +64,7 @@ jobs:
   test:
     name: Test
     needs: [build]
-    if: ${{ needs.build.result == 'failure' || needs.build.outputs.status == 'dirty' }}
+    if: ${{ failure() || needs.build.outputs.status == 'dirty' }}
     uses: ./.github/workflows/test.yml
     with:
       ref: ${{ needs.build.outputs.sha }}
