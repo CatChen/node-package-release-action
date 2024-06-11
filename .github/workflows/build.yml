@@ -22,6 +22,7 @@ jobs:
       contents: write
     outputs:
       status: ${{ steps.check-git-status.outputs.status }}
+      sha: ${{ steps.check-git-status.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,11 +56,15 @@ jobs:
   eslint:
     name: ESLint
     needs: [build]
-    if: ${{ needs.build.outputs.status == 'dirty' }}
+    if: ${{ needs.build.result == 'failure' || needs.build.outputs.status == 'dirty' }}
     uses: ./.github/workflows/eslint.yml
+    with:
+      ref: ${{ needs.build.outputs.sha }}
 
   test:
     name: Test
     needs: [build]
-    if: ${{ needs.build.outputs.status == 'dirty' }}
+    if: ${{ needs.build.result == 'failure' || needs.build.outputs.status == 'dirty' }}
     uses: ./.github/workflows/test.yml
+    with:
+      ref: ${{ needs.build.outputs.sha }}
