@@ -1,5 +1,5 @@
 import { warning } from '@actions/core';
-import { ReleaseType, diff, gte, rsort, inc } from 'semver';
+import { ReleaseType, diff, gte, inc, rsort } from 'semver';
 import { getAllGitTags } from './getAllGitTags';
 
 export async function findLastSameReleaseTypeVersion(
