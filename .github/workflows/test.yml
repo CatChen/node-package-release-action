@@ -31,6 +31,7 @@ jobs:
           git checkout -b "$TEST_BRANCH_NAME"
 
       - name: Test
+        id: test
         uses: ./
         with:
           release-type: prerelease
@@ -41,8 +42,10 @@ jobs:
         continue-on-error: true
         env:
           TEST_BRANCH_NAME: ${{ format('workflows/tests/id-{0}/run-{1}/attempt-{2}/sha-{3}', github.run_id, github.run_number, github.run_attempt, github.sha) }}
+          TAG: ${{ steps.test.outputs.tag }}
         run: |
           git push -d origin "$TEST_BRANCH_NAME"
+          gh release delete "$TAG" --yes
 
   test-without-package:
     name: Test without Package
@@ -66,6 +69,7 @@ jobs:
           git checkout -b "$TEST_BRANCH_NAME"
 
       - name: Test
+        id: test
         uses: ./
         with:
           release-type: prerelease
@@ -79,3 +83,4 @@ jobs:
           TEST_BRANCH_NAME: ${{ format('workflows/tests/no-package/id-{0}/run-{1}/attempt-{2}/sha-{3}', github.run_id, github.run_number, github.run_attempt, github.sha) }}
         run: |
           git push -d origin "$TEST_BRANCH_NAME"
+          gh release delete "$TAG" --yes
