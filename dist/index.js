@@ -36355,7 +36355,7 @@ exports.RELEASE_TYPES = [
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.checkDiff = void 0;
+exports.checkDiff = checkDiff;
 const node_path_1 = __nccwpck_require__(9411);
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
@@ -36378,7 +36378,6 @@ async function checkDiff(tag) {
             .join('\n'));
     return diffOutput.stdout.split('\n').join('') !== '';
 }
-exports.checkDiff = checkDiff;
 
 
 /***/ }),
@@ -36388,7 +36387,8 @@ exports.checkDiff = checkDiff;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.configGit = exports.GITHUB_ACTION_USER_EMAIL = exports.GITHUB_ACTION_USER_NAME = void 0;
+exports.GITHUB_ACTION_USER_EMAIL = exports.GITHUB_ACTION_USER_NAME = void 0;
+exports.configGit = configGit;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 exports.GITHUB_ACTION_USER_NAME = 'GitHub Action';
@@ -36417,7 +36417,6 @@ async function configGit() {
     (0, core_1.exportVariable)('GH_TOKEN', githubToken);
     await (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
 }
-exports.configGit = configGit;
 
 
 /***/ }),
@@ -36427,7 +36426,7 @@ exports.configGit = configGit;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createRelease = void 0;
+exports.createRelease = createRelease;
 const core_1 = __nccwpck_require__(2186);
 async function createRelease(owner, repo, version, octokit) {
     const dryRun = (0, core_1.getBooleanInput)('dry-run');
@@ -36452,7 +36451,6 @@ async function createRelease(owner, repo, version, octokit) {
         prerelease: (0, core_1.getBooleanInput)('prerelease'),
     });
 }
-exports.createRelease = createRelease;
 
 
 /***/ }),
@@ -36462,7 +36460,7 @@ exports.createRelease = createRelease;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.fetchEverything = void 0;
+exports.fetchEverything = fetchEverything;
 const exec_1 = __nccwpck_require__(1514);
 async function fetchEverything() {
     await (0, exec_1.getExecOutput)('git', ['fetch', '--tags', 'origin']);
@@ -36474,7 +36472,6 @@ async function fetchEverything() {
         await (0, exec_1.getExecOutput)('git', ['fetch', '--unshallow', 'origin']);
     }
 }
-exports.fetchEverything = fetchEverything;
 
 
 /***/ }),
@@ -36484,7 +36481,7 @@ exports.fetchEverything = fetchEverything;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.findLastSameReleaseTypeVersion = void 0;
+exports.findLastSameReleaseTypeVersion = findLastSameReleaseTypeVersion;
 const core_1 = __nccwpck_require__(2186);
 const semver_1 = __nccwpck_require__(1383);
 const getAllGitTags_1 = __nccwpck_require__(4484);
@@ -36514,7 +36511,6 @@ async function findLastSameReleaseTypeVersion(releaseVersion, releaseType) {
     }
     return candidateTag;
 }
-exports.findLastSameReleaseTypeVersion = findLastSameReleaseTypeVersion;
 
 
 /***/ }),
@@ -36524,7 +36520,7 @@ exports.findLastSameReleaseTypeVersion = findLastSameReleaseTypeVersion;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getAllGitTags = void 0;
+exports.getAllGitTags = getAllGitTags;
 const exec_1 = __nccwpck_require__(1514);
 const semver_1 = __nccwpck_require__(1383);
 async function getAllGitTags() {
@@ -36533,7 +36529,6 @@ async function getAllGitTags() {
     const versionTags = allTags.filter((tag) => (0, semver_1.valid)(tag));
     return versionTags;
 }
-exports.getAllGitTags = getAllGitTags;
 
 
 /***/ }),
@@ -36543,7 +36538,7 @@ exports.getAllGitTags = getAllGitTags;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getLastGitTag = void 0;
+exports.getLastGitTag = getLastGitTag;
 const core_1 = __nccwpck_require__(2186);
 const semver_1 = __nccwpck_require__(1383);
 const getAllGitTags_1 = __nccwpck_require__(4484);
@@ -36557,7 +36552,6 @@ async function getLastGitTag() {
     const lastTag = sortedTags[0];
     return lastTag;
 }
-exports.getLastGitTag = getLastGitTag;
 
 
 /***/ }),
@@ -36567,7 +36561,7 @@ exports.getLastGitTag = getLastGitTag;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getLatestReleaseTag = void 0;
+exports.getLatestReleaseTag = getLatestReleaseTag;
 const core_1 = __nccwpck_require__(2186);
 const request_error_1 = __nccwpck_require__(537);
 const semver_1 = __nccwpck_require__(1383);
@@ -36617,7 +36611,6 @@ async function getLatestReleaseTag(owner, repo, octokit) {
     const sortedReleaseTags = (0, semver_1.rsort)(validReleaseTags);
     return sortedReleaseTags[0];
 }
-exports.getLatestReleaseTag = getLatestReleaseTag;
 
 
 /***/ }),
@@ -36627,7 +36620,7 @@ exports.getLatestReleaseTag = getLatestReleaseTag;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOctokit = void 0;
+exports.getOctokit = getOctokit;
 const core_1 = __nccwpck_require__(2186);
 const utils_1 = __nccwpck_require__(3030);
 const plugin_retry_1 = __nccwpck_require__(6298);
@@ -36664,7 +36657,6 @@ function getOctokit() {
     }));
     return octokit;
 }
-exports.getOctokit = getOctokit;
 
 
 /***/ }),
@@ -36674,7 +36666,8 @@ exports.getOctokit = getOctokit;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getPackageVersion = exports.DEFAULT_WORKING_DIRECTORY = void 0;
+exports.DEFAULT_WORKING_DIRECTORY = void 0;
+exports.getPackageVersion = getPackageVersion;
 const module_1 = __nccwpck_require__(8188);
 const node_fs_1 = __nccwpck_require__(7561);
 const node_path_1 = __nccwpck_require__(9411);
@@ -36693,7 +36686,6 @@ function getPackageVersion() {
     const { version } = require(packageJsonPath);
     return String(version);
 }
-exports.getPackageVersion = getPackageVersion;
 
 
 /***/ }),
@@ -36703,7 +36695,7 @@ exports.getPackageVersion = getPackageVersion;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.pushBranch = void 0;
+exports.pushBranch = pushBranch;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 async function pushBranch() {
@@ -36725,7 +36717,6 @@ async function pushBranch() {
         ...(dryRun ? ['--dry-run'] : []),
     ]);
 }
-exports.pushBranch = pushBranch;
 
 
 /***/ }),
@@ -36735,7 +36726,8 @@ exports.pushBranch = pushBranch;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.setVersion = exports.DEFAULT_WORKING_DIRECTORY = void 0;
+exports.DEFAULT_WORKING_DIRECTORY = void 0;
+exports.setVersion = setVersion;
 const node_fs_1 = __nccwpck_require__(7561);
 const node_path_1 = __nccwpck_require__(9411);
 const core_1 = __nccwpck_require__(2186);
@@ -36753,7 +36745,6 @@ async function setVersion(version) {
     }
     (0, core_1.notice)(`Tag created: v${version}`);
 }
-exports.setVersion = setVersion;
 
 
 /***/ }),
@@ -36763,7 +36754,7 @@ exports.setVersion = setVersion;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.updateTags = void 0;
+exports.updateTags = updateTags;
 const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 const semver_1 = __nccwpck_require__(1383);
@@ -36802,7 +36793,6 @@ async function updateTags(version) {
         ...(dryRun ? ['--dry-run'] : []),
     ]);
 }
-exports.updateTags = updateTags;
 
 
 /***/ }),
