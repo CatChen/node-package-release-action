@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, '[0-9]+-[0-9]+-*']
   workflow_dispatch:
+  workflow_run:
+    workflows: ['Dependabot']
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -14,6 +18,7 @@ jobs:
   test-with-package:
     name: Test with Package
     concurrency: release
+    if: ${{ !startsWith(github.head_ref, 'workflows/tests/') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
