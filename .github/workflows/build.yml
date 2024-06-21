@@ -12,6 +12,10 @@ on:
         description: 'Checkout a different git ref instead of the SHA from the GitHub event.'
         required: false
         type: string
+  workflow_run:
+    workflows: ['Dependabot']
+    types:
+      - completed
 
 jobs:
   build:
