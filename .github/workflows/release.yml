@@ -45,6 +45,7 @@ jobs:
     permissions:
       pull-requests: write
       contents: write
+    secrets: inherit
 
   test:
     uses: ./.github/workflows/test.yml
