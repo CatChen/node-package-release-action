@@ -31,7 +31,7 @@ on:
       diff-targets:
         description: 'Diff Targets'
         required: false
-        default: '{README.md,dist/**/*}'
+        default: '{README.md,LICENSE,dist/**/*}'
         type: string
       dry-run:
         description: 'Dry run'
@@ -91,7 +91,7 @@ jobs:
           update-shorthand-release: true
           dry-run: ${{ inputs.dry-run || false }}
           skip-if-no-diff: ${{ inputs.skip-if-no-diff || true }}
-          diff-targets: ${{ inputs.diff-targets || '{README.md,dist/**/*}' }}
+          diff-targets: ${{ inputs.diff-targets || '{README.md,LICENSE,dist/**/*}' }}
           github-token: ${{ steps.get-github-app-token.outputs.token }}
 
   publish:
