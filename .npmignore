@@ -4,6 +4,7 @@
 .vscode/
 .nvmrc
 .prettierignore
+.prettierrc.json
 action.yml
 assets/
 dist/
