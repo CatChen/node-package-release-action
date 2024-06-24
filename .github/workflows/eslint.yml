@@ -10,6 +10,7 @@ on:
     workflows: ['Dependabot']
     types:
       - completed
+  workflow_call:
 
 jobs:
   eslint:
@@ -32,4 +33,4 @@ jobs:
       - uses: CatChen/eslint-suggestion-action@v4
         with:
           targets: 'src'
-          fail-check: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          fail-check: ${{ github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
