@@ -10,6 +10,7 @@ on:
     workflows: ['Dependabot']
     types:
       - completed
+  workflow_call:
 
 permissions:
   contents: write

@@ -10,6 +10,7 @@ on:
     workflows: ['Dependabot']
     types:
       - completed
+  workflow_call:
 
 jobs:
   eslint:
@@ -19,7 +20,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -32,4 +32,4 @@ jobs:
       - uses: CatChen/eslint-suggestion-action@v4
         with:
           targets: 'src'
-          fail-check: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          fail-check: ${{ github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
