@@ -26,7 +26,10 @@ import { updateTags } from './updateTags';
 const DEFAULT_VERSION = '0.1.0';
 
 async function run(): Promise<void> {
-  await configGit();
+  const { owner, repo } = context.repo;
+  const octokit = getOctokit();
+
+  await configGit(octokit);
 
   startGroup('Fetch every git tag');
   await fetchEverything();
@@ -43,8 +46,6 @@ async function run(): Promise<void> {
   endGroup();
 
   startGroup('Get latest release tag');
-  const { owner, repo } = context.repo;
-  const octokit = getOctokit();
   const latestReleaseTag = await getLatestReleaseTag(owner, repo, octokit);
   notice(`Latest release tag: ${latestReleaseTag}`);
   endGroup();

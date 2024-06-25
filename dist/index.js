@@ -36393,7 +36393,7 @@ const core_1 = __nccwpck_require__(2186);
 const exec_1 = __nccwpck_require__(1514);
 exports.GITHUB_ACTION_USER_NAME = 'GitHub Action';
 exports.GITHUB_ACTION_USER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com';
-async function configGit() {
+async function configGit(octokit) {
     await (0, exec_1.getExecOutput)('git', [
         'config',
         '--global',
@@ -36416,6 +36416,27 @@ async function configGit() {
     const githubToken = (0, core_1.getInput)('github-token');
     (0, core_1.exportVariable)('GH_TOKEN', githubToken);
     await (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
+    await (0, exec_1.getExecOutput)('gh', ['auth', 'status']);
+    const { viewer: { login }, } = await octokit.graphql(`
+      query {
+        viewer {
+          login
+        }
+      }
+    `, {});
+    const remoteOutput = await (0, exec_1.getExecOutput)('git', [
+        'remote',
+        'get-url',
+        'origin',
+    ]);
+    const remoteUrl = remoteOutput.stdout.trim();
+    const remoteUrlWithToken = remoteUrl.replace(/https:\/\//, `https://${login}:${githubToken}@`);
+    await (0, exec_1.getExecOutput)('git', [
+        'remote',
+        'set-url',
+        'origin',
+        remoteUrlWithToken,
+    ]);
 }
 
 
@@ -44883,7 +44904,9 @@ const setVersion_1 = __nccwpck_require__(9556);
 const updateTags_1 = __nccwpck_require__(1443);
 const DEFAULT_VERSION = '0.1.0';
 async function run() {
-    await (0, configGit_1.configGit)();
+    const { owner, repo } = github_1.context.repo;
+    const octokit = (0, getOctokit_1.getOctokit)();
+    await (0, configGit_1.configGit)(octokit);
     (0, core_1.startGroup)('Fetch every git tag');
     await (0, fetchEverything_1.fetchEverything)();
     (0, core_1.endGroup)();
@@ -44896,8 +44919,6 @@ async function run() {
     (0, core_1.notice)(`package.json version: ${packageVersion}`);
     (0, core_1.endGroup)();
     (0, core_1.startGroup)('Get latest release tag');
-    const { owner, repo } = github_1.context.repo;
-    const octokit = (0, getOctokit_1.getOctokit)();
     const latestReleaseTag = await (0, getLatestReleaseTag_1.getLatestReleaseTag)(owner, repo, octokit);
     (0, core_1.notice)(`Latest release tag: ${latestReleaseTag}`);
     (0, core_1.endGroup)();
