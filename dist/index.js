@@ -36415,8 +36415,8 @@ async function configGit(octokit) {
     ]);
     const githubToken = (0, core_1.getInput)('github-token');
     (0, core_1.exportVariable)('GH_TOKEN', githubToken);
-    await (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
     await (0, exec_1.getExecOutput)('gh', ['auth', 'status']);
+    await (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
     const { viewer: { login }, } = await octokit.graphql(`
       query {
         viewer {
@@ -36734,6 +36734,7 @@ async function pushBranch() {
     (0, core_1.notice)(`Current branch: ${branchName}`);
     await (0, exec_1.getExecOutput)('git', [
         'push',
+        '--force-with-lease',
         '--follow-tags',
         ...(dryRun ? ['--dry-run'] : []),
     ]);
