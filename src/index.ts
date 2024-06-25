@@ -1,9 +1,11 @@
 import {
+  endGroup,
   getBooleanInput,
   getInput,
   notice,
   setFailed,
   setOutput,
+  startGroup,
 } from '@actions/core';
 import { context } from '@actions/github';
 import { inc, rsort } from 'semver';
@@ -28,16 +30,22 @@ async function run(): Promise<void> {
 
   await fetchEverything();
 
+  startGroup('Get last git tag');
   const lastGitTag = await getLastGitTag();
   notice(`Last git tag: ${lastGitTag}`);
+  endGroup();
 
+  startGroup('Get package.json version');
   const packageVersion = getPackageVersion();
   notice(`package.json version: ${packageVersion}`);
+  endGroup();
 
+  startGroup('Get latest release tag');
   const { owner, repo } = context.repo;
   const octokit = getOctokit();
   const latestReleaseTag = await getLatestReleaseTag(owner, repo, octokit);
   notice(`Latest release tag: ${latestReleaseTag}`);
+  endGroup();
 
   const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap(
     (version) => (version === null ? [] : [version]),
