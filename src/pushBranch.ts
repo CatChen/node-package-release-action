@@ -20,6 +20,7 @@ export async function pushBranch() {
 
   await getExecOutput('git', [
     'push',
+    '--force-with-lease',
     '--follow-tags',
     ...(dryRun ? ['--dry-run'] : []),
   ]);

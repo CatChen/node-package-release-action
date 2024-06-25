@@ -34,8 +34,8 @@ export async function configGit(octokit: Octokit & Api) {
   const githubToken = getInput('github-token');
   exportVariable('GH_TOKEN', githubToken);
 
-  await getExecOutput('gh', ['auth', 'setup-git']);
   await getExecOutput('gh', ['auth', 'status']);
+  await getExecOutput('gh', ['auth', 'setup-git']);
 
   const {
     viewer: { login },
