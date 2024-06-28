@@ -44887,6 +44887,7 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "X", ({ value: true }));
+exports.K = run;
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 const semver_1 = __nccwpck_require__(1383);
@@ -44964,6 +44965,7 @@ run().catch((error) => (0, core_1.setFailed)(error));
 })();
 
 var __webpack_exports___esModule = __webpack_exports__.X;
-export { __webpack_exports___esModule as __esModule };
+var __webpack_exports__run = __webpack_exports__.K;
+export { __webpack_exports___esModule as __esModule, __webpack_exports__run as run };
 
 //# sourceMappingURL=index.js.map
