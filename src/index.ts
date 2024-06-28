@@ -25,7 +25,7 @@ import { updateTags } from './updateTags';
 
 const DEFAULT_VERSION = '0.1.0';
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   const octokit = getOctokit();
 
   await configGit(octokit);
