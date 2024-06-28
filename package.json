@@ -10,6 +10,7 @@
     "package": "rm -rf dist && yarn ncc build src/index.ts --external eslint --source-map --license licenses.txt",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint -c eslint.config.js",
+    "postinstall": "is-ci || husky install",
     "preversion": "yarn && yarn build && yarn package"
   },
   "repository": {
@@ -39,6 +40,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "5",
     "husky": "^9.0.11",
+    "is-ci": "^3.0.1",
     "lint-staged": "^15.0.2",
     "prettier": "^3.0.2",
     "typescript": "^5.0.2",
@@ -48,13 +50,14 @@
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.0",
-    "@octokit/plugin-retry": "^6.0.1",
+    "@octokit/plugin-retry": "^7.1.1",
     "@octokit/plugin-throttling": "^9.3.0",
     "glob": "^10.2.3",
     "semver": "^7.3.8"
   },
   "resolutions": {
-    "strip-ansi": "6.0.1"
+    "strip-ansi": "6.0.1",
+    "@octokit/core": "^6.0.0"
   },
   "lint-staged": {
     "*.(ts,js)": "yarn lint --fix",
