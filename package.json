@@ -2,16 +2,18 @@
   "name": "node-package-release-action",
   "version": "2.1.15",
   "description": "A template to create custom GitHub Action with TypeScript/JavaScript.",
-  "main": "lib/index.js",
-  "types": "lib/index.d.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
   "type": "module",
   "scripts": {
-    "build": "rm -rf lib && yarn tsc",
-    "package": "rm -rf dist && yarn ncc build src/index.ts --external eslint --source-map --license licenses.txt",
+    "build": "rm -rf dist && yarn tsc",
+    "bundle": "rm -rf bundle && yarn ncc build src/index.ts --external eslint --source-map --license licenses.txt --out bundle",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint -c eslint.config.js",
     "postinstall": "is-ci || husky install",
-    "preversion": "yarn && yarn build && yarn package"
+    "prepublishOnly": "pinst --disable && yarn build",
+    "postpublish": "pinst --enable",
+    "preversion": "yarn && yarn build && yarn bundle"
   },
   "repository": {
     "type": "git",
@@ -42,6 +44,7 @@
     "husky": "^9.0.11",
     "is-ci": "^3.0.1",
     "lint-staged": "^15.0.2",
+    "pinst": "^3.0.0",
     "prettier": "^3.0.2",
     "typescript": "^5.0.2",
     "typescript-eslint": "^7.8.0"
