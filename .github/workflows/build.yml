@@ -42,14 +42,16 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Lint
-        run: yarn lint --fix
+      - name: Reformat
+        run: |
+          yarn prettier --write .
+          yarn lint --fix
 
       - name: Build
         run: yarn build
 
-      - name: Package
-        run: yarn package
+      - name: Bundle
+        run: yarn bundle
 
       - uses: CatChen/check-git-status-action@v1
         id: check-git-status
