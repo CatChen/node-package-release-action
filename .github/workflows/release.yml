@@ -58,9 +58,10 @@ jobs:
   codeql:
     uses: ./.github/workflows/codeql.yml
     permissions:
+      security-events: write
+      packages: read
       actions: read
       contents: read
-      security-events: write
 
   release:
     name: Release
