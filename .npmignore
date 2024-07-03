@@ -7,7 +7,7 @@
 .prettierrc.json
 action.yml
 assets/
-dist/
+bundle/
 src/
 tests/
 eslint.config.js
