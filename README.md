@@ -1,10 +1,9 @@
 # node-package-release-action
 
-[![Build](https://github.com/CatChen/node-package-release-action/actions/workflows/build.yml/badge.svg)](https://github.com/CatChen/node-package-release-action/actions/workflows/build.yml)
-[![Test](https://github.com/CatChen/node-package-release-action/actions/workflows/test.yml/badge.svg)](https://github.com/CatChen/node-package-release-action/actions/workflows/test.yml)
-[![ESLint](https://github.com/CatChen/node-package-release-action/actions/workflows/eslint.yml/badge.svg)](https://github.com/CatChen/node-package-release-action/actions/workflows/eslint.yml)
-[![CodeQL](https://github.com/CatChen/node-package-release-action/actions/workflows/codeql.yml/badge.svg)](https://github.com/CatChen/node-package-release-action/actions/workflows/codeql.yml)
-[![Ship](https://github.com/CatChen/node-package-release-action/actions/workflows/ship.yml/badge.svg)](https://github.com/CatChen/node-package-release-action/actions/workflows/ship.yml)
+[![Build](https://github.com/CatChen/node-package-release-action/actions/workflows/build.yml/badge.svg?branch=main&event=push)](https://github.com/CatChen/node-package-release-action/actions/workflows/build.yml)
+[![Test](https://github.com/CatChen/node-package-release-action/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/CatChen/node-package-release-action/actions/workflows/test.yml)
+[![ESLint](https://github.com/CatChen/node-package-release-action/actions/workflows/eslint.yml/badge.svg?branch=main&event=push)](https://github.com/CatChen/node-package-release-action/actions/workflows/eslint.yml)
+[![CodeQL](https://github.com/CatChen/node-package-release-action/actions/workflows/codeql.yml/badge.svg?branch=main&event=schedule)](https://github.com/CatChen/node-package-release-action/actions/workflows/codeql.yml)
 
 Stop running `npm version patch` manually to release a new version of your NPM package. Let this Action automate for you. Trigger it on GitHub or schedule a weekly or monthly release.
 
