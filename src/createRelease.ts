@@ -1,4 +1,5 @@
 import type { Octokit } from '@octokit/core';
+import type { components } from '@octokit/openapi-types/types.js';
 import type { Api } from '@octokit/plugin-rest-endpoint-methods/dist-types/types';
 import { getBooleanInput, info, notice } from '@actions/core';
 
@@ -7,7 +8,7 @@ export async function createRelease(
   repo: string,
   version: string,
   octokit: Octokit & Api,
-) {
+): Promise<components['schemas']['release'] | undefined> {
   const dryRun = getBooleanInput('dry-run');
   if (dryRun) {
     notice('Release creation is skipped in dry run');
@@ -22,7 +23,7 @@ export async function createRelease(
     return;
   }
 
-  await octokit.rest.repos.createRelease({
+  const releasesResponse = await octokit.rest.repos.createRelease({
     owner,
     repo,
     tag_name: `v${version}`,
@@ -30,4 +31,7 @@ export async function createRelease(
     generate_release_notes: true,
     prerelease: getBooleanInput('prerelease'),
   });
+  notice(`GitHub Release created: ${releasesResponse.data.html_url}`);
+
+  return releasesResponse.data;
 }
