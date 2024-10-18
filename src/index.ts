@@ -1,3 +1,4 @@
+import type { components } from '@octokit/openapi-types/types.js';
 import {
   endGroup,
   getBooleanInput,
@@ -25,8 +26,9 @@ import { updateTags } from './updateTags';
 
 const DEFAULT_VERSION = '0.1.0';
 
-export async function run(): Promise<void> {
-  const githubToken = getInput('github-token');
+export async function nodePackageRelease(
+  githubToken: string,
+): Promise<components['schemas']['release'] | undefined> {
   const octokit = getOctokit(githubToken);
 
   await configGit(octokit);
@@ -99,11 +101,18 @@ export async function run(): Promise<void> {
 
   await pushBranch();
 
-  await createRelease(owner, repo, releaseVersion, octokit);
+  const release = await createRelease(owner, repo, releaseVersion, octokit);
 
   if (getBooleanInput('update-shorthand-release')) {
     await updateTags(releaseVersion);
   }
+
+  return release;
+}
+
+async function run(): Promise<void> {
+  const githubToken = getInput('github-token');
+  await nodePackageRelease(githubToken);
 }
 
 run().catch((error: Error) => setFailed(error));
