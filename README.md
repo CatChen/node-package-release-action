@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - id: release
-        uses: CatChen/node-package-release-action@v1
+        uses: CatChen/node-package-release-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} # optional
           directory: './' #optional
@@ -149,7 +149,7 @@ on:
         with:
           ref: 'main'
 
-      - uses: CatChen/node-package-release-action@v1
+      - uses: CatChen/node-package-release-action@v2
         with:
           release-type: ${{ inputs.release-type || 'patch' }}
           prerelease: ${{ inputs.prerelease || false }}
