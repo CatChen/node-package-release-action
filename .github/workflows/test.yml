@@ -56,7 +56,7 @@ jobs:
           TEST_BRANCH_NAME: ${{ format('workflows/tests/id-{0}/run-{1}/attempt-{2}/sha-{3}', github.run_id, github.run_number, github.run_attempt, github.sha) }}
           TAG: ${{ steps.test.outputs.tag }}
         run: |
-          git push -d origin "$TEST_BRANCH_NAME"
+          git push -d origin "$TEST_BRANCH_NAME" || true # Success workflow have the branch deleted already
           gh release delete "$TAG" --yes
 
   test-without-package:
@@ -101,5 +101,5 @@ jobs:
           TEST_BRANCH_NAME: ${{ format('workflows/tests/no-package/id-{0}/run-{1}/attempt-{2}/sha-{3}', github.run_id, github.run_number, github.run_attempt, github.sha) }}
           TAG: ${{ steps.test.outputs.tag }}
         run: |
-          git push -d origin "$TEST_BRANCH_NAME"
+          git push -d origin "$TEST_BRANCH_NAME" || true # Success workflow have the branch deleted already
           gh release delete "$TAG" --yes
