@@ -35592,7 +35592,7 @@ async function createRelease(owner, repo, version, octokit) {
         (0, core_1.info)('Release body:\n' + response.data.body + '\n\n');
         return;
     }
-    await octokit.rest.repos.createRelease({
+    const releasesResponse = await octokit.rest.repos.createRelease({
         owner,
         repo,
         tag_name: `v${version}`,
@@ -35600,6 +35600,8 @@ async function createRelease(owner, repo, version, octokit) {
         generate_release_notes: true,
         prerelease: (0, core_1.getBooleanInput)('prerelease'),
     });
+    (0, core_1.notice)(`GitHub Release created: ${releasesResponse.data.html_url}`);
+    return releasesResponse.data;
 }
 
 
@@ -44509,7 +44511,7 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "B", ({ value: true }));
-exports.e = run;
+exports.E = nodePackageRelease;
 const core_1 = __nccwpck_require__(7484);
 const github_1 = __nccwpck_require__(3228);
 const semver_1 = __nccwpck_require__(2088);
@@ -44527,8 +44529,7 @@ const pushBranch_1 = __nccwpck_require__(1411);
 const setVersion_1 = __nccwpck_require__(36);
 const updateTags_1 = __nccwpck_require__(7095);
 const DEFAULT_VERSION = '0.1.0';
-async function run() {
-    const githubToken = (0, core_1.getInput)('github-token');
+async function nodePackageRelease(githubToken) {
     const octokit = (0, getOctokit_1.getOctokit)(githubToken);
     await (0, configGit_1.configGit)(octokit);
     (0, core_1.startGroup)('Fetch every git tag');
@@ -44578,17 +44579,22 @@ async function run() {
     (0, core_1.setOutput)('tag', `v${releaseVersion}`);
     await (0, setVersion_1.setVersion)(releaseVersion);
     await (0, pushBranch_1.pushBranch)();
-    await (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
+    const release = await (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
     if ((0, core_1.getBooleanInput)('update-shorthand-release')) {
         await (0, updateTags_1.updateTags)(releaseVersion);
     }
+    return release;
+}
+async function run() {
+    const githubToken = (0, core_1.getInput)('github-token');
+    await nodePackageRelease(githubToken);
 }
 run().catch((error) => (0, core_1.setFailed)(error));
 
 })();
 
 var __webpack_exports___esModule = __webpack_exports__.B;
-var __webpack_exports__run = __webpack_exports__.e;
-export { __webpack_exports___esModule as __esModule, __webpack_exports__run as run };
+var __webpack_exports__nodePackageRelease = __webpack_exports__.E;
+export { __webpack_exports___esModule as __esModule, __webpack_exports__nodePackageRelease as nodePackageRelease };
 
 //# sourceMappingURL=index.js.map
