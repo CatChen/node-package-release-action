@@ -26,7 +26,8 @@ import { updateTags } from './updateTags';
 const DEFAULT_VERSION = '0.1.0';
 
 export async function run(): Promise<void> {
-  const octokit = getOctokit();
+  const githubToken = getInput('github-token');
+  const octokit = getOctokit(githubToken);
 
   await configGit(octokit);
 
