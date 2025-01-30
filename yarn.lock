@@ -555,11 +555,11 @@
     bottleneck "^2.15.3"
 
 "@octokit/plugin-throttling@^9.3.0":
-  version "9.3.2"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-throttling/-/plugin-throttling-9.3.2.tgz#cc05180e45e769d6726c5faed157e9ad3b6ab8c0"
-  integrity sha512-FqpvcTpIWFpMMwIeSoypoJXysSAQ3R+ALJhXXSG1HTP3YZOIeLmcNcimKaXxTcws+Sh6yoRl13SJ5r8sXc1Fhw==
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-throttling/-/plugin-throttling-9.4.0.tgz#4ed134fe97262361feb0208b7d8df63b35c72eb7"
+  integrity sha512-IOlXxXhZA4Z3m0EEYtrrACkuHiArHLZ3CvqWwOez/pURNqRuwfoFlTPbN5Muf28pzFuztxPyiUiNwz8KctdZaQ==
   dependencies:
-    "@octokit/types" "^13.0.0"
+    "@octokit/types" "^13.7.0"
     bottleneck "^2.15.3"
 
 "@octokit/request-error@^5.1.0":
@@ -595,7 +595,7 @@
   dependencies:
     "@octokit/openapi-types" "^19.0.0"
 
-"@octokit/types@^13.0.0", "@octokit/types@^13.1.0", "@octokit/types@^13.6.2":
+"@octokit/types@^13.0.0", "@octokit/types@^13.1.0", "@octokit/types@^13.6.2", "@octokit/types@^13.7.0":
   version "13.7.0"
   resolved "https://registry.yarnpkg.com/@octokit/types/-/types-13.7.0.tgz#22d0e26a8c9f53599bfb907213d8ccde547f36aa"
   integrity sha512-BXfRP+3P3IN6fd4uF3SniaHKOO4UXWBfkdR3vA8mIvaoO/wLjGN5qivUtW0QRitBHHMcfC41SLhNVYIZZE+wkA==
