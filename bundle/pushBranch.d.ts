@@ -1,1 +1,1 @@
-export declare function pushBranch(): Promise<void>;
+export declare function pushBranch(dryRun: boolean): Promise<void>;

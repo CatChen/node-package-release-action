@@ -1,9 +1,7 @@
-import { error, getBooleanInput, notice } from '@actions/core';
+import { error, notice } from '@actions/core';
 import { getExecOutput } from '@actions/exec';
 
-export async function pushBranch() {
-  const dryRun = getBooleanInput('dry-run');
-
+export async function pushBranch(dryRun: boolean): Promise<void> {
   const gitBranchOutput = await getExecOutput('git', [
     'branch',
     '--show-current',

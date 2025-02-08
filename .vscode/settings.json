@@ -7,5 +7,10 @@
     "https://json.schemastore.org/tsconfig.json": "tsconfig.json",
     "https://json.schemastore.org/eslintrc.json": ".eslintrc.json",
     "https://json.schemastore.org/prettierrc.json": ".prettierrc.json"
+  },
+  "files.exclude": {
+    "**/dist": true,
+    "**/bundle": true,
+    "**/node_modules": true
   }
 }

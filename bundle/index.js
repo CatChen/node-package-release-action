@@ -35508,9 +35508,7 @@ const node_path_1 = __nccwpck_require__(6760);
 const core_1 = __nccwpck_require__(7484);
 const exec_1 = __nccwpck_require__(5236);
 const glob_1 = __nccwpck_require__(1363);
-async function checkDiff(tag) {
-    const directory = (0, core_1.getInput)('directory');
-    const diffTargets = (0, core_1.getInput)('diff-targets');
+async function checkDiff(tag, directory, diffTargets) {
     const diffOutput = await (0, exec_1.getExecOutput)('git', [
         'diff',
         tag,
@@ -35535,55 +35533,15 @@ async function checkDiff(tag) {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.GITHUB_ACTION_USER_EMAIL = exports.GITHUB_ACTION_USER_NAME = void 0;
 exports.configGit = configGit;
-const core_1 = __nccwpck_require__(7484);
 const exec_1 = __nccwpck_require__(5236);
-exports.GITHUB_ACTION_USER_NAME = 'GitHub Action';
-exports.GITHUB_ACTION_USER_EMAIL = '41898282+github-actions[bot]@users.noreply.github.com';
-async function configGit(octokit) {
-    await (0, exec_1.getExecOutput)('git', [
-        'config',
-        '--global',
-        'user.name',
-        exports.GITHUB_ACTION_USER_NAME,
-    ]);
-    await (0, exec_1.getExecOutput)('git', [
-        'config',
-        '--global',
-        'user.email',
-        exports.GITHUB_ACTION_USER_EMAIL,
-    ]);
+async function configGit() {
     await (0, exec_1.getExecOutput)('git', ['config', '--global', 'push.default', 'simple']);
     await (0, exec_1.getExecOutput)('git', [
         'config',
         '--global',
         'push.autoSetupRemote',
         'true',
-    ]);
-    const githubToken = (0, core_1.getInput)('github-token');
-    (0, core_1.exportVariable)('GH_TOKEN', githubToken);
-    await (0, exec_1.getExecOutput)('gh', ['auth', 'status']);
-    await (0, exec_1.getExecOutput)('gh', ['auth', 'setup-git']);
-    const { viewer: { login }, } = await octokit.graphql(`
-      query {
-        viewer {
-          login
-        }
-      }
-    `, {});
-    const remoteOutput = await (0, exec_1.getExecOutput)('git', [
-        'remote',
-        'get-url',
-        'origin',
-    ]);
-    const remoteUrl = remoteOutput.stdout.trim();
-    const remoteUrlWithToken = remoteUrl.replace(/https:\/\//, `https://${login}:${githubToken}@`);
-    await (0, exec_1.getExecOutput)('git', [
-        'remote',
-        'set-url',
-        'origin',
-        remoteUrlWithToken,
     ]);
 }
 
@@ -35597,8 +35555,7 @@ async function configGit(octokit) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createRelease = createRelease;
 const core_1 = __nccwpck_require__(7484);
-async function createRelease(owner, repo, version, octokit) {
-    const dryRun = (0, core_1.getBooleanInput)('dry-run');
+async function createRelease(owner, repo, version, prerelease, dryRun, octokit) {
     if (dryRun) {
         (0, core_1.notice)('Release creation is skipped in dry run');
         const response = await octokit.rest.repos.generateReleaseNotes({
@@ -35617,7 +35574,7 @@ async function createRelease(owner, repo, version, octokit) {
         tag_name: `v${version}`,
         name: `v${version}`,
         generate_release_notes: true,
-        prerelease: (0, core_1.getBooleanInput)('prerelease'),
+        prerelease,
     });
     (0, core_1.notice)(`GitHub Release created: ${releasesResponse.data.html_url}`);
     return releasesResponse.data;
@@ -35847,8 +35804,7 @@ const node_fs_1 = __nccwpck_require__(3024);
 const node_path_1 = __nccwpck_require__(6760);
 const core_1 = __nccwpck_require__(7484);
 exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
-function getPackageVersion() {
-    const directory = (0, core_1.getInput)('directory');
+function getPackageVersion(directory) {
     const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
     const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
     if (!(0, node_fs_1.existsSync)(packageJsonPath)) {
@@ -35872,8 +35828,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.pushBranch = pushBranch;
 const core_1 = __nccwpck_require__(7484);
 const exec_1 = __nccwpck_require__(5236);
-async function pushBranch() {
-    const dryRun = (0, core_1.getBooleanInput)('dry-run');
+async function pushBranch(dryRun) {
     const gitBranchOutput = await (0, exec_1.getExecOutput)('git', [
         'branch',
         '--show-current',
@@ -35908,8 +35863,7 @@ const node_path_1 = __nccwpck_require__(6760);
 const core_1 = __nccwpck_require__(7484);
 const exec_1 = __nccwpck_require__(5236);
 exports.DEFAULT_WORKING_DIRECTORY = process.cwd();
-async function setVersion(version) {
-    const directory = (0, core_1.getInput)('directory');
+async function setVersion(version, directory) {
     const absoluteDirectory = (0, node_path_1.resolve)(exports.DEFAULT_WORKING_DIRECTORY, directory);
     const packageJsonPath = (0, node_path_1.resolve)(absoluteDirectory, 'package.json');
     if ((0, node_fs_1.existsSync)(packageJsonPath)) {
@@ -35933,9 +35887,8 @@ exports.updateTags = updateTags;
 const core_1 = __nccwpck_require__(7484);
 const exec_1 = __nccwpck_require__(5236);
 const semver_1 = __nccwpck_require__(2088);
-async function updateTags(version) {
+async function updateTags(version, dryRun) {
     const semver = (0, semver_1.parse)(version);
-    const dryRun = (0, core_1.getBooleanInput)('dry-run');
     if (semver === null) {
         throw new Error(`Failed to parse the version as semver: ${version}`);
     }
@@ -44465,6 +44418,269 @@ throttling.triggersNotification = triggersNotification;
 
 
 
+/***/ }),
+
+/***/ 5416:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+// ESM COMPAT FLAG
+__nccwpck_require__.r(__webpack_exports__);
+
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  configGitWithToken: () => (/* binding */ configGitWithToken)
+});
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(7484);
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/utils.js
+var utils = __nccwpck_require__(8006);
+// EXTERNAL MODULE: ./node_modules/@octokit/plugin-retry/dist-bundle/index.js + 1 modules
+var dist_bundle = __nccwpck_require__(9250);
+// EXTERNAL MODULE: ./node_modules/@octokit/plugin-throttling/dist-bundle/index.js
+var plugin_throttling_dist_bundle = __nccwpck_require__(6856);
+;// CONCATENATED MODULE: ./node_modules/token-who-am-i-action/dist/getOctokit.js
+
+
+
+function getOctokit(githubToken) {
+    const Octokit = utils.GitHub.plugin(plugin_throttling_dist_bundle.throttling, dist_bundle.retry);
+    const octokit = new Octokit((0,utils.getOctokitOptions)(githubToken, {
+        throttle: {
+            onRateLimit: (retryAfter, options, _, retryCount) => {
+                if (retryCount === 0) {
+                    octokit.log.warn(`Request quota exhausted for request ${options.method} ${options.url}`);
+                    octokit.log.info(`Retrying after ${retryAfter} seconds!`);
+                    return true;
+                }
+                else {
+                    octokit.log.error(`Request quota exhausted for request ${options.method} ${options.url}`);
+                }
+            },
+            onSecondaryRateLimit: (retryAfter, options, _, retryCount) => {
+                if (retryCount === 0) {
+                    octokit.log.warn(`Abuse detected for request ${options.method} ${options.url}`);
+                    octokit.log.info(`Retrying after ${retryAfter} seconds!`);
+                    return true;
+                }
+                else {
+                    octokit.log.warn(`Abuse detected for request ${options.method} ${options.url}`);
+                }
+            },
+        },
+        retry: {
+            doNotRetry: ['429'],
+        },
+    }));
+    octokit.graphql = octokit.graphql.defaults({
+        headers: {
+            'X-GitHub-Next-Global-ID': 1,
+        },
+    });
+    return octokit;
+}
+
+;// CONCATENATED MODULE: ./node_modules/token-who-am-i-action/dist/index.js
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+function tokenWhoAmI(_a) {
+    return __awaiter(this, arguments, void 0, function* ({ githubToken, }) {
+        var _b;
+        const octokit = getOctokit(githubToken);
+        const { viewer: { login, global_id: globalId }, } = yield octokit.graphql(`
+      query {
+        viewer {
+          login
+          global_id: id
+        }
+      }
+    `, {});
+        (0,core.notice)(`Login: ${login}`);
+        (0,core.setOutput)('login', login);
+        (0,core.notice)(`Global ID: ${globalId}`);
+        (0,core.setOutput)('global-id', globalId);
+        const { headers: { 'x-oauth-scopes': xOauthScopes }, data: { id, name, email, type }, } = yield octokit.rest.users.getByUsername({ username: login });
+        (0,core.notice)(`Id: ${id}`);
+        (0,core.setOutput)('id', id);
+        (0,core.notice)(`Name: ${name}`);
+        (0,core.setOutput)('name', name);
+        (0,core.notice)(`Email: ${email}`);
+        (0,core.setOutput)('email', email);
+        (0,core.notice)(`Type: ${type}`);
+        (0,core.setOutput)('type', type);
+        if (type === 'User') {
+            const scopes = (_b = xOauthScopes === null || xOauthScopes === void 0 ? void 0 : xOauthScopes.split(',').map((scope) => scope.trim())) !== null && _b !== void 0 ? _b : undefined;
+            if (scopes !== undefined) {
+                (0,core.notice)(`Scopes: ${xOauthScopes}`);
+                (0,core.setOutput)('scopes', xOauthScopes);
+            }
+            return {
+                login,
+                globalId,
+                id,
+                name: name !== null && name !== void 0 ? name : undefined,
+                email: email !== null && email !== void 0 ? email : undefined,
+                scopes,
+                type,
+            };
+        }
+        else if (type === 'Bot') {
+            const { node: { bot_login: appSlug }, } = yield octokit.graphql(`
+        query($global_id: ID!) {
+          node(id: $global_id) {
+            ... on Bot{
+              bot_login: login
+            }
+          }
+        }
+      `, {
+                global_id: globalId,
+            });
+            (0,core.notice)(`App Slug: ${appSlug}`);
+            (0,core.setOutput)('app-slug', appSlug);
+            const { data: { name: botName }, } = yield octokit.rest.apps.getBySlug({ app_slug: appSlug });
+            (0,core.notice)(`Bot Name: ${botName}`);
+            (0,core.setOutput)('name', botName);
+            const botEmail = `${id}+${login}@users.noreply.github.com`;
+            (0,core.notice)(`Bot Email: ${botEmail}`);
+            (0,core.setOutput)('email', botEmail);
+            return {
+                login,
+                appSlug,
+                globalId,
+                id,
+                name: botName,
+                email: botEmail,
+                type,
+            };
+        }
+        else {
+            throw new Error(`Unsupported type: ${type}`);
+        }
+    });
+}
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const githubToken = (0,core.getInput)('github-token');
+        yield tokenWhoAmI({ githubToken });
+    });
+}
+run().catch((error) => (0,core.setFailed)(error));
+
+// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
+var exec = __nccwpck_require__(5236);
+;// CONCATENATED MODULE: ./node_modules/config-git-with-token-action/dist/configGh.js
+var configGh_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+function configGh(githubToken) {
+    return configGh_awaiter(this, void 0, void 0, function* () {
+        yield (0,core.group)('Configure gh', () => configGh_awaiter(this, void 0, void 0, function* () {
+            (0,core.exportVariable)('GH_TOKEN', githubToken);
+            yield (0,exec.getExecOutput)('gh', ['auth', 'status']);
+            yield (0,exec.getExecOutput)('gh', ['auth', 'setup-git']);
+        }));
+    });
+}
+
+;// CONCATENATED MODULE: ./node_modules/config-git-with-token-action/dist/configGit.js
+var configGit_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+function configGit(githubToken, me) {
+    return configGit_awaiter(this, void 0, void 0, function* () {
+        yield (0,core.group)('Configure git', () => configGit_awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            yield (0,exec.getExecOutput)('git', ['config', '--list']);
+            yield (0,exec.getExecOutput)('git', [
+                'config',
+                '--global',
+                'user.email',
+                (_a = me.email) !== null && _a !== void 0 ? _a : '',
+            ]);
+            yield (0,exec.getExecOutput)('git', [
+                'config',
+                '--global',
+                'user.name',
+                (_b = me.name) !== null && _b !== void 0 ? _b : me.login,
+            ]);
+            if (me.type === 'Bot') {
+                return;
+            }
+            const remoteOutput = yield (0,exec.getExecOutput)('git', [
+                'remote',
+                'get-url',
+                'origin',
+            ]);
+            const originUrl = remoteOutput.stdout.trim();
+            const originUrlWithToken = originUrl.replace(/^https:\/\//, `https://${me.login}:${githubToken}@`);
+            yield (0,exec.getExecOutput)('git', [
+                'remote',
+                'set-url',
+                'origin',
+                originUrlWithToken,
+            ]);
+        }));
+    });
+}
+
+;// CONCATENATED MODULE: ./node_modules/config-git-with-token-action/dist/index.js
+var dist_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+
+
+function configGitWithToken(_a) {
+    return dist_awaiter(this, arguments, void 0, function* ({ githubToken, }) {
+        const me = yield (0,core.group)('Run token-who-am-i', () => dist_awaiter(this, void 0, void 0, function* () {
+            return yield tokenWhoAmI({ githubToken });
+        }));
+        yield configGh(githubToken);
+        yield configGit(githubToken, me);
+    });
+}
+function dist_run() {
+    return dist_awaiter(this, void 0, void 0, function* () {
+        const githubToken = (0,core.getInput)('github-token');
+        yield configGitWithToken({ githubToken });
+    });
+}
+dist_run().catch((error) => (0,core.setFailed)(error));
+
+
 /***/ })
 
 /******/ });
@@ -44542,6 +44758,7 @@ Object.defineProperty(exports, "B", ({ value: true }));
 exports.E = nodePackageRelease;
 const core_1 = __nccwpck_require__(7484);
 const github_1 = __nccwpck_require__(3228);
+const config_git_with_token_action_1 = __nccwpck_require__(5416);
 const semver_1 = __nccwpck_require__(2088);
 const ReleaseType_1 = __nccwpck_require__(1922);
 const checkDiff_1 = __nccwpck_require__(1104);
@@ -44557,9 +44774,10 @@ const pushBranch_1 = __nccwpck_require__(1411);
 const setVersion_1 = __nccwpck_require__(36);
 const updateTags_1 = __nccwpck_require__(7095);
 const DEFAULT_VERSION = '0.1.0';
-async function nodePackageRelease(githubToken) {
+async function nodePackageRelease({ githubToken, directory, releaseType, prerelease, updateShorthandRelease, skipIfNoDiff, diffTargets, dryRun, }) {
     const octokit = (0, getOctokit_1.getOctokit)(githubToken);
-    await (0, configGit_1.configGit)(octokit);
+    await (0, config_git_with_token_action_1.configGitWithToken)({ githubToken });
+    await (0, configGit_1.configGit)();
     (0, core_1.startGroup)('Fetch every git tag');
     await (0, fetchEverything_1.fetchEverything)();
     (0, core_1.endGroup)();
@@ -44568,7 +44786,7 @@ async function nodePackageRelease(githubToken) {
     (0, core_1.notice)(`Last git tag: ${lastGitTag}`);
     (0, core_1.endGroup)();
     (0, core_1.startGroup)('Get package.json version');
-    const packageVersion = (0, getPackageVersion_1.getPackageVersion)();
+    const packageVersion = (0, getPackageVersion_1.getPackageVersion)(directory);
     (0, core_1.notice)(`package.json version: ${packageVersion}`);
     (0, core_1.endGroup)();
     (0, core_1.startGroup)('Get latest release tag');
@@ -44580,22 +44798,17 @@ async function nodePackageRelease(githubToken) {
     const sortedVersions = (0, semver_1.rsort)(versions);
     const highestVersion = sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
     (0, core_1.notice)(`Highest version: ${highestVersion}`);
-    const releaseType = ReleaseType_1.RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)('release-type').toLowerCase() === releaseType);
-    if (releaseType === undefined) {
-        (0, core_1.setFailed)(`Invalid release-type input: ${(0, core_1.getInput)('release-type')}`);
-        return;
-    }
     const releaseVersion = (0, semver_1.inc)(highestVersion, releaseType);
     if (releaseVersion === null) {
         (0, core_1.setFailed)('Failed to compute release version');
         return;
     }
     (0, core_1.notice)(`Release version: ${releaseVersion}`);
-    if ((0, core_1.getBooleanInput)('skip-if-no-diff')) {
+    if (skipIfNoDiff) {
         const lastSameReleaseTypeVersion = await (0, findLastSameReleaseTypeVersion_1.findLastSameReleaseTypeVersion)(releaseVersion, releaseType);
         (0, core_1.notice)(`Last same release type version: ${lastSameReleaseTypeVersion}`);
         if (lastSameReleaseTypeVersion !== null) {
-            const diff = await (0, checkDiff_1.checkDiff)(lastSameReleaseTypeVersion);
+            const diff = await (0, checkDiff_1.checkDiff)(lastSameReleaseTypeVersion, directory, diffTargets);
             if (!diff) {
                 (0, core_1.notice)(`Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`);
                 (0, core_1.setOutput)('skipped', true);
@@ -44605,17 +44818,30 @@ async function nodePackageRelease(githubToken) {
         (0, core_1.setOutput)('skipped', false);
     }
     (0, core_1.setOutput)('tag', `v${releaseVersion}`);
-    await (0, setVersion_1.setVersion)(releaseVersion);
-    await (0, pushBranch_1.pushBranch)();
-    const release = await (0, createRelease_1.createRelease)(owner, repo, releaseVersion, octokit);
-    if ((0, core_1.getBooleanInput)('update-shorthand-release')) {
-        await (0, updateTags_1.updateTags)(releaseVersion);
+    await (0, setVersion_1.setVersion)(releaseVersion, directory);
+    await (0, pushBranch_1.pushBranch)(dryRun);
+    const release = await (0, createRelease_1.createRelease)(owner, repo, releaseVersion, prerelease, dryRun, octokit);
+    if (updateShorthandRelease) {
+        await (0, updateTags_1.updateTags)(releaseVersion, dryRun);
     }
     return release;
 }
 async function run() {
-    const githubToken = (0, core_1.getInput)('github-token');
-    await nodePackageRelease(githubToken);
+    const releaseType = ReleaseType_1.RELEASE_TYPES.find((releaseType) => (0, core_1.getInput)('release-type').toLowerCase() === releaseType);
+    if (releaseType === undefined) {
+        (0, core_1.setFailed)(`Invalid release-type input: ${(0, core_1.getInput)('release-type')}`);
+        return;
+    }
+    await nodePackageRelease({
+        githubToken: (0, core_1.getInput)('github-token'),
+        directory: (0, core_1.getInput)('directory'),
+        releaseType,
+        prerelease: (0, core_1.getBooleanInput)('prerelease'),
+        updateShorthandRelease: (0, core_1.getBooleanInput)('update-shorthand-release'),
+        skipIfNoDiff: (0, core_1.getBooleanInput)('skip-if-no-diff'),
+        diffTargets: (0, core_1.getInput)('diff-targets'),
+        dryRun: (0, core_1.getBooleanInput)('dry-run'),
+    });
 }
 run().catch((error) => (0, core_1.setFailed)(error));
 
