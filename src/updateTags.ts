@@ -1,10 +1,12 @@
-import { getBooleanInput, notice, warning } from '@actions/core';
+import { notice, warning } from '@actions/core';
 import { getExecOutput } from '@actions/exec';
 import { parse } from 'semver';
 
-export async function updateTags(version: string) {
+export async function updateTags(
+  version: string,
+  dryRun: boolean,
+): Promise<void> {
   const semver = parse(version);
-  const dryRun = getBooleanInput('dry-run');
 
   if (semver === null) {
     throw new Error(`Failed to parse the version as semver: ${version}`);
