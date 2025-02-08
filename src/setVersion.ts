@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { getInput, notice } from '@actions/core';
+import { notice } from '@actions/core';
 import { getExecOutput } from '@actions/exec';
 
 export const DEFAULT_WORKING_DIRECTORY = process.cwd();
