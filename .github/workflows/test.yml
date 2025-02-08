@@ -15,10 +15,11 @@ on:
 permissions:
   contents: write
 
+concurrency: release
+
 jobs:
   test-with-package:
     name: Test with Package
-    concurrency: release
     if: ${{ !startsWith(github.head_ref || github.event.workflow_run.head_branch, 'workflows/tests/') }}
     runs-on: ubuntu-latest
     steps:
@@ -62,7 +63,6 @@ jobs:
   test-without-package:
     name: Test without Package
     needs: [test-with-package]
-    concurrency: release
     if: ${{ !startsWith(github.head_ref || github.event.workflow_run.head_branch, 'workflows/tests/') }}
     runs-on: ubuntu-latest
     steps:
