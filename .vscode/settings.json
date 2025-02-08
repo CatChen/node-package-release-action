@@ -1,4 +1,6 @@
 {
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "yaml.schemas": {
     "https://json.schemastore.org/github-action.json": "action.yml",
     "https://json.schemastore.org/github-funding.json": ".github/FUNDING.yml",

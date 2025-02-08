@@ -1,4 +1,4 @@
 import type { Octokit } from '@octokit/core';
-import type { components } from '@octokit/openapi-types/types.js';
 import type { Api } from '@octokit/plugin-rest-endpoint-methods/dist-types/types';
-export declare function createRelease(owner: string, repo: string, version: string, prerelease: boolean, dryRun: boolean, octokit: Octokit & Api): Promise<components['schemas']['release'] | undefined>;
+import type { Release } from '@octokit/webhooks-types/schema';
+export declare function createRelease(owner: string, repo: string, version: string, prerelease: boolean, dryRun: boolean, octokit: Octokit & Api): Promise<Release | undefined>;

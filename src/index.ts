@@ -1,4 +1,4 @@
-import type { components } from '@octokit/openapi-types/types.js';
+import type { Release } from '@octokit/webhooks-types/schema';
 import {
   endGroup,
   getBooleanInput,
@@ -10,7 +10,7 @@ import {
 } from '@actions/core';
 import { context } from '@actions/github';
 import { configGitWithToken } from 'config-git-with-token-action';
-import { ReleaseType, inc, rsort } from 'semver';
+import { type ReleaseType, inc, rsort } from 'semver';
 import { RELEASE_TYPES } from './ReleaseType';
 import { checkDiff } from './checkDiff';
 import { configGit } from './configGit';
@@ -45,7 +45,7 @@ export async function nodePackageRelease({
   skipIfNoDiff: boolean;
   diffTargets: string;
   dryRun: boolean;
-}): Promise<components['schemas']['release'] | undefined> {
+}): Promise<Release | undefined> {
   const octokit = getOctokit(githubToken);
 
   await configGitWithToken({ githubToken });
