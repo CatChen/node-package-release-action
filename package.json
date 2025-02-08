@@ -30,6 +30,7 @@
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.1.1",
     "@octokit/graphql-schema": "^15.1.2",
+    "@octokit/webhooks-types": "^7.6.1",
     "@serverless-guru/prettier-plugin-import-order": "^0.4.1",
     "@types/glob": "^8.0.0",
     "@types/node": "^22.0.0",
@@ -54,7 +55,6 @@
     "@actions/github": "^6.0.0",
     "@octokit/plugin-retry": "^7.1.1",
     "@octokit/plugin-throttling": "^9.3.0",
-    "@octokit/webhooks-types": "^7.6.1",
     "config-git-with-token-action": "^2.0.0",
     "glob": "^11.0.0",
     "semver": "^7.3.8"
