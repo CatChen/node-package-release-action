@@ -10,7 +10,7 @@ import {
 } from '@actions/core';
 import { context } from '@actions/github';
 import { configGitWithToken } from 'config-git-with-token-action';
-import { ReleaseType, inc, rsort } from 'semver';
+import { type ReleaseType, inc, rsort } from 'semver';
 import { RELEASE_TYPES } from './ReleaseType';
 import { checkDiff } from './checkDiff';
 import { configGit } from './configGit';
