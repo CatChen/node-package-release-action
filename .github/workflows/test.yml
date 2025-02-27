@@ -15,7 +15,7 @@ on:
 permissions:
   contents: write
 
-concurrency: release
+concurrency: release-${{ github.event_name }}
 
 jobs:
   test-with-package:
@@ -36,7 +36,7 @@ jobs:
           SHA: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
-          TEST_BRANCH_NAME: ${{ format('workflows/tests/id-{0}/run-{1}/attempt-{2}/sha-{3}', github.run_id, github.run_number, github.run_attempt, github.sha) }}
+          TEST_BRANCH_NAME: ${{ format('workflows/tests/package/id-{0}/run-{1}/attempt-{2}/sha-{3}', github.run_id, github.run_number, github.run_attempt, github.sha) }}
         run: |
           echo "::notice::Run number is $RUN_NUMBER"
           echo "::notice::Run attempt is $RUN_ATTEMPT"
@@ -54,7 +54,7 @@ jobs:
         if: ${{ always() }}
         continue-on-error: true
         env:
-          TEST_BRANCH_NAME: ${{ format('workflows/tests/id-{0}/run-{1}/attempt-{2}/sha-{3}', github.run_id, github.run_number, github.run_attempt, github.sha) }}
+          TEST_BRANCH_NAME: ${{ format('workflows/tests/package/id-{0}/run-{1}/attempt-{2}/sha-{3}', github.run_id, github.run_number, github.run_attempt, github.sha) }}
           TAG: ${{ steps.test.outputs.tag }}
         run: |
           git push -d origin "$TEST_BRANCH_NAME" || true # Success workflow have the branch deleted already
