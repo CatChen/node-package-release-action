@@ -16,9 +16,9 @@ updates:
         patterns:
           - '@actions/*'
     reviewers:
-      - catchen
+      - CatChen
     assignees:
-      - catchen
+      - CatChen
     labels:
       - accept2ship
 
@@ -27,6 +27,6 @@ updates:
     schedule:
       interval: daily
     assignees:
-      - catchen
+      - CatChen
     labels:
       - pass2ship
