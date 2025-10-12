@@ -596,11 +596,11 @@
     bottleneck "^2.15.3"
 
 "@octokit/plugin-throttling@^11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@octokit/plugin-throttling/-/plugin-throttling-11.0.1.tgz#31a0b5e759f0313514d9522a4103360f17ffc2e4"
-  integrity sha512-S+EVhy52D/272L7up58dr3FNSMXWuNZolkL4zMJBNIfIxyZuUcczsQAU4b5w6dewJXnKYVgSHSV5wxitMSW1kw==
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-throttling/-/plugin-throttling-11.0.2.tgz#22727f72630ce966cd163149a55bd56a9e0434fb"
+  integrity sha512-ntNIig4zZhQVOZF4fG9Wt8QCoz9ehb+xnlUwp74Ic2ANChCk8oKmRwV9zDDCtrvU1aERIOvtng8wsalEX7Jk5Q==
   dependencies:
-    "@octokit/types" "^14.0.0"
+    "@octokit/types" "^15.0.0"
     bottleneck "^2.15.3"
 
 "@octokit/plugin-throttling@^9.3.0":
