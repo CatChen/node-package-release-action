@@ -56,7 +56,7 @@
     "@octokit/plugin-retry": "^8.0.1",
     "@octokit/plugin-throttling": "^11.0.1",
     "config-git-with-token-action": "^2.0.0",
-    "glob": "^11.0.0",
+    "glob": "^13.0.0",
     "semver": "^7.3.8"
   },
   "resolutions": {
