@@ -1,6 +1,6 @@
 {
   "name": "node-package-release-action",
-  "version": "2.3.9",
+  "version": "2.3.10-4",
   "description": "A template to create custom GitHub Action with TypeScript/JavaScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
