@@ -104454,7 +104454,8 @@ async function getLatestReleaseTag(owner, repo, octokit) {
     const validReleaseTags = releaseTags.filter((tag) => (0,node_modules_semver.valid)(tag) !== null);
     if (validReleaseTags.length === 0) {
         warning(`No valid release tag found`);
-        core_debug('Release tags:\n' + releaseTags.map((tag) => `  ${tag}`).join('\n'));
+        core_debug('Release tags:\n' +
+            releaseTags.map((tag) => `  ${tag}`).join('\n'));
         return null;
     }
     const sortedReleaseTags = (0,node_modules_semver.rsort)(validReleaseTags);
