@@ -1,5 +1,5 @@
 import type { Octokit } from '@octokit/core';
-import type { Api } from '@octokit/plugin-rest-endpoint-methods/dist-types/types';
+import type { Api } from '@octokit/plugin-rest-endpoint-methods';
 import { debug, warning } from '@actions/core';
 import { RequestError } from '@octokit/request-error';
 import { rsort, valid } from 'semver';
