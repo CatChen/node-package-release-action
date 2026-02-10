@@ -1,5 +1,5 @@
 import type { Octokit } from '@octokit/core';
-import type { Api } from '@octokit/plugin-rest-endpoint-methods/dist-types/types';
+import type { Api } from '@octokit/plugin-rest-endpoint-methods';
 import { debug, warning } from '@actions/core';
 import { RequestError } from '@octokit/request-error';
 import { rsort, valid } from 'semver';
@@ -42,11 +42,18 @@ export async function getLatestReleaseTag(
     warning(`No release found`);
     return null;
   }
-  const releaseTags = releasesResponse.data.map((release) => release.tag_name);
-  const validReleaseTags = releaseTags.filter((tag) => valid(tag) !== null);
+  const releaseTags = releasesResponse.data.map(
+    (release: { tag_name: string }) => release.tag_name,
+  );
+  const validReleaseTags = releaseTags.filter(
+    (tag: string) => valid(tag) !== null,
+  );
   if (validReleaseTags.length === 0) {
     warning(`No valid release tag found`);
-    debug('Release tags:\n' + releaseTags.map((tag) => `  ${tag}`).join('\n'));
+    debug(
+      'Release tags:\n' +
+        releaseTags.map((tag: string) => `  ${tag}`).join('\n'),
+    );
     return null;
   }
 

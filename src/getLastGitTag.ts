@@ -1,6 +1,6 @@
 import { warning } from '@actions/core';
 import { rsort } from 'semver';
-import { getAllGitTags } from './getAllGitTags';
+import { getAllGitTags } from './getAllGitTags.js';
 
 export async function getLastGitTag() {
   const versionTags = await getAllGitTags();

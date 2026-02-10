@@ -1,4 +1,4 @@
-import type { Release } from '@octokit/webhooks-types/schema';
+import type { Release } from '@octokit/webhooks-types';
 import {
   endGroup,
   getBooleanInput,
@@ -11,19 +11,19 @@ import {
 import { context } from '@actions/github';
 import { configGitWithToken } from 'config-git-with-token-action';
 import { type ReleaseType, inc, rsort } from 'semver';
-import { RELEASE_TYPES } from './ReleaseType';
-import { checkDiff } from './checkDiff';
-import { configGit } from './configGit';
-import { createRelease } from './createRelease';
-import { fetchEverything } from './fetchEverything';
-import { findLastSameReleaseTypeVersion } from './findLastSameReleaseTypeVersion';
-import { getLastGitTag } from './getLastGitTag';
-import { getLatestReleaseTag } from './getLatestReleaseTag';
-import { getOctokit } from './getOctokit';
-import { getPackageVersion } from './getPackageVersion';
-import { pushBranch } from './pushBranch';
-import { setVersion } from './setVersion';
-import { updateTags } from './updateTags';
+import { RELEASE_TYPES } from './ReleaseType.js';
+import { checkDiff } from './checkDiff.js';
+import { configGit } from './configGit.js';
+import { createRelease } from './createRelease.js';
+import { fetchEverything } from './fetchEverything.js';
+import { findLastSameReleaseTypeVersion } from './findLastSameReleaseTypeVersion.js';
+import { getLastGitTag } from './getLastGitTag.js';
+import { getLatestReleaseTag } from './getLatestReleaseTag.js';
+import { getOctokit } from './getOctokit.js';
+import { getPackageVersion } from './getPackageVersion.js';
+import { pushBranch } from './pushBranch.js';
+import { setVersion } from './setVersion.js';
+import { updateTags } from './updateTags.js';
 
 const DEFAULT_VERSION = '0.1.0';
 
@@ -134,7 +134,8 @@ export async function nodePackageRelease({
 
 async function run(): Promise<void> {
   const releaseType = RELEASE_TYPES.find(
-    (releaseType) => getInput('release-type').toLowerCase() === releaseType,
+    (releaseType: string) =>
+      getInput('release-type').toLowerCase() === releaseType,
   );
   if (releaseType === undefined) {
     setFailed(`Invalid release-type input: ${getInput('release-type')}`);

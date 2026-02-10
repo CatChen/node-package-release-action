@@ -1,6 +1,6 @@
 import type { Octokit } from '@octokit/core';
-import type { Api } from '@octokit/plugin-rest-endpoint-methods/dist-types/types';
-import type { Release } from '@octokit/webhooks-types/schema';
+import type { Api } from '@octokit/plugin-rest-endpoint-methods';
+import type { Release } from '@octokit/webhooks-types';
 import { info, notice } from '@actions/core';
 
 export async function createRelease(
