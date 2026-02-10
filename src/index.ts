@@ -134,8 +134,7 @@ export async function nodePackageRelease({
 
 async function run(): Promise<void> {
   const releaseType = RELEASE_TYPES.find(
-    (releaseType: string) =>
-      getInput('release-type').toLowerCase() === releaseType,
+    (releaseType) => getInput('release-type').toLowerCase() === releaseType,
   );
   if (releaseType === undefined) {
     setFailed(`Invalid release-type input: ${getInput('release-type')}`);
