@@ -61,7 +61,7 @@ export async function nodePackageRelease({
   endGroup();
 
   startGroup('Get package.json version');
-  const packageVersion = getPackageVersion(directory);
+  const packageVersion = await getPackageVersion(directory);
   notice(`package.json version: ${packageVersion}`);
   endGroup();
 

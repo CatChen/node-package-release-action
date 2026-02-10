@@ -104435,7 +104435,9 @@ async function getLatestReleaseTag(owner, repo, octokit) {
                 warning(`Latest release not found but pre-release may exist`);
             }
             else {
-                throw new Error(`Unexpected error: [${error.status}] ${error.message}`);
+                throw new Error(`Unexpected error: [${error.status}] ${error.message}`, {
+                    cause: error,
+                });
             }
         }
         else {
@@ -104815,17 +104817,17 @@ function src_getOctokit_getOctokit(githubToken) {
 
 
 const DEFAULT_WORKING_DIRECTORY = process.cwd();
-function getPackageVersion(directory) {
+async function getPackageVersion(directory) {
     const absoluteDirectory = (0,external_node_path_namespaceObject.resolve)(DEFAULT_WORKING_DIRECTORY, directory);
     const packageJsonPath = (0,external_node_path_namespaceObject.resolve)(absoluteDirectory, 'package.json');
     if (!(0,external_node_fs_namespaceObject.existsSync)(packageJsonPath)) {
         warning(`package.json cannot be found at ${packageJsonPath}`);
         return null;
     }
-    const require = /* createRequire() */ undefined;
     notice(`Using package.json from: ${packageJsonPath}`);
-    const { version } = require(packageJsonPath);
-    return String(version);
+    const content = await (0,promises_namespaceObject.readFile)(packageJsonPath, 'utf-8');
+    const { version } = JSON.parse(content);
+    return version != null ? String(version) : null;
 }
 
 ;// CONCATENATED MODULE: ./src/pushBranch.ts
@@ -104939,7 +104941,7 @@ async function nodePackageRelease({ githubToken, directory, releaseType, prerele
     notice(`Last git tag: ${lastGitTag}`);
     endGroup();
     startGroup('Get package.json version');
-    const packageVersion = getPackageVersion(directory);
+    const packageVersion = await getPackageVersion(directory);
     notice(`package.json version: ${packageVersion}`);
     endGroup();
     startGroup('Get latest release tag');
