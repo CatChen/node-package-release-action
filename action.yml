@@ -39,7 +39,7 @@ outputs:
   skipped:
     description: 'Indicator of whether the Action is skipped because of the skip-if-no-diff input.'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'bundle/index.js'
 branding:
   icon: 'send'
