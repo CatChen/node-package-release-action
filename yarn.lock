@@ -1075,13 +1075,13 @@ concat-map@0.0.1:
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
 config-git-with-token-action@^2.0.0:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/config-git-with-token-action/-/config-git-with-token-action-2.0.5.tgz#bdb9df2ff7d447fa5b265f1e39c8fee0da9af5af"
-  integrity sha512-683xkEAgFhbFkU6as5dIpSsx905BFWg8p86cN7yBFnIlwWQa7f/yI5e4krUAB/kBCN0eqGS3WFxfCDKWoDnbzg==
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/config-git-with-token-action/-/config-git-with-token-action-2.0.9.tgz#3c8033a472e87777c990a5cab1d78a7390dd0cf2"
+  integrity sha512-7qIsiVWCUYA2/j46hB7HnWLwa9OIhMLDDV9Gt8EpozHIHdY00OGfasJlFcoJc4VxzFqkPdWhwwR6p7wwl/Og4g==
   dependencies:
-    "@actions/core" "^1.10.0"
-    "@actions/exec" "^1.1.1"
-    "@actions/github" "^6.0.0"
+    "@actions/core" "^3.0.0"
+    "@actions/exec" "^3.0.0"
+    "@actions/github" "^9.0.0"
     token-who-am-i-action "^2.0.0"
 
 convert-source-map@^1.7.0:
