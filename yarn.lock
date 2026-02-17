@@ -1082,9 +1082,9 @@ concat-map@0.0.1:
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
 config-git-with-token-action@^2.0.0:
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/config-git-with-token-action/-/config-git-with-token-action-2.0.9.tgz#3c8033a472e87777c990a5cab1d78a7390dd0cf2"
-  integrity sha512-7qIsiVWCUYA2/j46hB7HnWLwa9OIhMLDDV9Gt8EpozHIHdY00OGfasJlFcoJc4VxzFqkPdWhwwR6p7wwl/Og4g==
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/config-git-with-token-action/-/config-git-with-token-action-2.0.10.tgz#63b2b96e3c8b29f34b6e029ebab907826036401d"
+  integrity sha512-9KrhtTndhEtJ2NEgVPqLYVMgbspgCKRK/48vbkTX2tqfKtdxwcq/N+a0vMnr963ZGfwbMd4Cex9Db6p5WvhQ6Q==
   dependencies:
     "@actions/core" "^3.0.0"
     "@actions/exec" "^3.0.0"
