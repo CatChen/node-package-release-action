@@ -51,7 +51,7 @@ export function getOctokit(githubToken: string): Octokit &
         },
       },
       retry: {
-        doNotRetry: ['429'],
+        doNotRetry: [429],
       },
     }),
   );

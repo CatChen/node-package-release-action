@@ -94146,8 +94146,11 @@ async function getLatestReleaseTag(owner, repo, octokit) {
 var _octokit_plugin_retry_dist_bundle_VERSION = "0.0.0-development";
 
 // pkg/dist-src/error-request.js
+function isRequestError(error) {
+  return error.request !== void 0;
+}
 async function dist_bundle_errorRequest(state, octokit, error, options) {
-  if (!error.request || !error.request.request) {
+  if (!isRequestError(error) || !error?.request.request) {
     throw error;
   }
   if (error.status >= 400 && !state.doNotRetry.includes(error.status)) {
@@ -94164,8 +94167,8 @@ async function dist_bundle_errorRequest(state, octokit, error, options) {
 async function plugin_retry_dist_bundle_wrapRequest(state, octokit, request, options) {
   const limiter = new light();
   limiter.on("failed", function(error, info) {
-    const maxRetries = ~~error.request.request.retries;
-    const after = ~~error.request.request.retryAfter;
+    const maxRetries = ~~error.request.request?.retries;
+    const after = ~~error.request.request?.retryAfter;
     options.request.retryCount = info.retryCount + 1;
     if (maxRetries > info.retryCount) {
       return after * state.retryAfterBaseValue;
@@ -94177,7 +94180,7 @@ async function plugin_retry_dist_bundle_wrapRequest(state, octokit, request, opt
   );
 }
 async function dist_bundle_requestWithGraphqlErrorHandling(state, octokit, request, options) {
-  const response = await request(request, options);
+  const response = await request(options);
   if (response.data && response.data.errors && response.data.errors.length > 0 && /Something went wrong while executing your query/.test(
     response.data.errors[0].message
   )) {
@@ -94201,11 +94204,7 @@ function dist_bundle_retry(octokit, octokitOptions) {
     },
     octokitOptions.retry
   );
-  if (state.enabled) {
-    octokit.hook.error("request", dist_bundle_errorRequest.bind(null, state, octokit));
-    octokit.hook.wrap("request", plugin_retry_dist_bundle_wrapRequest.bind(null, state, octokit));
-  }
-  return {
+  const retryPlugin = {
     retry: {
       retryRequest: (error, retries, retryAfter) => {
         error.request.request = Object.assign({}, error.request.request, {
@@ -94216,6 +94215,11 @@ function dist_bundle_retry(octokit, octokitOptions) {
       }
     }
   };
+  if (state.enabled) {
+    octokit.hook.error("request", dist_bundle_errorRequest.bind(null, state, retryPlugin));
+    octokit.hook.wrap("request", plugin_retry_dist_bundle_wrapRequest.bind(null, state, retryPlugin));
+  }
+  return retryPlugin;
 }
 dist_bundle_retry.VERSION = _octokit_plugin_retry_dist_bundle_VERSION;
 
@@ -94478,7 +94482,7 @@ function src_getOctokit_getOctokit(githubToken) {
             },
         },
         retry: {
-            doNotRetry: ['429'],
+            doNotRetry: [429],
         },
     }));
     octokit.graphql = octokit.graphql.defaults({
