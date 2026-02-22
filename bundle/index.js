@@ -86272,7 +86272,7 @@ var external_os_ = __nccwpck_require__(857);
  * Sanitizes an input into a string so it can be passed into issueCommand safely
  * @param input input to sanitize into a string
  */
-function utils_toCommandValue(input) {
+function toCommandValue(input) {
     if (input === null || input === undefined) {
         return '';
     }
@@ -86379,13 +86379,13 @@ class Command {
     }
 }
 function escapeData(s) {
-    return utils_toCommandValue(s)
+    return toCommandValue(s)
         .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
         .replace(/\n/g, '%0A');
 }
 function escapeProperty(s) {
-    return utils_toCommandValue(s)
+    return toCommandValue(s)
         .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
         .replace(/\n/g, '%0A')
@@ -86413,13 +86413,13 @@ function file_command_issueFileCommand(command, message) {
     if (!external_fs_.existsSync(filePath)) {
         throw new Error(`Missing file at path: ${filePath}`);
     }
-    external_fs_.appendFileSync(filePath, `${utils_toCommandValue(message)}${external_os_.EOL}`, {
+    external_fs_.appendFileSync(filePath, `${toCommandValue(message)}${external_os_.EOL}`, {
         encoding: 'utf8'
     });
 }
-function file_command_prepareKeyValueMessage(key, value) {
+function prepareKeyValueMessage(key, value) {
     const delimiter = `ghadelimiter_${external_crypto_.randomUUID()}`;
-    const convertedValue = utils_toCommandValue(value);
+    const convertedValue = toCommandValue(value);
     // These should realistically never happen, but just in case someone finds a
     // way to exploit uuid generation let's not allow keys or values that contain
     // the delimiter.
@@ -88930,11 +88930,11 @@ var ExitCode;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function exportVariable(name, val) {
-    const convertedVal = utils_toCommandValue(val);
+    const convertedVal = toCommandValue(val);
     process.env[name] = convertedVal;
     const filePath = process.env['GITHUB_ENV'] || '';
     if (filePath) {
-        return file_command_issueFileCommand('ENV', file_command_prepareKeyValueMessage(name, val));
+        return file_command_issueFileCommand('ENV', prepareKeyValueMessage(name, val));
     }
     command_issueCommand('set-env', { name }, convertedVal);
 }
@@ -89051,10 +89051,10 @@ function getBooleanInput(name, options) {
 function setOutput(name, value) {
     const filePath = process.env['GITHUB_OUTPUT'] || '';
     if (filePath) {
-        return file_command_issueFileCommand('OUTPUT', file_command_prepareKeyValueMessage(name, value));
+        return file_command_issueFileCommand('OUTPUT', prepareKeyValueMessage(name, value));
     }
     process.stdout.write(external_os_.EOL);
-    command_issueCommand('set-output', { name }, utils_toCommandValue(value));
+    command_issueCommand('set-output', { name }, toCommandValue(value));
 }
 /**
  * Enables or disables the echoing of commands into stdout for the rest of the step.
@@ -89173,9 +89173,9 @@ function group(name, fn) {
 function saveState(name, value) {
     const filePath = process.env['GITHUB_STATE'] || '';
     if (filePath) {
-        return issueFileCommand('STATE', prepareKeyValueMessage(name, value));
+        return file_command_issueFileCommand('STATE', prepareKeyValueMessage(name, value));
     }
-    issueCommand('save-state', { name }, toCommandValue(value));
+    command_issueCommand('save-state', { name }, toCommandValue(value));
 }
 /**
  * Gets the value of an state set by this action's main execution.
@@ -94610,8 +94610,94 @@ async function updateTags(version, dryRun) {
 
 
 
+
 const DEFAULT_VERSION = '0.1.0';
-async function nodePackageRelease({ githubToken, directory, releaseType, prerelease, updateShorthandRelease, skipIfNoDiff, diffTargets, dryRun, }) {
+const STATE_IS_POST = 'isPost';
+const STATE_RELEASE_TRANSACTION = 'releaseTransaction';
+function saveReleaseTransactionState(state) {
+    saveState(STATE_RELEASE_TRANSACTION, JSON.stringify(state));
+}
+function updateReleaseTransactionState(state, updates) {
+    Object.assign(state, updates);
+    saveReleaseTransactionState(state);
+}
+function loadReleaseTransactionState() {
+    const stateJson = getState(STATE_RELEASE_TRANSACTION);
+    if (stateJson === '') {
+        return null;
+    }
+    try {
+        const parsed = JSON.parse(stateJson);
+        return {
+            completed: parsed.completed === true,
+            dryRun: parsed.dryRun === true,
+            initialBranchName: parsed.initialBranchName ?? null,
+            initialHeadSha: parsed.initialHeadSha ?? null,
+            releaseTag: parsed.releaseTag ?? null,
+            pushBranchCompleted: parsed.pushBranchCompleted === true,
+            releaseCreated: parsed.releaseCreated === true,
+            updateShorthandReleaseRequested: parsed.updateShorthandReleaseRequested === true,
+            updateShorthandReleaseCompleted: parsed.updateShorthandReleaseCompleted === true,
+        };
+    }
+    catch (error) {
+        warning(`Failed to parse release transaction state: ${String(error)}`);
+        return null;
+    }
+}
+async function getCurrentGitContext() {
+    const branchOutput = await getExecOutput('git', ['branch', '--show-current']);
+    const headOutput = await getExecOutput('git', ['rev-parse', 'HEAD']);
+    const branchName = branchOutput.stdout.trim();
+    const headSha = headOutput.stdout.trim();
+    return {
+        branchName: branchName === '' ? null : branchName,
+        headSha: headSha === '' ? null : headSha,
+    };
+}
+async function rollbackStep(stepName, command, args) {
+    notice(`${stepName}: ${command} ${args.join(' ')}`);
+    const output = await getExecOutput(command, args, {
+        ignoreReturnCode: true,
+    });
+    if (output.exitCode === 0) {
+        notice(`${stepName}: done`);
+        return true;
+    }
+    warning(`${stepName}: failed with exit code ${output.exitCode}`);
+    if (output.stdout.trim() !== '') {
+        warning(`${stepName} stdout:\n${output.stdout}`);
+    }
+    if (output.stderr.trim() !== '') {
+        warning(`${stepName} stderr:\n${output.stderr}`);
+    }
+    return false;
+}
+function logManualRemediation(state) {
+    const commands = [];
+    if (state.releaseTag !== null) {
+        commands.push(`gh release delete ${state.releaseTag} --yes`);
+        commands.push(`git push --delete origin ${state.releaseTag}`);
+    }
+    if (state.initialBranchName !== null && state.initialHeadSha !== null) {
+        commands.push(`git push --force-with-lease origin ${state.initialHeadSha}:refs/heads/${state.initialBranchName}`);
+    }
+    if (commands.length === 0) {
+        warning('Manual remediation commands are unavailable because release state is incomplete.');
+        return;
+    }
+    warning([
+        'Manual remediation commands (run only if needed):',
+        ...commands.map((command) => `  ${command}`),
+    ].join('\n'));
+}
+async function nodePackageRelease({ githubToken, directory, releaseType, prerelease, updateShorthandRelease, skipIfNoDiff, diffTargets, dryRun, state, }) {
+    const updateState = (updates) => {
+        if (state === undefined) {
+            return;
+        }
+        updateReleaseTransactionState(state, updates);
+    };
     const octokit = src_getOctokit_getOctokit(githubToken);
     await configGitWithToken({ githubToken });
     await configGit_configGit();
@@ -94641,6 +94727,7 @@ async function nodePackageRelease({ githubToken, directory, releaseType, prerele
         return;
     }
     notice(`Release version: ${releaseVersion}`);
+    updateState({ releaseTag: `v${releaseVersion}` });
     if (skipIfNoDiff) {
         const lastSameReleaseTypeVersion = await findLastSameReleaseTypeVersion(releaseVersion, releaseType);
         notice(`Last same release type version: ${lastSameReleaseTypeVersion}`);
@@ -94657,30 +94744,133 @@ async function nodePackageRelease({ githubToken, directory, releaseType, prerele
     setOutput('tag', `v${releaseVersion}`);
     await setVersion(releaseVersion, directory);
     await pushBranch(dryRun);
+    updateState({ pushBranchCompleted: true });
     const release = await createRelease(owner, repo, releaseVersion, prerelease, dryRun, octokit);
+    if (release !== undefined) {
+        updateState({ releaseCreated: true });
+    }
     if (updateShorthandRelease) {
         await updateTags(releaseVersion, dryRun);
+        updateState({ updateShorthandReleaseCompleted: true });
     }
     return release;
 }
 async function src_run() {
-    const releaseType = RELEASE_TYPES.find((releaseType) => getInput('release-type').toLowerCase() === releaseType);
+    const githubToken = getInput('github-token');
+    const directory = getInput('directory');
+    const releaseTypeInput = getInput('release-type');
+    const releaseType = RELEASE_TYPES.find((supportedReleaseType) => releaseTypeInput.toLowerCase() === supportedReleaseType);
+    const prerelease = getBooleanInput('prerelease');
+    const updateShorthandRelease = getBooleanInput('update-shorthand-release');
+    const skipIfNoDiff = getBooleanInput('skip-if-no-diff');
+    const diffTargets = getInput('diff-targets');
+    const dryRun = getBooleanInput('dry-run');
     if (releaseType === undefined) {
-        setFailed(`Invalid release-type input: ${getInput('release-type')}`);
+        setFailed(`Invalid release-type input: ${releaseTypeInput}`);
         return;
     }
+    const { branchName, headSha } = await getCurrentGitContext();
+    const state = {
+        completed: false,
+        dryRun,
+        initialBranchName: branchName,
+        initialHeadSha: headSha,
+        releaseTag: null,
+        pushBranchCompleted: false,
+        releaseCreated: false,
+        updateShorthandReleaseRequested: updateShorthandRelease,
+        updateShorthandReleaseCompleted: false,
+    };
+    saveReleaseTransactionState(state);
     await nodePackageRelease({
-        githubToken: getInput('github-token'),
-        directory: getInput('directory'),
+        githubToken,
+        directory,
         releaseType,
-        prerelease: getBooleanInput('prerelease'),
-        updateShorthandRelease: getBooleanInput('update-shorthand-release'),
-        skipIfNoDiff: getBooleanInput('skip-if-no-diff'),
-        diffTargets: getInput('diff-targets'),
-        dryRun: getBooleanInput('dry-run'),
+        prerelease,
+        updateShorthandRelease,
+        skipIfNoDiff,
+        diffTargets,
+        dryRun,
+        state,
     });
+    updateReleaseTransactionState(state, { completed: true });
 }
-src_run().catch((error) => setFailed(error));
+async function cleanup() {
+    startGroup('Post action cleanup');
+    const state = loadReleaseTransactionState();
+    if (state === null) {
+        notice('No release transaction state was found. Nothing to clean up.');
+        endGroup();
+        return;
+    }
+    if (state.completed) {
+        notice('Release transaction completed successfully. Nothing to clean up.');
+        endGroup();
+        return;
+    }
+    notice('Release transaction failed. Starting best-effort cleanup.');
+    if (state.dryRun) {
+        notice('Dry run mode detected. No remote cleanup is required.');
+        endGroup();
+        return;
+    }
+    if (state.pushBranchCompleted && !state.releaseCreated) {
+        notice('Failure detected after branch push but before GitHub release creation. Attempting rollback.');
+        const rollbackResults = [];
+        if (state.releaseTag !== null) {
+            rollbackResults.push(await rollbackStep(`Delete remote tag ${state.releaseTag}`, 'git', [
+                'push',
+                '--delete',
+                'origin',
+                state.releaseTag,
+            ]));
+        }
+        else {
+            warning('Release tag is unavailable. Skipping remote tag deletion.');
+        }
+        if (state.initialBranchName !== null && state.initialHeadSha !== null) {
+            rollbackResults.push(await rollbackStep(`Reset remote branch ${state.initialBranchName} to ${state.initialHeadSha}`, 'git', [
+                'push',
+                '--force-with-lease',
+                'origin',
+                `${state.initialHeadSha}:refs/heads/${state.initialBranchName}`,
+            ]));
+        }
+        else {
+            warning('Initial branch and HEAD SHA are unavailable. Skipping branch rollback.');
+        }
+        if (rollbackResults.length === 0 ||
+            rollbackResults.some((result) => !result)) {
+            warning('Automatic rollback did not fully succeed.');
+            logManualRemediation(state);
+        }
+        else {
+            notice('Automatic rollback completed successfully.');
+        }
+        endGroup();
+        return;
+    }
+    if (state.releaseCreated) {
+        warning(`GitHub Release ${state.releaseTag ?? '(unknown tag)'} was already created before failure.` +
+            '\nAutomatic rollback is skipped to avoid deleting published artifacts unexpectedly.');
+        if (state.updateShorthandReleaseRequested &&
+            !state.updateShorthandReleaseCompleted) {
+            warning('Shorthand tag update may be incomplete. Re-running this workflow can reconcile shorthand tags.');
+        }
+        logManualRemediation(state);
+        endGroup();
+        return;
+    }
+    notice('Failure happened before any remote push. No cleanup action is needed.');
+    endGroup();
+}
+if (!getState(STATE_IS_POST)) {
+    saveState(STATE_IS_POST, 'true');
+    src_run().catch((error) => setFailed(error));
+}
+else {
+    cleanup().catch((error) => setFailed(error));
+}
 
 var __webpack_exports__nodePackageRelease = __webpack_exports__.E;
 export { __webpack_exports__nodePackageRelease as nodePackageRelease };
