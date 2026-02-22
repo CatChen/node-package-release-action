@@ -412,7 +412,9 @@ async function cleanup(): Promise<void> {
     return;
   }
 
-  notice('Failure happened before any remote push. No cleanup action is needed.');
+  notice(
+    'Failure happened before any remote push. No cleanup action is needed.',
+  );
   endGroup();
 }
 
