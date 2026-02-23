@@ -94113,7 +94113,8 @@ async function cleanupAfterPushWithoutRelease(state) {
     else {
         warning('Initial branch and HEAD SHA are unavailable. Skipping rollback.');
     }
-    if (rollbackResults.length === 0 || rollbackResults.some((result) => !result)) {
+    if (rollbackResults.length === 0 ||
+        rollbackResults.some((result) => !result)) {
         warning('Automatic rollback did not fully succeed.');
         logReleaseTransactionManualRemediation(state);
         return;

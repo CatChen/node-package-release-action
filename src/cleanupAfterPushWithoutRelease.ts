@@ -1,5 +1,5 @@
-import { notice, warning } from '@actions/core';
 import type { ReleaseTransactionState } from './ReleaseTransactionState.js';
+import { notice, warning } from '@actions/core';
 import { logReleaseTransactionManualRemediation } from './logReleaseTransactionManualRemediation.js';
 import { runCleanupStep } from './runCleanupStep.js';
 
@@ -42,7 +42,10 @@ export async function cleanupAfterPushWithoutRelease(
     warning('Initial branch and HEAD SHA are unavailable. Skipping rollback.');
   }
 
-  if (rollbackResults.length === 0 || rollbackResults.some((result) => !result)) {
+  if (
+    rollbackResults.length === 0 ||
+    rollbackResults.some((result) => !result)
+  ) {
     warning('Automatic rollback did not fully succeed.');
     logReleaseTransactionManualRemediation(state);
     return;

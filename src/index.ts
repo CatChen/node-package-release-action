@@ -211,7 +211,9 @@ async function cleanup(): Promise<void> {
     }
 
     if (state.completed) {
-      notice('Release transaction completed successfully. Nothing to clean up.');
+      notice(
+        'Release transaction completed successfully. Nothing to clean up.',
+      );
       return;
     }
 

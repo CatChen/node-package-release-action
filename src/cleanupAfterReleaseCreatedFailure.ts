@@ -1,5 +1,5 @@
-import { warning } from '@actions/core';
 import type { ReleaseTransactionState } from './ReleaseTransactionState.js';
+import { warning } from '@actions/core';
 import { logReleaseTransactionManualRemediation } from './logReleaseTransactionManualRemediation.js';
 
 export function cleanupAfterReleaseCreatedFailure(
