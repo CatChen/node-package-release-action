@@ -9,10 +9,9 @@ export type ReleaseTransactionState = {
     releaseCreated: boolean;
     updateShorthandReleaseCompleted: boolean;
 };
-export declare function saveReleaseTransactionState(state: ReleaseTransactionState): void;
-export declare function updateReleaseTransactionState(state: ReleaseTransactionState, updates: Partial<ReleaseTransactionState>): void;
-export declare function loadReleaseTransactionState(): ReleaseTransactionState | null;
-export declare function createReleaseTransactionState({ dryRun, updateShorthandRelease, }: {
+export declare function saveReleaseTransactionState({ dryRun, updateShorthandRelease, }: {
     dryRun: boolean;
     updateShorthandRelease: boolean;
 }): Promise<ReleaseTransactionState>;
+export declare function updateReleaseTransactionState(state: ReleaseTransactionState, updates: Partial<ReleaseTransactionState>): void;
+export declare function loadReleaseTransactionState(): ReleaseTransactionState | null;

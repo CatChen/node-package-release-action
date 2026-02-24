@@ -9,24 +9,22 @@ import {
   setFailed,
   setOutput,
   startGroup,
+  warning,
 } from '@actions/core';
 import { context } from '@actions/github';
 import { configGitWithToken } from 'config-git-with-token-action';
 import { type ReleaseType, inc, rsort } from 'semver';
 import {
   IS_POST,
-  type ReleaseTransactionState,
-  createReleaseTransactionState,
   loadReleaseTransactionState,
   saveReleaseTransactionState,
   updateReleaseTransactionState,
 } from './ReleaseTransactionState.js';
 import { RELEASE_TYPES } from './ReleaseType.js';
 import { checkDiff } from './checkDiff.js';
-import { cleanupAfterPushWithoutRelease } from './cleanupAfterPushWithoutRelease.js';
-import { cleanupAfterReleaseCreatedFailure } from './cleanupAfterReleaseCreatedFailure.js';
 import { configGit } from './configGit.js';
 import { createRelease } from './createRelease.js';
+import { deleteTag } from './deleteTag.js';
 import { fetchEverything } from './fetchEverything.js';
 import { findLastSameReleaseTypeVersion } from './findLastSameReleaseTypeVersion.js';
 import { getLastGitTag } from './getLastGitTag.js';
@@ -34,6 +32,7 @@ import { getLatestReleaseTag } from './getLatestReleaseTag.js';
 import { getOctokit } from './getOctokit.js';
 import { getPackageVersion } from './getPackageVersion.js';
 import { pushBranch } from './pushBranch.js';
+import { resetBranch } from './resetBranch.js';
 import { setVersion } from './setVersion.js';
 import { updateTags } from './updateTags.js';
 
@@ -58,157 +57,132 @@ export async function nodePackageRelease({
   diffTargets: string;
   dryRun: boolean;
 }): Promise<Release | undefined> {
-  const state = await createReleaseTransactionState({
+  const state = await saveReleaseTransactionState({
     dryRun,
     updateShorthandRelease,
   });
-  saveReleaseTransactionState(state);
 
-  const updateState = (updates: Partial<ReleaseTransactionState>): void => {
-    updateReleaseTransactionState(state, updates);
-  };
-  let completed = false;
+  const octokit = getOctokit(githubToken);
 
-  try {
-    const octokit = getOctokit(githubToken);
+  await configGitWithToken({ githubToken });
+  await configGit();
 
-    await configGitWithToken({ githubToken });
-    await configGit();
+  startGroup('Fetch every git tag');
+  await fetchEverything();
+  endGroup();
 
-    startGroup('Fetch every git tag');
-    await fetchEverything();
-    endGroup();
+  startGroup('Get last git tag');
+  const lastGitTag = await getLastGitTag();
+  notice(`Last git tag: ${lastGitTag}`);
+  endGroup();
 
-    startGroup('Get last git tag');
-    const lastGitTag = await getLastGitTag();
-    notice(`Last git tag: ${lastGitTag}`);
-    endGroup();
+  startGroup('Get package.json version');
+  const packageVersion = await getPackageVersion(directory);
+  notice(`package.json version: ${packageVersion}`);
+  endGroup();
 
-    startGroup('Get package.json version');
-    const packageVersion = await getPackageVersion(directory);
-    notice(`package.json version: ${packageVersion}`);
-    endGroup();
+  startGroup('Get latest release tag');
+  const { owner, repo } = context.repo;
+  const latestReleaseTag = await getLatestReleaseTag(owner, repo, octokit);
+  notice(`Latest release tag: ${latestReleaseTag}`);
+  endGroup();
 
-    startGroup('Get latest release tag');
-    const { owner, repo } = context.repo;
-    const latestReleaseTag = await getLatestReleaseTag(owner, repo, octokit);
-    notice(`Latest release tag: ${latestReleaseTag}`);
-    endGroup();
+  const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap(
+    (version) => (version === null ? [] : [version]),
+  );
+  const sortedVersions = rsort(versions);
+  const highestVersion =
+    sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
+  notice(`Highest version: ${highestVersion}`);
 
-    const versions = [lastGitTag, packageVersion, latestReleaseTag].flatMap(
-      (version) => (version === null ? [] : [version]),
-    );
-    const sortedVersions = rsort(versions);
-    const highestVersion =
-      sortedVersions.length === 0 ? DEFAULT_VERSION : sortedVersions[0];
-    notice(`Highest version: ${highestVersion}`);
-
-    const releaseVersion = inc(highestVersion, releaseType);
-    if (releaseVersion === null) {
-      setFailed('Failed to compute release version');
-      return;
-    }
-    notice(`Release version: ${releaseVersion}`);
-    updateState({ releaseTag: `v${releaseVersion}` });
-
-    if (skipIfNoDiff) {
-      const lastSameReleaseTypeVersion = await findLastSameReleaseTypeVersion(
-        releaseVersion,
-        releaseType,
-      );
-      notice(`Last same release type version: ${lastSameReleaseTypeVersion}`);
-
-      if (lastSameReleaseTypeVersion !== null) {
-        const diff = await checkDiff(
-          lastSameReleaseTypeVersion,
-          directory,
-          diffTargets,
-        );
-        if (!diff) {
-          notice(
-            `Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`,
-          );
-          setOutput('skipped', true);
-          completed = true;
-          return;
-        }
-      }
-      setOutput('skipped', false);
-    }
-
-    setOutput('tag', `v${releaseVersion}`);
-
-    await setVersion(releaseVersion, directory);
-
-    await pushBranch(dryRun);
-    updateState({ pushBranchCompleted: true });
-
-    const release = await createRelease(
-      owner,
-      repo,
-      releaseVersion,
-      prerelease,
-      dryRun,
-      octokit,
-    );
-    if (release !== undefined) {
-      updateState({ releaseCreated: true });
-    }
-
-    if (updateShorthandRelease) {
-      await updateTags(releaseVersion, dryRun);
-      updateState({ updateShorthandReleaseCompleted: true });
-    }
-
-    completed = true;
-    return release;
-  } finally {
-    if (completed) {
-      updateReleaseTransactionState(state, { completed: true });
-    }
+  const releaseVersion = inc(highestVersion, releaseType);
+  if (releaseVersion === null) {
+    setFailed('Failed to compute release version');
+    return;
   }
+  notice(`Release version: ${releaseVersion}`);
+  updateReleaseTransactionState(state, { releaseTag: `v${releaseVersion}` });
+
+  if (skipIfNoDiff) {
+    const lastSameReleaseTypeVersion = await findLastSameReleaseTypeVersion(
+      releaseVersion,
+      releaseType,
+    );
+    notice(`Last same release type version: ${lastSameReleaseTypeVersion}`);
+
+    if (lastSameReleaseTypeVersion !== null) {
+      const diff = await checkDiff(
+        lastSameReleaseTypeVersion,
+        directory,
+        diffTargets,
+      );
+      if (!diff) {
+        notice(
+          `Skip due to lack of diff between HEAD..${lastSameReleaseTypeVersion}`,
+        );
+        setOutput('skipped', true);
+        updateReleaseTransactionState(state, { completed: true });
+        return;
+      }
+    }
+    setOutput('skipped', false);
+  }
+
+  setOutput('tag', `v${releaseVersion}`);
+
+  await setVersion(releaseVersion, directory);
+
+  await pushBranch(dryRun);
+  updateReleaseTransactionState(state, { pushBranchCompleted: true });
+
+  const release = await createRelease(
+    owner,
+    repo,
+    releaseVersion,
+    prerelease,
+    dryRun,
+    octokit,
+  );
+  if (release !== undefined) {
+    updateReleaseTransactionState(state, { releaseCreated: true });
+  }
+
+  if (updateShorthandRelease) {
+    await updateTags(releaseVersion, dryRun);
+    updateReleaseTransactionState(state, {
+      updateShorthandReleaseCompleted: true,
+    });
+  }
+
+  updateReleaseTransactionState(state, { completed: true });
+  return release;
 }
 
 async function run(): Promise<void> {
-  const githubToken = getInput('github-token');
-  const directory = getInput('directory');
-  const releaseTypeInput = getInput('release-type');
   const releaseType = RELEASE_TYPES.find(
-    (supportedReleaseType) =>
-      releaseTypeInput.toLowerCase() === supportedReleaseType,
+    (releaseType) => getInput('release-type').toLowerCase() === releaseType,
   );
-  const prerelease = getBooleanInput('prerelease');
-  const updateShorthandRelease = getBooleanInput('update-shorthand-release');
-  const skipIfNoDiff = getBooleanInput('skip-if-no-diff');
-  const diffTargets = getInput('diff-targets');
-  const dryRun = getBooleanInput('dry-run');
-
   if (releaseType === undefined) {
-    setFailed(`Invalid release-type input: ${releaseTypeInput}`);
+    setFailed(`Invalid release-type input: ${getInput('release-type')}`);
     return;
   }
 
   await nodePackageRelease({
-    githubToken,
-    directory,
+    githubToken: getInput('github-token'),
+    directory: getInput('directory'),
     releaseType,
-    prerelease,
-    updateShorthandRelease,
-    skipIfNoDiff,
-    diffTargets,
-    dryRun,
+    prerelease: getBooleanInput('prerelease'),
+    updateShorthandRelease: getBooleanInput('update-shorthand-release'),
+    skipIfNoDiff: getBooleanInput('skip-if-no-diff'),
+    diffTargets: getInput('diff-targets'),
+    dryRun: getBooleanInput('dry-run'),
   });
 }
 
 async function cleanup(): Promise<void> {
   startGroup('Post action cleanup');
   try {
-    const state = loadReleaseTransactionState();
-
-    if (state === null) {
-      notice('No release transaction state was found. Nothing to clean up.');
-      return;
-    }
+    const state = loadReleaseTransactionState()!;
 
     if (state.completed) {
       notice(
@@ -225,12 +199,32 @@ async function cleanup(): Promise<void> {
     }
 
     if (state.pushBranchCompleted && !state.releaseCreated) {
-      await cleanupAfterPushWithoutRelease(state);
+      notice(
+        'Failure detected after branch push but before GitHub release creation. Attempting rollback.',
+      );
+      if (state.releaseTag !== null) {
+        await deleteTag(state.releaseTag);
+      } else {
+        warning('Release tag is unavailable. Skipping remote tag deletion.');
+      }
+
+      if (state.initialBranchName !== null && state.initialHeadSha !== null) {
+        await resetBranch(state.initialBranchName, state.initialHeadSha);
+      } else {
+        warning('Initial branch and HEAD SHA are unavailable. Skipping rollback.');
+      }
+      notice('Best-effort rollback finished.');
       return;
     }
 
     if (state.releaseCreated && !state.updateShorthandReleaseCompleted) {
-      cleanupAfterReleaseCreatedFailure(state);
+      warning(
+        `GitHub Release ${state.releaseTag ?? '(unknown tag)'} was already created before failure.` +
+          '\nAutomatic rollback is skipped to avoid deleting published artifacts unexpectedly.',
+      );
+      warning(
+        'Shorthand tag update may be incomplete. Update shorthand tags manually if needed.',
+      );
       return;
     }
 

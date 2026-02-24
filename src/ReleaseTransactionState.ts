@@ -15,10 +15,32 @@ export type ReleaseTransactionState = {
   updateShorthandReleaseCompleted: boolean;
 };
 
-export function saveReleaseTransactionState(
+function persistReleaseTransactionState(
   state: ReleaseTransactionState,
 ): void {
   saveState(RELEASE_TRANSACTION, JSON.stringify(state));
+}
+
+export async function saveReleaseTransactionState({
+  dryRun,
+  updateShorthandRelease,
+}: {
+  dryRun: boolean;
+  updateShorthandRelease: boolean;
+}): Promise<ReleaseTransactionState> {
+  const { branchName, headSha } = await getCurrentGitContext();
+  const state: ReleaseTransactionState = {
+    completed: false,
+    dryRun,
+    initialBranchName: branchName,
+    initialHeadSha: headSha,
+    releaseTag: null,
+    pushBranchCompleted: false,
+    releaseCreated: false,
+    updateShorthandReleaseCompleted: !updateShorthandRelease,
+  };
+  persistReleaseTransactionState(state);
+  return state;
 }
 
 export function updateReleaseTransactionState(
@@ -26,7 +48,7 @@ export function updateReleaseTransactionState(
   updates: Partial<ReleaseTransactionState>,
 ): void {
   Object.assign(state, updates);
-  saveReleaseTransactionState(state);
+  persistReleaseTransactionState(state);
 }
 
 export function loadReleaseTransactionState(): ReleaseTransactionState | null {
@@ -66,25 +88,5 @@ async function getCurrentGitContext(): Promise<{
   return {
     branchName: branchName === '' ? null : branchName,
     headSha: headSha === '' ? null : headSha,
-  };
-}
-
-export async function createReleaseTransactionState({
-  dryRun,
-  updateShorthandRelease,
-}: {
-  dryRun: boolean;
-  updateShorthandRelease: boolean;
-}): Promise<ReleaseTransactionState> {
-  const { branchName, headSha } = await getCurrentGitContext();
-  return {
-    completed: false,
-    dryRun,
-    initialBranchName: branchName,
-    initialHeadSha: headSha,
-    releaseTag: null,
-    pushBranchCompleted: false,
-    releaseCreated: false,
-    updateShorthandReleaseCompleted: !updateShorthandRelease,
   };
 }

@@ -1,7 +1,7 @@
 import { notice, warning } from '@actions/core';
 import { getExecOutput } from '@actions/exec';
 
-export async function updateTag(tag: string): Promise<void> {
+export async function deleteTag(tag: string): Promise<void> {
   notice(`Delete remote tag: ${tag}`);
   const output = await getExecOutput(
     'git',

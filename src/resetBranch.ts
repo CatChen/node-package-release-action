@@ -10,7 +10,7 @@ export async function resetBranch(
     'git',
     [
       'push',
-      '--force-with-lease',
+      '--force',
       'origin',
       `${initialHeadSha}:refs/heads/${branchName}`,
     ],
