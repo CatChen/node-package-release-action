@@ -1,1 +1,1 @@
-export declare function updateTag(tag: string): Promise<boolean>;
+export declare function updateTag(tag: string): Promise<void>;

@@ -94039,10 +94039,10 @@ async function checkDiff(tag, directory, diffTargets) {
     return diffOutput.stdout.split('\n').join('') !== '';
 }
 
-;// CONCATENATED MODULE: ./src/deleteBranch.ts
+;// CONCATENATED MODULE: ./src/resetBranch.ts
 
 
-async function deleteBranch(branchName, initialHeadSha) {
+async function resetBranch(branchName, initialHeadSha) {
     notice(`Reset remote branch ${branchName} to ${initialHeadSha}`);
     const output = await getExecOutput('git', [
         'push',
@@ -94054,17 +94054,9 @@ async function deleteBranch(branchName, initialHeadSha) {
     });
     if (output.exitCode === 0) {
         notice(`Remote branch ${branchName} reset to ${initialHeadSha}`);
-        return true;
+        return;
     }
     warning(`Failed to reset remote branch ${branchName} with exit code ${output.exitCode}`);
-    if (output.stdout.trim() !== '') {
-        warning(`Reset branch stdout:\n${output.stdout}`);
-    }
-    if (output.stderr.trim() !== '') {
-        warning(`Reset branch stderr:\n${output.stderr}`);
-    }
-    warning(`Manual cleanup command: git push --force-with-lease origin ${initialHeadSha}:refs/heads/${branchName}`);
-    return false;
 }
 
 ;// CONCATENATED MODULE: ./src/updateTag.ts
@@ -94077,17 +94069,9 @@ async function updateTag(tag) {
     });
     if (output.exitCode === 0) {
         notice(`Tag deleted: ${tag}`);
-        return true;
+        return;
     }
     warning(`Failed to delete remote tag ${tag} with exit code ${output.exitCode}`);
-    if (output.stdout.trim() !== '') {
-        warning(`Delete tag stdout:\n${output.stdout}`);
-    }
-    if (output.stderr.trim() !== '') {
-        warning(`Delete tag stderr:\n${output.stderr}`);
-    }
-    warning(`Manual cleanup command: git push --delete origin ${tag}`);
-    return false;
 }
 
 ;// CONCATENATED MODULE: ./src/cleanupAfterPushWithoutRelease.ts
@@ -94096,30 +94080,19 @@ async function updateTag(tag) {
 
 async function cleanupAfterPushWithoutRelease(state) {
     notice('Failure detected after branch push but before GitHub release creation. Attempting rollback.');
-    let rollbackCompleted = true;
     if (state.releaseTag !== null) {
-        if (!(await updateTag(state.releaseTag))) {
-            rollbackCompleted = false;
-        }
+        await updateTag(state.releaseTag);
     }
     else {
         warning('Release tag is unavailable. Skipping remote tag deletion.');
-        rollbackCompleted = false;
     }
     if (state.initialBranchName !== null && state.initialHeadSha !== null) {
-        if (!(await deleteBranch(state.initialBranchName, state.initialHeadSha))) {
-            rollbackCompleted = false;
-        }
+        await resetBranch(state.initialBranchName, state.initialHeadSha);
     }
     else {
         warning('Initial branch and HEAD SHA are unavailable. Skipping rollback.');
-        rollbackCompleted = false;
     }
-    if (!rollbackCompleted) {
-        warning('Automatic rollback did not fully succeed.');
-        return;
-    }
-    notice('Automatic rollback completed successfully.');
+    notice('Best-effort rollback finished.');
 }
 
 ;// CONCATENATED MODULE: ./src/cleanupAfterReleaseCreatedFailure.ts
