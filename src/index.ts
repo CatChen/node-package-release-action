@@ -14,8 +14,8 @@ import { context } from '@actions/github';
 import { configGitWithToken } from 'config-git-with-token-action';
 import { type ReleaseType, inc, rsort } from 'semver';
 import {
-  type ReleaseTransactionState,
   IS_POST,
+  type ReleaseTransactionState,
   createReleaseTransactionState,
   loadReleaseTransactionState,
   saveReleaseTransactionState,

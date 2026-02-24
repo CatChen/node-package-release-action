@@ -8,5 +8,7 @@ export function cleanupAfterReleaseCreatedFailure(
     `GitHub Release ${state.releaseTag ?? '(unknown tag)'} was already created before failure.` +
       '\nAutomatic rollback is skipped to avoid deleting published artifacts unexpectedly.',
   );
-  warning('Shorthand tag update may be incomplete. Update shorthand tags manually if needed.');
+  warning(
+    'Shorthand tag update may be incomplete. Update shorthand tags manually if needed.',
+  );
 }
