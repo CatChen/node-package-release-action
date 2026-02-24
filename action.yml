@@ -41,6 +41,8 @@ outputs:
 runs:
   using: 'node24'
   main: 'bundle/index.js'
+  post: 'bundle/index.js'
+  post-if: always()
 branding:
   icon: 'send'
   color: 'blue'
