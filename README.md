@@ -80,6 +80,16 @@ This controls the diff targets used with `skip-if-no-diff`. The default value is
 
 This controls whether this is a dry run. The default value is `false`. It's used for debugging only.
 
+## Failure handling and cleanup
+
+This Action now has a post step (`post-if: always()`) that performs best-effort cleanup when the main release flow fails.
+
+- If a branch/tag push succeeds but GitHub Release creation fails, the post step attempts to roll back remote git state by deleting the release tag and resetting the branch to the original commit.
+- If a GitHub Release was already created before the failure, the post step does not delete published artifacts automatically. Instead it prints explicit manual remediation commands in logs.
+- In `dry-run` mode, no remote cleanup is attempted.
+
+Cleanup commands use `--force-with-lease` and may fail if branch protection or concurrent pushes prevent rollback. In that case, follow the remediation commands printed in logs.
+
 ## FAQ
 
 ### How do all the `release-type` options work?
