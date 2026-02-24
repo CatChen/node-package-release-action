@@ -93929,17 +93929,17 @@ var node_modules_semver = __nccwpck_require__(2088);
 ;// CONCATENATED MODULE: ./src/ReleaseTransactionState.ts
 
 
-const STATE_IS_POST = 'isPost';
-const STATE_RELEASE_TRANSACTION = 'releaseTransaction';
+const IS_POST = 'isPost';
+const RELEASE_TRANSACTION = 'releaseTransaction';
 function saveReleaseTransactionState(state) {
-    saveState(STATE_RELEASE_TRANSACTION, JSON.stringify(state));
+    saveState(RELEASE_TRANSACTION, JSON.stringify(state));
 }
 function updateReleaseTransactionState(state, updates) {
     Object.assign(state, updates);
     saveReleaseTransactionState(state);
 }
 function loadReleaseTransactionState() {
-    const stateJson = getState(STATE_RELEASE_TRANSACTION);
+    const stateJson = getState(RELEASE_TRANSACTION);
     if (stateJson === '') {
         return null;
     }
@@ -93953,7 +93953,6 @@ function loadReleaseTransactionState() {
             releaseTag: parsed.releaseTag ?? null,
             pushBranchCompleted: parsed.pushBranchCompleted === true,
             releaseCreated: parsed.releaseCreated === true,
-            updateShorthandReleaseRequested: parsed.updateShorthandReleaseRequested === true,
             updateShorthandReleaseCompleted: parsed.updateShorthandReleaseCompleted === true,
         };
     }
@@ -93972,7 +93971,7 @@ async function getCurrentGitContext() {
         headSha: headSha === '' ? null : headSha,
     };
 }
-async function createReleaseTransactionState({ dryRun, updateShorthandReleaseRequested, }) {
+async function createReleaseTransactionState({ dryRun, updateShorthandRelease, }) {
     const { branchName, headSha } = await getCurrentGitContext();
     return {
         completed: false,
@@ -93982,8 +93981,7 @@ async function createReleaseTransactionState({ dryRun, updateShorthandReleaseReq
         releaseTag: null,
         pushBranchCompleted: false,
         releaseCreated: false,
-        updateShorthandReleaseRequested,
-        updateShorthandReleaseCompleted: false,
+        updateShorthandReleaseCompleted: !updateShorthandRelease,
     };
 }
 
@@ -94041,46 +94039,54 @@ async function checkDiff(tag, directory, diffTargets) {
     return diffOutput.stdout.split('\n').join('') !== '';
 }
 
-;// CONCATENATED MODULE: ./src/logReleaseTransactionManualRemediation.ts
-
-function logReleaseTransactionManualRemediation(state) {
-    const commands = [];
-    if (state.releaseTag !== null) {
-        commands.push(`gh release delete ${state.releaseTag} --yes`);
-        commands.push(`git push --delete origin ${state.releaseTag}`);
-    }
-    if (state.initialBranchName !== null && state.initialHeadSha !== null) {
-        commands.push(`git push --force-with-lease origin ${state.initialHeadSha}:refs/heads/${state.initialBranchName}`);
-    }
-    if (commands.length === 0) {
-        warning('Manual remediation commands are unavailable because release state is incomplete.');
-        return;
-    }
-    warning([
-        'Manual remediation commands (run only if needed):',
-        ...commands.map((command) => `  ${command}`),
-    ].join('\n'));
-}
-
-;// CONCATENATED MODULE: ./src/runCleanupStep.ts
+;// CONCATENATED MODULE: ./src/deleteBranch.ts
 
 
-async function runCleanupStep(stepName, command, args) {
-    notice(`${stepName}: ${command} ${args.join(' ')}`);
-    const output = await getExecOutput(command, args, {
+async function deleteBranch(branchName, initialHeadSha) {
+    notice(`Reset remote branch ${branchName} to ${initialHeadSha}`);
+    const output = await getExecOutput('git', [
+        'push',
+        '--force-with-lease',
+        'origin',
+        `${initialHeadSha}:refs/heads/${branchName}`,
+    ], {
         ignoreReturnCode: true,
     });
     if (output.exitCode === 0) {
-        notice(`${stepName}: done`);
+        notice(`Remote branch ${branchName} reset to ${initialHeadSha}`);
         return true;
     }
-    warning(`${stepName}: failed with exit code ${output.exitCode}`);
+    warning(`Failed to reset remote branch ${branchName} with exit code ${output.exitCode}`);
     if (output.stdout.trim() !== '') {
-        warning(`${stepName} stdout:\n${output.stdout}`);
+        warning(`Reset branch stdout:\n${output.stdout}`);
     }
     if (output.stderr.trim() !== '') {
-        warning(`${stepName} stderr:\n${output.stderr}`);
+        warning(`Reset branch stderr:\n${output.stderr}`);
     }
+    warning(`Manual cleanup command: git push --force-with-lease origin ${initialHeadSha}:refs/heads/${branchName}`);
+    return false;
+}
+
+;// CONCATENATED MODULE: ./src/updateTag.ts
+
+
+async function updateTag(tag) {
+    notice(`Delete remote tag: ${tag}`);
+    const output = await getExecOutput('git', ['push', '--delete', 'origin', tag], {
+        ignoreReturnCode: true,
+    });
+    if (output.exitCode === 0) {
+        notice(`Tag deleted: ${tag}`);
+        return true;
+    }
+    warning(`Failed to delete remote tag ${tag} with exit code ${output.exitCode}`);
+    if (output.stdout.trim() !== '') {
+        warning(`Delete tag stdout:\n${output.stdout}`);
+    }
+    if (output.stderr.trim() !== '') {
+        warning(`Delete tag stderr:\n${output.stderr}`);
+    }
+    warning(`Manual cleanup command: git push --delete origin ${tag}`);
     return false;
 }
 
@@ -94090,33 +94096,27 @@ async function runCleanupStep(stepName, command, args) {
 
 async function cleanupAfterPushWithoutRelease(state) {
     notice('Failure detected after branch push but before GitHub release creation. Attempting rollback.');
-    const rollbackResults = [];
+    let rollbackCompleted = true;
     if (state.releaseTag !== null) {
-        rollbackResults.push(await runCleanupStep(`Delete remote tag ${state.releaseTag}`, 'git', [
-            'push',
-            '--delete',
-            'origin',
-            state.releaseTag,
-        ]));
+        if (!(await updateTag(state.releaseTag))) {
+            rollbackCompleted = false;
+        }
     }
     else {
         warning('Release tag is unavailable. Skipping remote tag deletion.');
+        rollbackCompleted = false;
     }
     if (state.initialBranchName !== null && state.initialHeadSha !== null) {
-        rollbackResults.push(await runCleanupStep(`Reset remote branch ${state.initialBranchName} to ${state.initialHeadSha}`, 'git', [
-            'push',
-            '--force-with-lease',
-            'origin',
-            `${state.initialHeadSha}:refs/heads/${state.initialBranchName}`,
-        ]));
+        if (!(await deleteBranch(state.initialBranchName, state.initialHeadSha))) {
+            rollbackCompleted = false;
+        }
     }
     else {
         warning('Initial branch and HEAD SHA are unavailable. Skipping rollback.');
+        rollbackCompleted = false;
     }
-    if (rollbackResults.length === 0 ||
-        rollbackResults.some((result) => !result)) {
+    if (!rollbackCompleted) {
         warning('Automatic rollback did not fully succeed.');
-        logReleaseTransactionManualRemediation(state);
         return;
     }
     notice('Automatic rollback completed successfully.');
@@ -94124,15 +94124,10 @@ async function cleanupAfterPushWithoutRelease(state) {
 
 ;// CONCATENATED MODULE: ./src/cleanupAfterReleaseCreatedFailure.ts
 
-
 function cleanupAfterReleaseCreatedFailure(state) {
     warning(`GitHub Release ${state.releaseTag ?? '(unknown tag)'} was already created before failure.` +
         '\nAutomatic rollback is skipped to avoid deleting published artifacts unexpectedly.');
-    if (state.updateShorthandReleaseRequested &&
-        !state.updateShorthandReleaseCompleted) {
-        warning('Shorthand tag update may be incomplete. Re-running this workflow can reconcile shorthand tags.');
-    }
-    logReleaseTransactionManualRemediation(state);
+    warning('Shorthand tag update may be incomplete. Update shorthand tags manually if needed.');
 }
 
 ;// CONCATENATED MODULE: ./src/configGit.ts
@@ -94772,7 +94767,7 @@ const DEFAULT_VERSION = '0.1.0';
 async function nodePackageRelease({ githubToken, directory, releaseType, prerelease, updateShorthandRelease, skipIfNoDiff, diffTargets, dryRun, }) {
     const state = await createReleaseTransactionState({
         dryRun,
-        updateShorthandReleaseRequested: updateShorthandRelease,
+        updateShorthandRelease,
     });
     saveReleaseTransactionState(state);
     const updateState = (updates) => {
@@ -94891,7 +94886,7 @@ async function cleanup() {
             await cleanupAfterPushWithoutRelease(state);
             return;
         }
-        if (state.releaseCreated) {
+        if (state.releaseCreated && !state.updateShorthandReleaseCompleted) {
             cleanupAfterReleaseCreatedFailure(state);
             return;
         }
@@ -94901,8 +94896,8 @@ async function cleanup() {
         endGroup();
     }
 }
-if (!getState(STATE_IS_POST)) {
-    saveState(STATE_IS_POST, 'true');
+if (!getState(IS_POST)) {
+    saveState(IS_POST, 'true');
     src_run().catch((error) => setFailed(error));
 }
 else {

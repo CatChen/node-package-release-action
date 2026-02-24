@@ -1,8 +1,8 @@
 import { getState, saveState, warning } from '@actions/core';
 import { getExecOutput } from '@actions/exec';
 
-export const STATE_IS_POST = 'isPost';
-const STATE_RELEASE_TRANSACTION = 'releaseTransaction';
+export const IS_POST = 'isPost';
+const RELEASE_TRANSACTION = 'releaseTransaction';
 
 export type ReleaseTransactionState = {
   completed: boolean;
@@ -12,14 +12,13 @@ export type ReleaseTransactionState = {
   releaseTag: string | null;
   pushBranchCompleted: boolean;
   releaseCreated: boolean;
-  updateShorthandReleaseRequested: boolean;
   updateShorthandReleaseCompleted: boolean;
 };
 
 export function saveReleaseTransactionState(
   state: ReleaseTransactionState,
 ): void {
-  saveState(STATE_RELEASE_TRANSACTION, JSON.stringify(state));
+  saveState(RELEASE_TRANSACTION, JSON.stringify(state));
 }
 
 export function updateReleaseTransactionState(
@@ -31,7 +30,7 @@ export function updateReleaseTransactionState(
 }
 
 export function loadReleaseTransactionState(): ReleaseTransactionState | null {
-  const stateJson = getState(STATE_RELEASE_TRANSACTION);
+  const stateJson = getState(RELEASE_TRANSACTION);
   if (stateJson === '') {
     return null;
   }
@@ -45,8 +44,6 @@ export function loadReleaseTransactionState(): ReleaseTransactionState | null {
       releaseTag: parsed.releaseTag ?? null,
       pushBranchCompleted: parsed.pushBranchCompleted === true,
       releaseCreated: parsed.releaseCreated === true,
-      updateShorthandReleaseRequested:
-        parsed.updateShorthandReleaseRequested === true,
       updateShorthandReleaseCompleted:
         parsed.updateShorthandReleaseCompleted === true,
     };
@@ -74,10 +71,10 @@ async function getCurrentGitContext(): Promise<{
 
 export async function createReleaseTransactionState({
   dryRun,
-  updateShorthandReleaseRequested,
+  updateShorthandRelease,
 }: {
   dryRun: boolean;
-  updateShorthandReleaseRequested: boolean;
+  updateShorthandRelease: boolean;
 }): Promise<ReleaseTransactionState> {
   const { branchName, headSha } = await getCurrentGitContext();
   return {
@@ -88,7 +85,6 @@ export async function createReleaseTransactionState({
     releaseTag: null,
     pushBranchCompleted: false,
     releaseCreated: false,
-    updateShorthandReleaseRequested,
-    updateShorthandReleaseCompleted: false,
+    updateShorthandReleaseCompleted: !updateShorthandRelease,
   };
 }

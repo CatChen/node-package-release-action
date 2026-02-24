@@ -15,7 +15,7 @@ import { configGitWithToken } from 'config-git-with-token-action';
 import { type ReleaseType, inc, rsort } from 'semver';
 import {
   type ReleaseTransactionState,
-  STATE_IS_POST,
+  IS_POST,
   createReleaseTransactionState,
   loadReleaseTransactionState,
   saveReleaseTransactionState,
@@ -60,7 +60,7 @@ export async function nodePackageRelease({
 }): Promise<Release | undefined> {
   const state = await createReleaseTransactionState({
     dryRun,
-    updateShorthandReleaseRequested: updateShorthandRelease,
+    updateShorthandRelease,
   });
   saveReleaseTransactionState(state);
 
@@ -229,7 +229,7 @@ async function cleanup(): Promise<void> {
       return;
     }
 
-    if (state.releaseCreated) {
+    if (state.releaseCreated && !state.updateShorthandReleaseCompleted) {
       cleanupAfterReleaseCreatedFailure(state);
       return;
     }
@@ -242,8 +242,8 @@ async function cleanup(): Promise<void> {
   }
 }
 
-if (!getState(STATE_IS_POST)) {
-  saveState(STATE_IS_POST, 'true');
+if (!getState(IS_POST)) {
+  saveState(IS_POST, 'true');
   run().catch((error: Error) => setFailed(error));
 } else {
   cleanup().catch((error: Error) => setFailed(error));

@@ -1,7 +1,7 @@
 import type { ReleaseTransactionState } from './ReleaseTransactionState.js';
 import { notice, warning } from '@actions/core';
-import { logReleaseTransactionManualRemediation } from './logReleaseTransactionManualRemediation.js';
-import { runCleanupStep } from './runCleanupStep.js';
+import { deleteBranch } from './deleteBranch.js';
+import { updateTag } from './updateTag.js';
 
 export async function cleanupAfterPushWithoutRelease(
   state: ReleaseTransactionState,
@@ -10,44 +10,28 @@ export async function cleanupAfterPushWithoutRelease(
     'Failure detected after branch push but before GitHub release creation. Attempting rollback.',
   );
 
-  const rollbackResults: boolean[] = [];
+  let rollbackCompleted = true;
 
   if (state.releaseTag !== null) {
-    rollbackResults.push(
-      await runCleanupStep(`Delete remote tag ${state.releaseTag}`, 'git', [
-        'push',
-        '--delete',
-        'origin',
-        state.releaseTag,
-      ]),
-    );
+    if (!(await updateTag(state.releaseTag))) {
+      rollbackCompleted = false;
+    }
   } else {
     warning('Release tag is unavailable. Skipping remote tag deletion.');
+    rollbackCompleted = false;
   }
 
   if (state.initialBranchName !== null && state.initialHeadSha !== null) {
-    rollbackResults.push(
-      await runCleanupStep(
-        `Reset remote branch ${state.initialBranchName} to ${state.initialHeadSha}`,
-        'git',
-        [
-          'push',
-          '--force-with-lease',
-          'origin',
-          `${state.initialHeadSha}:refs/heads/${state.initialBranchName}`,
-        ],
-      ),
-    );
+    if (!(await deleteBranch(state.initialBranchName, state.initialHeadSha))) {
+      rollbackCompleted = false;
+    }
   } else {
     warning('Initial branch and HEAD SHA are unavailable. Skipping rollback.');
+    rollbackCompleted = false;
   }
 
-  if (
-    rollbackResults.length === 0 ||
-    rollbackResults.some((result) => !result)
-  ) {
+  if (!rollbackCompleted) {
     warning('Automatic rollback did not fully succeed.');
-    logReleaseTransactionManualRemediation(state);
     return;
   }
 
