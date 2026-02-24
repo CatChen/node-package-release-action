@@ -94616,12 +94616,7 @@ async function pushBranch(dryRun) {
 
 async function resetBranch(branchName, initialHeadSha) {
     notice(`Reset remote branch ${branchName} to ${initialHeadSha}`);
-    const output = await getExecOutput('git', [
-        'push',
-        '--force',
-        'origin',
-        `${initialHeadSha}:refs/heads/${branchName}`,
-    ], {
+    const output = await getExecOutput('git', ['push', '--force', 'origin', `${initialHeadSha}:refs/heads/${branchName}`], {
         ignoreReturnCode: true,
     });
     if (output.exitCode === 0) {

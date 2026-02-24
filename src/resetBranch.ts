@@ -8,12 +8,7 @@ export async function resetBranch(
   notice(`Reset remote branch ${branchName} to ${initialHeadSha}`);
   const output = await getExecOutput(
     'git',
-    [
-      'push',
-      '--force',
-      'origin',
-      `${initialHeadSha}:refs/heads/${branchName}`,
-    ],
+    ['push', '--force', 'origin', `${initialHeadSha}:refs/heads/${branchName}`],
     {
       ignoreReturnCode: true,
     },

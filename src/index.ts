@@ -211,7 +211,9 @@ async function cleanup(): Promise<void> {
       if (state.initialBranchName !== null && state.initialHeadSha !== null) {
         await resetBranch(state.initialBranchName, state.initialHeadSha);
       } else {
-        warning('Initial branch and HEAD SHA are unavailable. Skipping rollback.');
+        warning(
+          'Initial branch and HEAD SHA are unavailable. Skipping rollback.',
+        );
       }
       notice('Best-effort rollback finished.');
       return;

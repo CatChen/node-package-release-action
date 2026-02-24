@@ -15,9 +15,7 @@ export type ReleaseTransactionState = {
   updateShorthandReleaseCompleted: boolean;
 };
 
-function persistReleaseTransactionState(
-  state: ReleaseTransactionState,
-): void {
+function persistReleaseTransactionState(state: ReleaseTransactionState): void {
   saveState(RELEASE_TRANSACTION, JSON.stringify(state));
 }
 
