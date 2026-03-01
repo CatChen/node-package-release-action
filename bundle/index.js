@@ -94036,7 +94036,7 @@ async function fetchEverything() {
 
 
 async function getAllGitTags() {
-    const tagOutput = await getExecOutput('git', ['tag']);
+    const tagOutput = await getExecOutput('git', ['tag'], { silent: true });
     const allTags = tagOutput.stdout.split('\n');
     const versionTags = allTags.filter((tag) => (0,node_modules_semver.valid)(tag));
     return versionTags;
