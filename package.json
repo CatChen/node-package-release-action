@@ -1,6 +1,6 @@
 {
   "name": "node-package-release-action",
-  "version": "2.3.12",
+  "version": "2.3.13-28",
   "description": "This GitHub Action automates Node package version bumps and GitHub releases.",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
