@@ -1,7 +1,7 @@
 {
   "name": "node-package-release-action",
   "version": "2.3.12",
-  "description": "A template to create custom GitHub Action with TypeScript/JavaScript.",
+  "description": "This GitHub Action automates Node package version bumps and GitHub releases.",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
   "type": "module",

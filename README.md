@@ -42,8 +42,19 @@ jobs:
           then
             echo 'Release is skipped.'
           else
-            echo "Release $TAG successfully."
+            echo "Released $TAG successfully."
           fi
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          check-latest: true
+          registry-url: https://registry.npmjs.org/
+
+      - name: Publish
+        if: ${{ steps.release.outputs.skipped != 'true' }}
+        run: |
+          npm publish
 ```
 
 ## Options
