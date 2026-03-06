@@ -88,6 +88,9 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.get-github-app-token.outputs.token }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
@@ -125,6 +128,9 @@ jobs:
         with:
           ref: ${{ github.ref_name || github.ref }}
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
@@ -134,7 +140,7 @@ jobs:
 
       - name: Build
         run: |
-          yarn install
+          yarn install --immutable
           yarn build
 
       - name: Publish
