@@ -1554,14 +1554,14 @@ __metadata:
   linkType: hard
 
 "config-git-with-token-action@npm:^2.0.0":
-  version: 2.0.12
-  resolution: "config-git-with-token-action@npm:2.0.12"
+  version: 2.0.13
+  resolution: "config-git-with-token-action@npm:2.0.13"
   dependencies:
     "@actions/core": "npm:^3.0.0"
     "@actions/exec": "npm:^3.0.0"
     "@actions/github": "npm:^9.0.0"
     token-who-am-i-action: "npm:^2.0.0"
-  checksum: 10c0/879b80aabb67e29a3be7ba3b1f92b002e9992419b7f4330b43c43edc2db866cb8c7b02cf0dc833915656b52e7ae633772e106be0a394a70e7b228ccf9eb304c3
+  checksum: 10c0/0012ce601dac477d6ff9d5087d4024bdbf7e18fed2f2b9730877e01073e7a559c9465f7dd6ff9f0b8ddc6e6ebc461929c6c8b7e08a6c28be9c5ca98e4e7226e9
   languageName: node
   linkType: hard
 
