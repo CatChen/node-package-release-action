@@ -2,9 +2,17 @@
   "name": "node-package-release-action",
   "version": "2.3.13",
   "description": "This GitHub Action automates Node package version bumps and GitHub releases.",
-  "packageManager": "yarn@4.13.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CatChen/node-package-release-action.git"
+  },
+  "author": "Cat Chen",
+  "homepage": "https://github.com/CatChen/node-package-release-action#readme",
+  "bugs": {
+    "url": "https://github.com/CatChen/node-package-release-action/issues"
+  },
   "main": "dist/index.js",
-  "types": "dist/index.d.js",
   "type": "module",
   "scripts": {
     "build": "rm -rf dist && tsc",
@@ -16,16 +24,6 @@
     "prepublishOnly": "pinst --disable && yarn build",
     "preversion": "yarn && yarn build && yarn bundle",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CatChen/node-package-release-action.git"
-  },
-  "author": "Cat Chen",
-  "homepage": "https://github.com/CatChen/node-package-release-action#readme",
-  "bugs": {
-    "url": "https://github.com/CatChen/node-package-release-action/issues"
   },
   "dependencies": {
     "@actions/core": "^3.0.0",
@@ -65,6 +63,7 @@
   "resolutions": {
     "strip-ansi": "6.0.1"
   },
+  "types": "dist/index.d.js",
   "funding": "https://github.com/CatChen/node-package-release-action?sponsor=1",
   "lint-staged": {
     "*.{ts,js}": [
@@ -72,5 +71,6 @@
       "yarn lint --fix"
     ],
     "*.{json,yml,yaml,md,markdown}": "yarn format"
-  }
+  },
+  "packageManager": "yarn@4.13.0"
 }
