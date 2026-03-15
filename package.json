@@ -1,6 +1,6 @@
 {
   "name": "node-package-release-action",
-  "version": "2.3.13",
+  "version": "2.3.14-69",
   "description": "This GitHub Action automates Node package version bumps and GitHub releases.",
   "license": "MIT",
   "repository": {
