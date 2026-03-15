@@ -9,11 +9,6 @@
   "importOrder": [
     "<TYPES>",
     "<BUILTIN_MODULES>",
-    "^@action/core/(.*)$",
-    "^@action/github/(.*)$",
-    "^@action/exec/(.*)$",
-    "^@action/glob/(.*)$",
-    "^@action/(.*)$",
     "<THIRD_PARTY_MODULES>",
     "^[./]"
   ],
