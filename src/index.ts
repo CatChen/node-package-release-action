@@ -1,4 +1,5 @@
 import type { Release } from '@octokit/webhooks-types';
+import type { ReleaseType } from 'semver';
 import {
   endGroup,
   getBooleanInput,
@@ -10,8 +11,7 @@ import {
 } from '@actions/core';
 import { context } from '@actions/github';
 import { configGitWithToken } from 'config-git-with-token-action';
-import { type ReleaseType, inc, rsort } from 'semver';
-import { RELEASE_TYPES } from './ReleaseType.js';
+import { inc, rsort } from 'semver';
 import { checkDiff } from './checkDiff.js';
 import { configGit } from './configGit.js';
 import { createRelease } from './createRelease.js';
@@ -22,6 +22,7 @@ import { getLatestReleaseTag } from './getLatestReleaseTag.js';
 import { getOctokit } from './getOctokit.js';
 import { getPackageVersion } from './getPackageVersion.js';
 import { pushBranch } from './pushBranch.js';
+import { RELEASE_TYPES } from './ReleaseType.js';
 import { setVersion } from './setVersion.js';
 import { updateTags } from './updateTags.js';
 
