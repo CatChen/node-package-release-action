@@ -969,8 +969,8 @@ __metadata:
   linkType: hard
 
 "config-git-with-token-action@npm:^2.0.15":
-  version: 2.0.15
-  resolution: "config-git-with-token-action@npm:2.0.15"
+  version: 2.0.16
+  resolution: "config-git-with-token-action@npm:2.0.16"
   dependencies:
     "@actions/core": "npm:^3.0.0"
     "@actions/exec": "npm:^3.0.0"
@@ -978,7 +978,7 @@ __metadata:
     "@octokit/core": "npm:^7.0.0"
     graphql: "npm:^16.11.0"
     token-who-am-i-action: "npm:^2.0.16"
-  checksum: 10c0/faaf86703231c968c6c9861761f8a5ee94772f21a7a22645ea2cdff22c724f03ec07afd6426140d4458a2eeb038c1c9d242168027b9d3ab57839d4682d1a4a11
+  checksum: 10c0/d1382e180b57d2a7f5e21a2739f1f8e6cba6fd74c6d9f9eba05e716b6edfa22745ec5248dd09d22eb8407519e1ec7f2a6c6814b02489e1d8a48cae9418d49488
   languageName: node
   linkType: hard
 
