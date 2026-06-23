@@ -962,16 +962,16 @@ __metadata:
   linkType: hard
 
 "config-git-with-token-action@npm:^2.0.15":
-  version: 2.0.16
-  resolution: "config-git-with-token-action@npm:2.0.16"
+  version: 2.0.18
+  resolution: "config-git-with-token-action@npm:2.0.18"
   dependencies:
     "@actions/core": "npm:^3.0.0"
     "@actions/exec": "npm:^3.0.0"
     "@actions/github": "npm:^9.0.0"
     "@octokit/core": "npm:^7.0.0"
-    graphql: "npm:^16.11.0"
+    graphql: "npm:^17.0.1"
     token-who-am-i-action: "npm:^2.0.16"
-  checksum: 10c0/d1382e180b57d2a7f5e21a2739f1f8e6cba6fd74c6d9f9eba05e716b6edfa22745ec5248dd09d22eb8407519e1ec7f2a6c6814b02489e1d8a48cae9418d49488
+  checksum: 10c0/e9a7810237e80b71fcefdcfd74a06566eab5fe2ec50172d6d001b21e8c1e8eec23ed1f6706b7532b0fa99d159c0a170a9bd4503142ea94932f7bcaffd6dd1c18
   languageName: node
   linkType: hard
 
@@ -1368,10 +1368,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:^16.11.0":
-  version: 16.13.1
-  resolution: "graphql@npm:16.13.1"
-  checksum: 10c0/0c7a9aea59504fbf3e0674f13ddb82935780f2a388e1db0ef41c3711c0ff8cb0a871c50d30d2d5288f32b946af3570d6f9ba8d13b03a330336f27121f9ac7a6b
+"graphql@npm:^17.0.1":
+  version: 17.0.1
+  resolution: "graphql@npm:17.0.1"
+  checksum: 10c0/95e4766eefa97bbc37cb4452527d24e12068f170e03c564611a3911f30a77361dfcfbdbfeea00f643c82585c02312c1f41ba6a6263049996d279c49951454980
   languageName: node
   linkType: hard
 
