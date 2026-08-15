@@ -48,7 +48,7 @@ jobs:
             -f "reviewers[]=CatChen"
 
       - name: Add label for internal dependencies
-        if: ${{ steps.dependabot-metadata.outputs.dependency-names == 'config-git-with-token-action' }}
+        if: ${{ steps.dependabot-metadata.outputs.dependency-names == 'config-git-with-token-action' || steps.dependabot-metadata.outputs.dependency-names == 'token-who-am-i-action' }}
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
