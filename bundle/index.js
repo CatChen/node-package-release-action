@@ -33541,6 +33541,9 @@ function qstring(str) {
 /******/ }
 /******/ 
 /************************************************************************/
+/******/ /* webpack/runtime/asset-relocator-loader */
+/******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = decodeURIComponent(new URL('.', import.meta.url).pathname).slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
+/******/ 
 /******/ /* webpack/runtime/create fake namespace object */
 /******/ (() => {
 /******/ 	var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
@@ -33598,10 +33601,6 @@ function qstring(str) {
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 	};
 /******/ })();
-/******/ 
-/******/ /* webpack/runtime/compat */
-/******/ 
-/******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
 /******/ 
 /************************************************************************/
 var __webpack_exports__ = {};
@@ -42169,7 +42168,7 @@ function src_getOctokit_getOctokit(githubToken) {
 const DEFAULT_WORKING_DIRECTORY = process.cwd();
 async function getPackageVersion(directory) {
     const absoluteDirectory = (0,external_node_path_namespaceObject.resolve)(DEFAULT_WORKING_DIRECTORY, directory);
-    const packageJsonPath = (0,external_node_path_namespaceObject.resolve)(absoluteDirectory, 'package.json');
+    const packageJsonPath = __nccwpck_require__.ab + "node-package-release-action/" + absoluteDirectory + '/package.json';
     if (!(0,external_node_fs_namespaceObject.existsSync)(packageJsonPath)) {
         warning(`package.json cannot be found at ${packageJsonPath}`);
         return null;
@@ -42222,7 +42221,7 @@ const RELEASE_TYPES = [
 const setVersion_DEFAULT_WORKING_DIRECTORY = process.cwd();
 async function setVersion(version, directory) {
     const absoluteDirectory = (0,external_node_path_namespaceObject.resolve)(setVersion_DEFAULT_WORKING_DIRECTORY, directory);
-    const packageJsonPath = (0,external_node_path_namespaceObject.resolve)(absoluteDirectory, 'package.json');
+    const packageJsonPath = __nccwpck_require__.ab + "node-package-release-action/" + absoluteDirectory + '/package.json';
     if ((0,external_node_fs_namespaceObject.existsSync)(packageJsonPath)) {
         await getExecOutput('npm', ['version', version]);
     }
