@@ -33,7 +33,7 @@
     "@octokit/plugin-retry": "^8.0.1",
     "@octokit/plugin-throttling": "^11.0.1",
     "config-git-with-token-action": "^2.0.15",
-    "glob": "^13.0.0",
+    "glob": "^14.0.3",
     "semver": "^7.3.8"
   },
   "devDependencies": {
